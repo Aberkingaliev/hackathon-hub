@@ -16,6 +16,12 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
     baseline-on-migrate: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
 eureka:
   client:
     service-url:

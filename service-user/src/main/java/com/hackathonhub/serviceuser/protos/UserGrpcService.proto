@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+option java_package = "com.hackathonhub.serviceuser.grpc";
+
+enum role_enum {
+    admin = 0;
+    user = 1;
+}
+
+enum status_enum {
+    success = 0;
+    alreadyRegisted = 1;
+    error = 2;
+}
+
+message UserSaveRequest {
+    string username = 1;
+    string fullName = 2;
+    string email = 3;
+    string password = 4;
+    bool isActivated = 5;
+    string teamId = 6;
+    role_enum role = 7;
+};
+
+message UserResponseData {
+    string id = 1;
+    string username = 2;
+    string fullName = 3;
+    string email = 4;
+    bool isActivated = 5;
+    string teamId = 6;
+    role_enum role = 7;
+};
+
+message UserGetAllArray {
+    repeated UserResponseData users = 1;
+}
+
+message UserResponse {
+    status_enum status = 1;
+    string message = 2;
+    oneof response {
+        UserResponseData user = 3;
+        bool isUserAlreadyExist = 4;
+        bool isPasswordValidated = 5;
+        UserGetAllArray allUsers = 7;
+    };
+}
+
+message UserDeleteByIdRequest {
+    string id = 1;
+}
+
+message UserGetByEmailRequest {
+    string email = 1;
+}
+
+
+
+
+service User {
+    rpc saveUser (UserSaveRequest) returns (UserResponse);
+    rpc deleteUser (UserDeleteByIdRequest) returns (UserResponse);
+    rpc isExistUserByEmail (UserGetByEmailRequest) returns (UserResponse);
+    rpc getUserByEmail (UserGetByEmailRequest) returns (UserResponse);
+}
