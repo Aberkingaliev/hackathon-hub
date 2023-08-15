@@ -1,0 +1,20 @@
+server:
+  port: 0
+spring:
+  application:
+    name: service-user
+  jdbc:
+    url: jdbc:postgresql://localhost:5432/usersControl
+    username: admin
+    password: admin
+  flyway:
+    url: ${spring.jdbc.url}
+    user: ${spring.jdbc.username}
+    password: ${spring.jdbc.password}
+    baseline-on-migrate: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
