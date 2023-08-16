@@ -3,6 +3,9 @@ package com.hackathonhub.serviceauth.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
@@ -36,20 +39,20 @@ public class AuthToken {
         return this;
     }
 
-    public AuthToken setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public AuthToken setCreatedAt(Long createdAt) {
+        this.createdAt = Timestamp.from(Instant.ofEpochSecond(createdAt));
         return this;
     }
 
     @Column(name = "userId")
     protected UUID userId;
 
-    @Column(name = "accessToken")
+    @Column(name = "accessToken", columnDefinition = "TEXT", length = 7000)
     protected String accessToken;
 
-    @Column(name = "refreshToken")
+    @Column(name = "refreshToken", columnDefinition = "TEXT", length = 7000)
     protected String refreshToken;
 
     @Column(name = "createdAt")
-    protected Date createdAt;
+    protected Timestamp createdAt;
 }

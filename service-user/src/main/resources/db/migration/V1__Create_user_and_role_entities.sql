@@ -7,7 +7,7 @@ CREATE TABLE users(
     username VARCHAR(255) NOT NULL UNIQUE,
     fullName VARCHAR,
     email VARCHAR UNIQUE NOT NULL UNIQUE,
-    password VARCHAR NOT NULL,
+    password TEXT NOT NULL,
     isActivated BOOLEAN DEFAULT FALSE,
     teamId UUID DEFAULT NULL,
     role role_enum DEFAULT 'user'
