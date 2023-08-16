@@ -10,14 +10,7 @@ import java.util.UUID;
 public class UserMapper {
 
     public static User mapGrpcToLocal(UserGrpcService.UserSaveRequest user) {
-        return new User()
-                .setUsername(user.getUsername())
-                .setFullName(user.getFullName())
-                .setEmail(user.getEmail())
-                .setPassword(user.getPassword())
-                .setActivated(user.getIsActivated())
-                .setTeamId(UUID.fromString(user.getTeamId()))
-                .setRole(Role.valueOf(user.getRole().toString()));
+        return buildUserLocal(user);
     }
 
     public static UserGrpcService.UserResponse mapLocalToGrpc(UserMapperGrpcActions actionType, UserResponseContext context) {
@@ -39,13 +32,24 @@ public class UserMapper {
         return UserGrpcService
                 .UserResponseData
                 .newBuilder()
-                    .setId(user.getId().toString())
-                    .setUsername(user.getUsername())
-                    .setFullName(user.getFullName())
-                    .setEmail(user.getEmail())
-                    .setIsActivated(user.getIsActivated())
-                    .setTeamId(user.getTeamId().toString())
-                    .setRole(UserGrpcService.role_enum.valueOf(user.getRole().toString()))
+                .setId(user.getId().toString())
+                .setUsername(user.getUsername())
+                .setFullName(user.getFullName())
+                .setEmail(user.getEmail())
+                .setIsActivated(user.getIsActivated())
+                .setTeamId(user.getTeamId().toString())
+                .setRole(UserGrpcService.role_enum.valueOf(user.getRole().toString()))
                 .build();
+    }
+
+    private static User buildUserLocal(UserGrpcService.UserSaveRequest user) {
+        return new User()
+                .setUsername(user.getUsername())
+                .setFullName(user.getFullName())
+                .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
+                .setActivated(user.getIsActivated())
+                .setTeamId(UUID.fromString(user.getTeamId()))
+                .setRole(Role.valueOf(user.getRole().toString()));
     }
 }
