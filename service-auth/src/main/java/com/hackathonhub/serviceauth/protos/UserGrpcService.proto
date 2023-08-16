@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option java_package = "com.hackathonhub.serviceuser.grpc";
+option java_package = "com.hackathonhub.serviceauth.grpc";
 
 enum role_enum {
     admin = 0;

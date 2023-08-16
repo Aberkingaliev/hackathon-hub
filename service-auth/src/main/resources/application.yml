@@ -31,3 +31,16 @@ eureka:
       defaultZone: http://localhost:8081/eureka
   instance:
     instance-id: ${spring.application.name}:${random.value}
+jwt:
+  secretKey: 0be2557f-8cdc-4fdb-b15b-c01a5813b9f6
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

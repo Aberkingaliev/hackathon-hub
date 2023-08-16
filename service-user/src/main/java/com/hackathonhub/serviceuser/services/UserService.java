@@ -3,14 +3,12 @@ package com.hackathonhub.serviceuser.services;
 
 import com.hackathonhub.serviceuser.grpc.UserGrpc;
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
-import com.hackathonhub.serviceuser.mappers.UserMapper;
-import com.hackathonhub.serviceuser.mappers.UserMapperGrpcActions;
-import com.hackathonhub.serviceuser.mappers.contexts.UserResponseContext;
+import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
+import com.hackathonhub.serviceuser.mappers.grpc.factories.UserMapperFactory;
 import com.hackathonhub.serviceuser.models.User;
 import com.hackathonhub.serviceuser.repositories.UserRepository;
 import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,65 +25,71 @@ public class UserService extends UserGrpc.UserImplBase {
     private final UserRepository userRepository;
 
     @Override
-    public void saveUser(UserGrpcService.UserSaveRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
-        User mappedUser = UserMapper.mapGrpcToLocal(request);
+    public void saveUser(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
+
+        User mappedUser = UserMapperFactory
+                .getMapper(UserGrpcService.actions_enum.saveUser)
+                .fromGrpcRequestToLocal(request);
+
         User savedUser = userRepository.save(mappedUser);
 
         UserResponseContext userResponseContext = UserResponseContext
                 .builder()
                     .status(UserGrpcService.status_enum.success)
-                    .user(Optional.of(savedUser))
-                    .message("User succesfuly saved")
+                    .userData(Optional.of(savedUser))
+                    .message("USER_SAVED")
                 .build();
 
-        responseObserver.onNext(UserMapper.mapLocalToGrpc(UserMapperGrpcActions.save, userResponseContext));
+        responseObserver.onNext(UserMapperFactory.getMapper(UserGrpcService.actions_enum.saveUser).fromLocalToGrpcResponse(userResponseContext));
 
         responseObserver.onCompleted();
     }
 
+
     @Override
-    public void getUserByEmail(UserGrpcService.UserGetByEmailRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
-        User user = userRepository.getByEmail(request.getEmail());
+    public void getUserByEmail(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
+        User user = userRepository.getByEmail(request.getUserForGetByEmail().getEmail());
 
         UserResponseContext userResponseContext = UserResponseContext
                 .builder()
-                    .status(UserGrpcService.status_enum.success)
-                    .user(Optional.ofNullable(user))
-                    .message("User by email founded")
+                .status(UserGrpcService.status_enum.success)
+                .userData(Optional.ofNullable(user))
+                .message("USER_BY_EMAIL_FOUNDED")
                 .build();
 
         responseObserver
-                .onNext(UserMapper.mapLocalToGrpc(UserMapperGrpcActions.getByEmail, userResponseContext));
+                .onNext(UserMapperFactory.getMapper(UserGrpcService.actions_enum.getUserByEmail).fromLocalToGrpcResponse(userResponseContext));
 
         responseObserver.onCompleted();
     }
 
+
     @Override
-    public void deleteUser(UserGrpcService.UserDeleteByIdRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
-        userRepository.deleteById(UUID.fromString(request.getId()));
+    public void deleteUser(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
+        userRepository.deleteById(UUID.fromString(request.getUserForDelete().getId()));
 
         UserResponseContext userResponseContext = UserResponseContext
                 .builder()
-                    .status(UserGrpcService.status_enum.success)
-                    .message("User is deleted")
+                .status(UserGrpcService.status_enum.success)
+                .message("USER_IS_DELETED")
                 .build();
 
-        responseObserver.onNext(UserMapper.mapLocalToGrpc(UserMapperGrpcActions.delete, userResponseContext));
+        responseObserver.onNext(UserMapperFactory.getMapper(UserGrpcService.actions_enum.deleteUser).fromLocalToGrpcResponse(userResponseContext));
         responseObserver.onCompleted();
     }
 
     @Override
-    public void isExistUserByEmail(UserGrpcService.UserGetByEmailRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
-        Boolean isExist = userRepository.existByEmail(request.getEmail());
+    public void isExistUserByEmail(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
+        Boolean isExist = userRepository.existByEmail(request.getUserIsExistByEmail().getEmail());
 
         UserResponseContext userResponseContext = UserResponseContext
                 .builder()
-                    .status(UserGrpcService.status_enum.success)
-                    .isExist(Optional.ofNullable(isExist))
-                    .message("The user exists: " + isExist)
+                .status(UserGrpcService.status_enum.success)
+                .isExistState(Optional.ofNullable(isExist))
+                .message("USER_IS_EXIST: " + isExist)
                 .build();
 
-        responseObserver.onNext(UserMapper.mapLocalToGrpc(UserMapperGrpcActions.existByEmail, userResponseContext));
+        responseObserver.onNext(UserMapperFactory.getMapper(UserGrpcService.actions_enum.isExistUserByEmail).fromLocalToGrpcResponse(userResponseContext));
         responseObserver.onCompleted();
     }
 }
