@@ -11,17 +11,20 @@ spring:
     url: ${spring.datasource.url}
     username: ${spring.datasource.username}
     password: ${spring.datasource.password}
-#  flyway:
-#    url: ${spring.datasource.url}
-#    user: ${spring.datasource.username}
-#    password: ${spring.datasource.password}
-#    baseline-on-migrate: true
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    baseline-on-migrate: true
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+  redis:
+    host: localhost
+    port: 6379
 eureka:
   client:
     service-url:
