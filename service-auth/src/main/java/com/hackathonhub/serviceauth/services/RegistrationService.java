@@ -24,10 +24,10 @@ import java.util.UUID;
 
 
 @Service
-public class AuthService {
+public class RegistrationService {
 
     @Autowired
-    public AuthService(AuthRepository authRepository, JWTUtils jwtUtils) {
+    public RegistrationService(AuthRepository authRepository, JWTUtils jwtUtils) {
         this.authRepository = authRepository;
         this.jwtUtils = jwtUtils;
     }

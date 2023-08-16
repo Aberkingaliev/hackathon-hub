@@ -1,6 +1,5 @@
 package com.hackathonhub.serviceauth.models;
 
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.UUID;

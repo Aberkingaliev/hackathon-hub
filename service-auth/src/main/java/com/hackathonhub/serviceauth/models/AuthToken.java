@@ -3,10 +3,8 @@ package com.hackathonhub.serviceauth.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 
 

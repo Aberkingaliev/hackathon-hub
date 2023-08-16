@@ -3,7 +3,7 @@ package com.hackathonhub.serviceauth.controllers;
 
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceauth.models.User;
-import com.hackathonhub.serviceauth.services.AuthService;
+import com.hackathonhub.serviceauth.services.RegistrationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,11 @@ public class AuthController {
 
 
     @Autowired
-    private AuthService authService;
+    private RegistrationService registrationService;
 
     @PostMapping("/registration")
     public ApiAuthResponse registration(@RequestBody User user, HttpServletResponse responseServlet) {
-        ApiAuthResponse response = authService.registration(user);
+        ApiAuthResponse response = registrationService.registration(user);
 
         if (response.getStatus() == HttpStatus.CREATED) {
             Cookie cookie = new Cookie("refreshToken",

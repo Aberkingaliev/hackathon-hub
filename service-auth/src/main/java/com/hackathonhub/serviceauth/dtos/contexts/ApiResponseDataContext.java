@@ -1,7 +1,6 @@
 package com.hackathonhub.serviceauth.dtos.contexts;
 
 import com.hackathonhub.serviceauth.models.AuthToken;
-import com.hackathonhub.serviceauth.models.User;
 import lombok.Builder;
 import lombok.Data;
 
