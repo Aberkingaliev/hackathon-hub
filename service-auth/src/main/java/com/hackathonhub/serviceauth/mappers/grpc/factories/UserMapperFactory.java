@@ -5,9 +5,12 @@ import com.hackathonhub.serviceauth.mappers.grpc.UserGetByEmailMapper;
 import com.hackathonhub.serviceauth.mappers.grpc.UserIsExistByEmailMapper;
 import com.hackathonhub.serviceauth.mappers.grpc.UserSaveMapper;
 import com.hackathonhub.serviceauth.mappers.grpc.strategies.UserMapperStrategy;
-import com.hackathonhub.serviceauth.grpc.UserGrpcService;
+import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 
 public class UserMapperFactory {
+
+    private static final String NOT_SUPPORTED_EXCEPTION = "NOT_SUPPORTED ACTION: ";
+
     public static UserMapperStrategy getMapper(UserGrpcService.actions_enum action) {
         UserMapperStrategy mapper = null;
 
@@ -16,7 +19,8 @@ public class UserMapperFactory {
             case deleteUser -> mapper = new UserDeleteMapper();
             case getUserByEmail -> mapper = new UserGetByEmailMapper();
             case isExistUserByEmail -> mapper = new UserIsExistByEmailMapper();
-            default -> throw new UnsupportedOperationException("Mapper is not support for this action: " + action);
+            default -> throw new UnsupportedOperationException(
+                    NOT_SUPPORTED_EXCEPTION + action);
         }
 
         return mapper;

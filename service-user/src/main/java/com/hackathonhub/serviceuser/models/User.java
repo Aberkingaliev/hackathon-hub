@@ -3,12 +3,17 @@ package com.hackathonhub.serviceuser.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 
 @Entity
 @Data
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "username")
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,9 +37,12 @@ public class User {
     @Column(name = "teamId")
     private UUID teamId;
 
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private Role role = Role.user;
+    @Column(name = "roles")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_to_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     public User setId(UUID id) {
         this.id = id;
@@ -71,8 +79,8 @@ public class User {
         return this;
     }
 
-    public User setRole(Role role) {
-        this.role = role;
+    public User setRole(HashSet<Role> roles) {
+        this.roles = roles;
         return this;
     }
 }

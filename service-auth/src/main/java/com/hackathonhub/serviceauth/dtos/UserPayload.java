@@ -1,9 +1,11 @@
 package com.hackathonhub.serviceauth.dtos;
 
-import com.hackathonhub.serviceauth.grpc.UserGrpcService;
+
+import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import lombok.Data;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,14 +29,14 @@ public class UserPayload {
         return this;
     }
 
-    public UserPayload setRole(UserGrpcService.role_enum role) {
-        this.role = role;
+    public UserPayload setRoles(List<UserGrpcService.UserRole> role) {
+        this.roles = roles;
         return this;
     }
 
     private String email;
     private Boolean isActivate;
-    private UserGrpcService.role_enum role;
+    private List<UserGrpcService.UserRole> roles;
 
     public HashMap<String, String> toHashMap() {
         return new HashMap<>(
@@ -42,7 +44,7 @@ public class UserPayload {
                         Map.entry("id", id.toString()),
                         Map.entry("email", email),
                         Map.entry("isActivated", isActivate.toString()),
-                        Map.entry("role", role.toString())
+                        Map.entry("roleList", "")
                 )
         );
     }

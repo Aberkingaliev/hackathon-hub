@@ -1,7 +1,7 @@
 package com.hackathonhub.serviceauth.mappers.grpc.contexts;
 
 import com.hackathonhub.serviceauth.models.User;
-import com.hackathonhub.serviceauth.grpc.UserGrpcService;
+import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import lombok.Builder;
 import lombok.Getter;
 

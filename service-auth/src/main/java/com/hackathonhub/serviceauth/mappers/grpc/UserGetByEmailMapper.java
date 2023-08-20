@@ -4,9 +4,12 @@ import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserResponseContext;
 import com.hackathonhub.serviceauth.mappers.grpc.strategies.UserMapperStrategy;
 import com.hackathonhub.serviceauth.models.Role;
+import com.hackathonhub.serviceauth.models.RoleEnum;
 import com.hackathonhub.serviceauth.models.User;
-import com.hackathonhub.serviceauth.grpc.UserGrpcService;
+import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 public class UserGetByEmailMapper implements UserMapperStrategy {
@@ -14,21 +17,38 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
     public UserGrpcService.UserResponse fromLocalToGrpcResponse(UserResponseContext context) {
         User user = context.getUserData().get();
 
+        List<UserGrpcService.UserRole> userRoles = user.getRoles()
+                .stream()
+                .map(role -> UserGrpcService.UserRole
+                        .newBuilder()
+                        .setId(role.getId().toString())
+                        .setRole(
+                                UserGrpcService.role_enum.valueOf(
+                                        role.getRole_name().toString()
+                                )
+                        )
+                        .build())
+                .toList();
+
+
+
         UserGrpcService.UserResponseData data = UserGrpcService.UserResponseData
                 .newBuilder()
+                .setId(user.getId().toString())
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
                 .setIsActivated(user.getIsActivated())
                 .setTeamId(user.getTeamId().toString())
-                .setRole(UserGrpcService.role_enum.valueOf(user.getRole().toString()))
+                .addAllRoles(userRoles)
                 .build();
 
         return UserGrpcService.UserResponse
                 .newBuilder()
-                    .setStatus(context.getStatus())
-                    .setMessage(context.getMessage())
-                    .setUser(data)
+                .setStatus(context.getStatus())
+                .setMessage(context.getMessage())
+                .setUser(data)
                 .build();
     }
 
@@ -49,12 +69,28 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
     @Override
     public User fromGrpcResponseToLocal(UserGrpcService.UserResponse userResponse) {
         UserGrpcService.UserResponseData user = userResponse.getUser();
+        HashSet<Role> roles = new HashSet<>(
+                user
+                        .getRolesList()
+                        .stream()
+                        .map(role -> new Role()
+                                .setId(UUID.fromString(role.getId()))
+                                .setRole_name(
+                                        RoleEnum.valueOf(
+                                                role.getRole().toString()
+                                        )
+                                )
+                        )
+                        .toList());
         return new User()
+                .setId(UUID.fromString(user.getId()))
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
                 .setActivated(user.getIsActivated())
                 .setTeamId(UUID.fromString(user.getTeamId()))
-                .setRole(Role.valueOf(user.getRole().toString()));
+                .setRole(roles);
+
     }
 }

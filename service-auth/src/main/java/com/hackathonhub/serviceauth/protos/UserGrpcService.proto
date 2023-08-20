@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-option java_package = "com.hackathonhub.serviceauth.grpc";
+option java_package = "com.hackathonhub.serviceuser.grpc";
 
 enum role_enum {
-    admin = 0;
-    user = 1;
+    ROLE_ADMIN = 0;
+    ROLE_USER = 1;
 }
 
 enum status_enum {
@@ -19,8 +19,6 @@ enum actions_enum {
     isExistUserByEmail = 2;
     getUserByEmail = 3;
 }
-
-
 
 message UserResponse {
     status_enum status = 1;
@@ -39,11 +37,16 @@ message UserResponseData {
     string username = 2;
     string fullName = 3;
     string email = 4;
-    bool isActivated = 5;
-    string teamId = 6;
-    role_enum role = 7;
+    string password = 5;
+    bool isActivated = 6;
+    repeated UserRole roles = 8;
+    string teamId = 7;
 };
 
+message UserRole {
+    string id = 1;
+    role_enum role = 2;
+};
 
 message UserGetAllArray {
     repeated UserResponseData users = 1;
@@ -74,13 +77,14 @@ message UserIsExistByEmailRequest {
 }
 
 message UserSaveRequest {
-    string username = 1;
-    string fullName = 2;
-    string email = 3;
-    string password = 4;
-    bool isActivated = 5;
-    string teamId = 6;
-    role_enum role = 7;
+    string id = 1;
+    string username = 2;
+    string fullName = 3;
+    string email = 4;
+    string password = 5;
+    bool isActivated = 6;
+    string teamId = 7;
+    repeated UserRole roles = 8;
 };
 
 
