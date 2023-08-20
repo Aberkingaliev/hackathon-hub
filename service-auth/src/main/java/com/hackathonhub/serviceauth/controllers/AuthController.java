@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.concurrent.TimeUnit;
+
 @RestController
 @RequestMapping("/api")
 public class AuthController {
@@ -34,7 +36,6 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ApiAuthResponse registration(@RequestBody User user) {
-
         return registrationService.registration(user);
     }
 
@@ -44,14 +45,15 @@ public class AuthController {
         ApiAuthResponse response = loginService.login(loginRequest);
 
         if (response.getStatus() == HttpStatus.OK) {
-            Cookie cookie = new Cookie("refreshToken",
+            Cookie refreshTokenCookie = new Cookie("refreshToken",
                     response
                             .getData()
                             .getData()
                             .get()
                             .getRefreshToken());
+            refreshTokenCookie.setMaxAge((int) TimeUnit.DAYS.toMillis(30));
 
-            responseServlet.addCookie(cookie);
+            responseServlet.addCookie(refreshTokenCookie);
 
             responseServlet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + response
                     .getData()
@@ -61,6 +63,20 @@ public class AuthController {
         }
 
         return response;
+    }
+
+    @PostMapping("/logout")
+    public ApiAuthResponse logout(HttpServletResponse responseServlet) {
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setMaxAge(0);
+        responseServlet.addCookie(refreshTokenCookie);
+        responseServlet.setHeader("Authorization", "");
+
+        return ApiAuthResponse
+                .builder()
+                .status(HttpStatus.OK)
+                .message("USER_SUCCESSFULLY_LOGOUT")
+                .build();
     }
 
 
