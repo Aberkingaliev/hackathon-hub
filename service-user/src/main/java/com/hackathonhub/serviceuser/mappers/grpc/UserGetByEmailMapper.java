@@ -8,8 +8,8 @@ import com.hackathonhub.serviceuser.models.Role;
 import com.hackathonhub.serviceuser.models.RoleEnum;
 import com.hackathonhub.serviceuser.models.User;
 import java.util.HashSet;
-import java.util.List;
 import java.util.UUID;
+import java.util.List;
 
 public class UserGetByEmailMapper implements UserMapperStrategy {
     @Override
