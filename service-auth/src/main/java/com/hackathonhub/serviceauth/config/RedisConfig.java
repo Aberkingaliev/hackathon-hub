@@ -21,14 +21,17 @@ public class RedisConfig {
 
     @Bean
     public LettuceConnectionFactory lettuceConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfig = new RedisStandaloneConfiguration();
+        RedisStandaloneConfiguration redisStandaloneConfig =
+                new RedisStandaloneConfiguration();
         redisStandaloneConfig.setHostName(redisHost);
         redisStandaloneConfig.setPort(redisPort);
+
         return new LettuceConnectionFactory(redisStandaloneConfig);
     }
 
     @Bean
-    RedisOperations<String, AuthTokenRedis> redisOperations(LettuceConnectionFactory connFactory) {
+    RedisOperations<String, AuthTokenRedis> redisOperations
+            (LettuceConnectionFactory connFactory) {
         RedisTemplate<String, AuthTokenRedis> template = new RedisTemplate<>();
         template.setConnectionFactory(connFactory);
 

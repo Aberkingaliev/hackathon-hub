@@ -9,4 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface AuthRepository extends JpaRepository<AuthToken, UUID> {
+
+    AuthToken findByRefreshToken(String refreshToken);
+
 }

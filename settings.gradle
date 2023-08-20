@@ -1,2 +1,4 @@
 rootProject.name = 'hackathon-hub'
-
+includeBuild("service-registry")
+includeBuild("service-auth")
+includeBuild("service-user")

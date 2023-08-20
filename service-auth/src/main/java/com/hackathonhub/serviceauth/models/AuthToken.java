@@ -1,8 +1,13 @@
 package com.hackathonhub.serviceauth.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.Data;
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
@@ -12,7 +17,9 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "authTokens")
+@Table(name = "authTokens", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "refreshToken")
+})
 public class AuthToken {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

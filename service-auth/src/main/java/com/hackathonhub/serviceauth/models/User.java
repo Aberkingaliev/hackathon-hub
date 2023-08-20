@@ -2,11 +2,20 @@ package com.hackathonhub.serviceauth.models;
 
 import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 
 @Data
 public class User {
+
+    public User setId(UUID id) {
+        this.id = id;
+        return this;
+    }
+
+    private UUID id;
 
     private String username;
 
@@ -20,7 +29,7 @@ public class User {
 
     private UUID teamId;
 
-    private Role role = Role.user;
+    private Set<Role> roles = new HashSet<>();
 
 
     public User setUsername(String username) {
@@ -53,8 +62,8 @@ public class User {
         return this;
     }
 
-    public User setRole(Role role) {
-        this.role = role;
+    public User setRole(Set<Role> roles) {
+        this.roles = roles;
         return this;
     }
 }

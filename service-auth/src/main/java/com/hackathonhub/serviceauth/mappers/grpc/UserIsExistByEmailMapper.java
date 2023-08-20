@@ -1,9 +1,9 @@
 package com.hackathonhub.serviceauth.mappers.grpc;
 
-import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserResponseContext;
 import com.hackathonhub.serviceauth.mappers.grpc.strategies.UserMapperStrategy;
+import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 
 public class UserIsExistByEmailMapper implements UserMapperStrategy {
     @Override

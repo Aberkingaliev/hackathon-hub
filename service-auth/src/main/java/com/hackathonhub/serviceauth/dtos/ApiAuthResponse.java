@@ -12,6 +12,5 @@ public class ApiAuthResponse {
 
     HttpStatus status;
     String message;
-
     ApiResponseDataContext data;
 }

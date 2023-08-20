@@ -4,11 +4,35 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/service-auth" name="service-auth">
+                <projects>
+                  <project path="$PROJECT_DIR$/service-auth" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/service-registry" name="service-registry">
+                <projects>
+                  <project path="$PROJECT_DIR$/service-registry" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/service-user" name="service-user">
+                <projects>
+                  <project path="$PROJECT_DIR$/service-user" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/service-auth" />
+            <option value="$PROJECT_DIR$/service-registry" />
+            <option value="$PROJECT_DIR$/service-user" />
           </set>
         </option>
       </GradleProjectSettings>
