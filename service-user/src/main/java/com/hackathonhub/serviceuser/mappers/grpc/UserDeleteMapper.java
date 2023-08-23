@@ -4,6 +4,7 @@ import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
 import com.hackathonhub.serviceuser.mappers.grpc.strategies.UserMapperStrategy;
+import com.hackathonhub.serviceuser.utils.UuidUtils;
 
 public class UserDeleteMapper implements UserMapperStrategy {
     @Override
@@ -12,7 +13,6 @@ public class UserDeleteMapper implements UserMapperStrategy {
                 .newBuilder()
                 .setStatus(context.getStatus())
                 .setMessage(context.getMessage())
-                .setAction(UserGrpcService.actions_enum.deleteUser)
                 .build();
     }
 
@@ -20,7 +20,7 @@ public class UserDeleteMapper implements UserMapperStrategy {
     public UserGrpcService.UserRequest fromLocalToGrpcRequest(UserRequestContext context) {
         UserGrpcService.UserDeleteByIdRequest request = UserGrpcService.UserDeleteByIdRequest
                 .newBuilder()
-                .setId(context.getUserId().toString())
+                .setId(UuidUtils.uuidToString(context.getUserId().get()))
                 .build();
         return UserGrpcService.UserRequest
                 .newBuilder()

@@ -17,4 +17,5 @@ public class UserResponseContext {
         private final UserGrpcService.status_enum status;
         private final String message;
 
+
 }

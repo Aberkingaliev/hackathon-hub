@@ -7,6 +7,8 @@ import com.hackathonhub.serviceuser.mappers.grpc.strategies.UserMapperStrategy;
 import com.hackathonhub.serviceuser.models.Role;
 import com.hackathonhub.serviceuser.models.RoleEnum;
 import com.hackathonhub.serviceuser.models.User;
+import com.hackathonhub.serviceuser.utils.UuidUtils;
+
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.List;
@@ -20,7 +22,7 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
                 .stream()
                 .map(role -> UserGrpcService.UserRole
                                 .newBuilder()
-                                .setId(role.getId().toString())
+                                .setId(UuidUtils.uuidToString(role.getId()))
                                 .setRole(
                                         UserGrpcService.role_enum.valueOf(
                                                 role.getRole_name().toString()
@@ -35,13 +37,13 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
 
         UserGrpcService.UserResponseData data = UserGrpcService.UserResponseData
                 .newBuilder()
-                .setId(user.getId().toString())
+                .setId(UuidUtils.uuidToString(user.getId()))
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
                 .setIsActivated(user.getIsActivated())
-                .setTeamId(user.getTeamId().toString())
+                .setTeamId(UuidUtils.uuidToString(user.getTeamId()))
                 .addAllRoles(userRoles)
                 .build();
 
@@ -75,7 +77,7 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
                 user.getRolesList()
                         .stream()
                         .map(role -> new Role()
-                                .setId(UUID.fromString(role.getId()))
+                                .setId(UuidUtils.stringToUUID(role.getId()))
                                 .setRole_name(
                                         RoleEnum.valueOf(
                                                 role.getRole()
@@ -86,13 +88,13 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
                         .toList()
         );
         return new User()
-                .setId(UUID.fromString(user.getId()))
+                .setId(UuidUtils.stringToUUID(user.getId()))
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
                 .setActivated(user.getIsActivated())
-                .setTeamId(UUID.fromString(user.getTeamId()))
+                .setTeamId(UuidUtils.stringToUUID(user.getTeamId()))
                 .setRole(roles);
 
     }

@@ -9,7 +9,7 @@ import com.hackathonhub.serviceuser.mappers.grpc.strategies.UserMapperStrategy;
 
 public class UserMapperFactory {
     public static UserMapperStrategy getMapper(UserGrpcService.actions_enum action) {
-        UserMapperStrategy mapper = null;
+        UserMapperStrategy mapper = new UserSaveMapper();
 
         switch (action) {
             case saveUser -> mapper = new UserSaveMapper();
