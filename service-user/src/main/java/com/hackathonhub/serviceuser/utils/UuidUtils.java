@@ -21,7 +21,7 @@ public class UuidUtils {
         try {
             return uuid.toString();
         } catch (IllegalArgumentException e) {
-            log.error("UUID is not valid: {},\nError: {}", uuid, e.getMessage());
+            log.error("UUID is not valid: {},\n{}", uuid, e.getMessage());
             throw new IllegalArgumentException("UUID is not valid: " + uuid);
         }
     }
