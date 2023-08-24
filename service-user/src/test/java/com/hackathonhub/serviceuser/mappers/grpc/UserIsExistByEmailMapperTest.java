@@ -1,56 +1,95 @@
 package com.hackathonhub.serviceuser.mappers.grpc;
 
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
-import com.hackathonhub.serviceuser.mappers.grpc.__mocks__.UserMockGrpc;
-import com.hackathonhub.serviceuser.mappers.grpc.__mocks__.UserMockLocal;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
-import com.hackathonhub.serviceuser.mappers.grpc.factories.UserMapperFactory;
+import com.hackathonhub.serviceuser.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
+import com.hackathonhub.serviceuser.__mocks__.UserMocksFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
-import java.util.UUID;
+
 
 public class UserIsExistByEmailMapperTest {
 
-    private static final String requestedEmailLocal = UserMockLocal.getUserForResponse().getEmail();
-    private static final UserGrpcService.UserRequest userIsExistByEmailRequestGrpc = UserMockGrpc.getUserIsExistByEmailRequest();
-    private static final UserGrpcService.UserResponse userIsExistByEmailResponseGrpc = UserMockGrpc.getUserIsExistByEmailResponse();
+    private final UserIsExistByEmailMapper mapper = new UserIsExistByEmailMapper();
+    private final UserMockStrategy mockStrategy = UserMocksFactory
+            .getMockStrategy(UserGrpcService.actions_enum.isExistUserByEmail);
 
 
+    @Test()
+    void fromLocalToGrpcResponse_Test() {
+        /*
 
-    @Test
-    void fromLocalToGrpcResponseTest () {
+        GIVEN
 
-        UserResponseContext context = UserResponseContext
+         */
+
+        UserResponseContext context= UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
+                .message(StaticGrpcResponseMessage.USER_IS_EXIST)
                 .isExistState(Optional.of(true))
-                .message("test")
                 .build();
 
-        UserGrpcService.UserResponse mappedUser = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.isExistUserByEmail)
+        UserGrpcService.UserResponse response = mockStrategy.getResponse();
+        /*
+
+        EXECUTE
+
+        */
+
+        UserGrpcService.UserResponse responseFromCallMapper = mapper
                 .fromLocalToGrpcResponse(context);
 
-        Assertions.assertEquals(userIsExistByEmailResponseGrpc, mappedUser);
+        /*
+
+        ASSERTIONS
+
+         */
+
+        Assertions.assertEquals(response, responseFromCallMapper);
+
     }
 
-
     @Test
-    void fromLocalToGrpcRequest() {
-        UserRequestContext context = UserRequestContext
+    void fromLocalToGrpcRequest_Test() {
+        /*
+
+        GIVEN
+
+         */
+        String email = mockStrategy
+                .getRequest()
+                .getUserIsExistByEmail()
+                .getEmail();
+
+
+        UserRequestContext requestContext = UserRequestContext
                 .builder()
-                .userEmail(Optional.of(requestedEmailLocal))
+                .userEmail(Optional.of(email))
                 .build();
 
-        UserGrpcService.UserRequest mappedUser = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.isExistUserByEmail)
-                .fromLocalToGrpcRequest(context);
 
+        UserGrpcService.UserRequest request = mockStrategy.getRequest();
+        /*
 
-        Assertions.assertEquals(userIsExistByEmailRequestGrpc, mappedUser);
+        EXECUTE
+
+        */
+
+        UserGrpcService.UserRequest responseFromCallMapper = mapper.fromLocalToGrpcRequest(requestContext);
+
+        /*
+
+        ASSERTIONS
+
+         */
+
+        Assertions.assertEquals(request, responseFromCallMapper);
+
     }
 
 }

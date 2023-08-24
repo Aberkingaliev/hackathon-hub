@@ -8,15 +8,21 @@ import com.hackathonhub.serviceuser.models.Role;
 import com.hackathonhub.serviceuser.models.RoleEnum;
 import com.hackathonhub.serviceuser.models.User;
 import com.hackathonhub.serviceuser.utils.UuidUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.List;
 
+
+@Slf4j
 public class UserGetByEmailMapper implements UserMapperStrategy {
     @Override
     public UserGrpcService.UserResponse fromLocalToGrpcResponse(UserResponseContext context) {
-        User user = context.getUserData().get();
+        User user = context.getUserData().orElseThrow(()-> {
+            log.error("USER_NOT_FOUND_FOR_MAPPING: " + context.getUserData());
+            return new RuntimeException("USER_NOT_FOUND_FOR_MAPPING: " + context.getUserData());
+        });
 
         List<UserGrpcService.UserRole> userRoles = user.getRoles()
                 .stream()
@@ -59,7 +65,12 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
     public UserGrpcService.UserRequest fromLocalToGrpcRequest(UserRequestContext context) {
         UserGrpcService.UserGetByEmailRequest data = UserGrpcService.UserGetByEmailRequest
                 .newBuilder()
-                .setEmail(context.getUserEmail().get())
+                .setEmail(context.getUserEmail().orElseThrow(
+                        () -> {
+                            log.error("EMAIL_NOT_FOUND_FOR_MAPPING: " + context.getUserEmail());
+                            return new RuntimeException("EMAIL_NOT_FOUND_FOR_MAPPING" + context.getUserEmail());
+                        }
+                ))
                 .build();
 
         return UserGrpcService.UserRequest

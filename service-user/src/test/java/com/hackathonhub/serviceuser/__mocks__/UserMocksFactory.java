@@ -1,10 +1,11 @@
-package com.hackathonhub.serviceuser.services.__mocks__;
+package com.hackathonhub.serviceuser.__mocks__;
 
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
-import com.hackathonhub.serviceuser.services.__mocks__.mockImpls.UserDeletByIdMocks;
-import com.hackathonhub.serviceuser.services.__mocks__.mockImpls.UserGetByEmailMocks;
-import com.hackathonhub.serviceuser.services.__mocks__.mockImpls.UserIsExistByEmailMocks;
-import com.hackathonhub.serviceuser.services.__mocks__.mockImpls.UserSaveMocks;
+import com.hackathonhub.serviceuser.__mocks__.mockImpls.UserDeletByIdMocks;
+import com.hackathonhub.serviceuser.__mocks__.mockImpls.UserGetByEmailMocks;
+import com.hackathonhub.serviceuser.__mocks__.mockImpls.UserIsExistByEmailMocks;
+import com.hackathonhub.serviceuser.__mocks__.mockImpls.UserSaveMocks;
+
 
 public class UserMocksFactory {
 

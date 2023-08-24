@@ -1,72 +1,152 @@
 package com.hackathonhub.serviceuser.mappers.grpc;
 
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
-import com.hackathonhub.serviceuser.mappers.grpc.__mocks__.UserMockGrpc;
-import com.hackathonhub.serviceuser.mappers.grpc.__mocks__.UserMockLocal;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
-import com.hackathonhub.serviceuser.mappers.grpc.factories.UserMapperFactory;
 import com.hackathonhub.serviceuser.models.User;
+import com.hackathonhub.serviceuser.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceuser.__mocks__.MockLocalUserDataType;
+import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
+import com.hackathonhub.serviceuser.__mocks__.UserMocksFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+
+
 public class UserSaveMapperTest {
 
-    private static final User userSaveResponseLocal = UserMockLocal.getUserForResponse();
-    private static final User userSaveRequestLocal = UserMockLocal.getUserForRequest();
-    private static final UserGrpcService.UserRequest userSaveRequestGrpc = UserMockGrpc.getUserSaveRequest();
-    private static final UserGrpcService.UserResponse userSaveResponseGrpc = UserMockGrpc.getUserForResponse();
+    private final UserSaveMapper mapper = new UserSaveMapper();
+    private final UserMockStrategy mockStrategy = UserMocksFactory
+            .getMockStrategy(UserGrpcService.actions_enum.saveUser);
 
 
+    @Test()
+    void fromLocalToGrpcResponse_Test() {
+        /*
 
-    @Test
-    void fromLocalToGrpcResponseTest () {
+        GIVEN
 
-        UserResponseContext context = UserResponseContext
+         */
+        User localUserFromDb = mockStrategy.getUser(MockLocalUserDataType.USER_FROM_DB);
+
+        UserResponseContext context= UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
-                .message("test")
-                .userData(Optional.of(userSaveResponseLocal))
+                .message(StaticGrpcResponseMessage.USER_SAVED)
+                .userData(Optional.of(localUserFromDb))
                 .build();
 
-        UserGrpcService.UserResponse mappedUser = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.saveUser)
+        UserGrpcService.UserResponse response = mockStrategy.getResponse();
+        /*
+
+        EXECUTE
+
+        */
+
+        UserGrpcService.UserResponse responseFromCallMapper = mapper
                 .fromLocalToGrpcResponse(context);
 
-        Assertions.assertEquals(userSaveResponseGrpc, mappedUser);
+        /*
+
+        ASSERTIONS
+
+         */
+
+        Assertions.assertEquals(response, responseFromCallMapper);
+
     }
 
+    @Test
+    void fromGrpcResponseToLocal_Test() {
+        /*
+
+        GIVEN
+
+         */
+        User localUserFromDb = mockStrategy.getUser(MockLocalUserDataType.USER_FROM_DB);
+
+
+        UserGrpcService.UserResponse response = mockStrategy.getResponse();
+        /*
+
+        EXECUTE
+
+        */
+
+        User responseFromCallMapper = mapper.fromGrpcResponseToLocal(response);
+
+        /*
+
+        ASSERTIONS
+
+         */
+
+        Assertions.assertEquals(localUserFromDb, responseFromCallMapper);
+
+    }
 
     @Test
-    void fromLocalToGrpcRequest() {
-        UserRequestContext context = UserRequestContext
+    void fromLocalToGrpcRequest_Test() {
+        /*
+
+        GIVEN
+
+         */
+        User localUserForRequest = mockStrategy.getUser(MockLocalUserDataType.MAPPED_USER_FROM_REQUEST);
+
+        UserRequestContext requestContext = UserRequestContext
                 .builder()
-                .userData(Optional.of(userSaveRequestLocal))
+                .userData(Optional.of(localUserForRequest))
                 .build();
 
-        UserGrpcService.UserRequest mappedUser = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.saveUser)
-                .fromLocalToGrpcRequest(context);
 
+        UserGrpcService.UserRequest request = mockStrategy.getRequest();
+        /*
 
-        Assertions.assertEquals(userSaveRequestGrpc, mappedUser);
+        EXECUTE
+
+        */
+
+        UserGrpcService.UserRequest responseFromCallMapper = mapper.fromLocalToGrpcRequest(requestContext);
+
+        /*
+
+        ASSERTIONS
+
+         */
+
+        Assertions.assertEquals(request, responseFromCallMapper);
+
     }
 
     @Test
-    void fromGrpcRequestToLocal() {
-        User mappedUser = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.saveUser)
-                .fromGrpcRequestToLocal(userSaveRequestGrpc);
+    void fromRequestToLocal_Test() {
+        /*
 
-        Assertions.assertEquals(userSaveRequestLocal, mappedUser);
-    }
+        GIVEN
 
-    @Test
-    void fromGrpcResponseToLocal() {
-        User mappedUser = UserMapperFactory.getMapper(UserGrpcService.actions_enum.saveUser).fromGrpcResponseToLocal(userSaveResponseGrpc);
+         */
+        User localUserFromRequest = mockStrategy.getUser(MockLocalUserDataType.MAPPED_USER_FROM_REQUEST);
 
-        Assertions.assertEquals(userSaveResponseLocal, mappedUser);
+
+        UserGrpcService.UserRequest request = mockStrategy.getRequest();
+        /*
+
+        EXECUTE
+
+        */
+
+        User responseFromCallMapper = mapper.fromGrpcRequestToLocal(request);
+
+        /*
+
+        ASSERTIONS
+
+         */
+
+        Assertions.assertEquals(localUserFromRequest, responseFromCallMapper);
+
     }
 }

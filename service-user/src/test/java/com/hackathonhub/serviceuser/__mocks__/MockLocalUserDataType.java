@@ -1,4 +1,4 @@
-package com.hackathonhub.serviceuser.services.__mocks__;
+package com.hackathonhub.serviceuser.__mocks__;
 
 public enum MockLocalUserDataType {
     MAPPED_USER_FROM_REQUEST,

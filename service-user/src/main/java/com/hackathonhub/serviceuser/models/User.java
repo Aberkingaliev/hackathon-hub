@@ -83,4 +83,16 @@ public class User {
         this.roles = roles;
         return this;
     }
+
+    public User from(User user) {
+        return new User()
+                .setId(user.getId())
+                .setUsername(user.getUsername())
+                .setFullName(user.getFullName())
+                .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
+                .setActivated(user.getIsActivated())
+                .setTeamId(user.getTeamId())
+                .setRole(new HashSet<>(user.getRoles()));
+    }
 }

@@ -9,6 +9,7 @@ import com.hackathonhub.serviceuser.mappers.grpc.factories.UserMapperFactory;
 import com.hackathonhub.serviceuser.mappers.grpc.strategies.UserMapperStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.Enumeration;
 
@@ -25,5 +26,10 @@ public class UserMapperFactoryTest {
         Assertions.assertEquals(UserGetByEmailMapper.class , getByEmailMapper.getClass());
         Assertions.assertEquals(UserDeleteMapper.class , deleteMapper.getClass());
         Assertions.assertEquals(UserIsExistByEmailMapper.class , isExistByEmailMapper.getClass());
+        Assertions.assertThrows(
+                UnsupportedOperationException.class,
+                () -> UserMapperFactory.getMapper(UserGrpcService.actions_enum.UNRECOGNIZED),
+                "Mapper is not support for this action: UNRECOGNIZED"
+        );
     }
 }

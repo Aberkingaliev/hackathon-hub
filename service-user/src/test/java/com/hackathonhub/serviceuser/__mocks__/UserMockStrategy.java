@@ -1,4 +1,4 @@
-package com.hackathonhub.serviceuser.services.__mocks__;
+package com.hackathonhub.serviceuser.__mocks__;
 
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.models.User;

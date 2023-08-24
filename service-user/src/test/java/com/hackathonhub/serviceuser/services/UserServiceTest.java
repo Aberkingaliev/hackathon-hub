@@ -1,9 +1,12 @@
 package com.hackathonhub.serviceuser.services;
 
+import com.hackathonhub.serviceuser.__mocks__.MockLocalUserDataType;
+import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
+import com.hackathonhub.serviceuser.__mocks__.UserMockTestBase;
+import com.hackathonhub.serviceuser.__mocks__.UserMocksFactory;
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.models.User;
 import com.hackathonhub.serviceuser.repositories.UserRepository;
-import com.hackathonhub.serviceuser.services.__mocks__.*;
 import io.grpc.internal.testing.StreamRecorder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

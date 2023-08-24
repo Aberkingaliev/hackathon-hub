@@ -1,55 +1,95 @@
 package com.hackathonhub.serviceuser.mappers.grpc;
 
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
-import com.hackathonhub.serviceuser.mappers.grpc.__mocks__.UserMockGrpc;
-import com.hackathonhub.serviceuser.mappers.grpc.__mocks__.UserMockLocal;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
-import com.hackathonhub.serviceuser.mappers.grpc.factories.UserMapperFactory;
+import com.hackathonhub.serviceuser.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
+import com.hackathonhub.serviceuser.__mocks__.UserMocksFactory;
+import com.hackathonhub.serviceuser.utils.UuidUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
-import java.util.UUID;
+
 
 public class UserDeleteMapperTest {
 
-    private static final UUID requestedIdLocal = UserMockLocal.getUserForResponse().getId();
-    private static final UserGrpcService.UserRequest userDeleteRequestGrpc = UserMockGrpc.getUserDeleteRequest();
-    private static final UserGrpcService.UserResponse userDeleteResponseGrpc = UserMockGrpc.getUserDeleteResponse();
+    private final UserDeleteMapper mapper = new UserDeleteMapper();
+    private final UserMockStrategy mockStrategy = UserMocksFactory
+            .getMockStrategy(UserGrpcService.actions_enum.deleteUser);
 
 
+    @Test()
+    void fromLocalToGrpcResponse_Test() {
+        /*
 
-    @Test
-    void fromLocalToGrpcResponseTest () {
+        GIVEN
 
-        UserResponseContext context = UserResponseContext
+         */
+
+        UserResponseContext context= UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
-                .message("test")
+                .message(StaticGrpcResponseMessage.USER_DELETED)
                 .build();
 
-        UserGrpcService.UserResponse mappedUser = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.deleteUser)
+        UserGrpcService.UserResponse response = mockStrategy.getResponse();
+        /*
+
+        EXECUTE
+
+        */
+
+        UserGrpcService.UserResponse responseFromCallMapper = mapper
                 .fromLocalToGrpcResponse(context);
 
-        Assertions.assertEquals(userDeleteResponseGrpc, mappedUser);
+        /*
+
+        ASSERTIONS
+
+         */
+
+        Assertions.assertEquals(response, responseFromCallMapper);
+
     }
 
-
     @Test
-    void fromLocalToGrpcRequest() {
-        UserRequestContext context = UserRequestContext
+    void fromLocalToGrpcRequest_Test() {
+        /*
+
+        GIVEN
+
+         */
+        String id = mockStrategy
+                .getRequest()
+                .getUserForDelete()
+                .getId();
+
+
+        UserRequestContext requestContext = UserRequestContext
                 .builder()
-                .userId(Optional.of(requestedIdLocal))
+                .userId(Optional.of(UuidUtils.stringToUUID(id)))
                 .build();
 
-        UserGrpcService.UserRequest mappedUser = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.deleteUser)
-                .fromLocalToGrpcRequest(context);
 
+        UserGrpcService.UserRequest request = mockStrategy.getRequest();
+        /*
 
-        Assertions.assertEquals(userDeleteRequestGrpc, mappedUser);
+        EXECUTE
+
+        */
+
+        UserGrpcService.UserRequest responseFromCallMapper = mapper.fromLocalToGrpcRequest(requestContext);
+
+        /*
+
+        ASSERTIONS
+
+         */
+
+        Assertions.assertEquals(request, responseFromCallMapper);
+
     }
 
 }
