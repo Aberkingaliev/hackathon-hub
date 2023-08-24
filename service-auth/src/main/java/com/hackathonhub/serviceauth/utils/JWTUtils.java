@@ -20,11 +20,14 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class JWTUtils {
 
-
     @Value("${jwt.secretKey}")
     private String secretKey;
 
     private static final String BEARER_PREFIX = "Bearer ";
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
 
 
     public String getParsedSecretKey() {
