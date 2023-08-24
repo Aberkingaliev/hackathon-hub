@@ -80,4 +80,5 @@ public class UuidUtilsTest {
         Assertions.assertEquals(String.class, stringFromUuid.getClass());
         Assertions.assertEquals(stringUuid, stringFromUuid);
     }
+
 }
