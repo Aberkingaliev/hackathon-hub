@@ -16,13 +16,8 @@ import java.util.UUID;
 
 @Service
 public class UserService extends UserGrpc.UserImplBase {
-
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     public void saveUser(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
@@ -37,11 +32,14 @@ public class UserService extends UserGrpc.UserImplBase {
                 .builder()
                     .status(UserGrpcService.status_enum.success)
                     .userData(Optional.of(savedUser))
-                    .message("USER_SAVED")
+                    .message(StaticGrpcResponseMessage.USER_SAVED)
                 .build();
 
-        responseObserver.onNext(UserMapperFactory.getMapper(UserGrpcService.actions_enum.saveUser).fromLocalToGrpcResponse(userResponseContext));
+        UserGrpcService.UserResponse response = UserMapperFactory
+                .getMapper(UserGrpcService.actions_enum.saveUser)
+                .fromLocalToGrpcResponse(userResponseContext);
 
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
@@ -54,12 +52,14 @@ public class UserService extends UserGrpc.UserImplBase {
                 .builder()
                 .status(UserGrpcService.status_enum.success)
                 .userData(Optional.ofNullable(user))
-                .message("USER_BY_EMAIL_FOUNDED")
+                .message(StaticGrpcResponseMessage.USER_BY_EMAIL_FOUNDED)
                 .build();
 
-        responseObserver
-                .onNext(UserMapperFactory.getMapper(UserGrpcService.actions_enum.getUserByEmail).fromLocalToGrpcResponse(userResponseContext));
+        UserGrpcService.UserResponse response = UserMapperFactory
+                .getMapper(UserGrpcService.actions_enum.getUserByEmail)
+                .fromLocalToGrpcResponse(userResponseContext);
 
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
@@ -71,10 +71,14 @@ public class UserService extends UserGrpc.UserImplBase {
         UserResponseContext userResponseContext = UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
-                .message("USER_IS_DELETED")
+                .message(StaticGrpcResponseMessage.USER_DELETED)
                 .build();
 
-        responseObserver.onNext(UserMapperFactory.getMapper(UserGrpcService.actions_enum.deleteUser).fromLocalToGrpcResponse(userResponseContext));
+        UserGrpcService.UserResponse response = UserMapperFactory
+                .getMapper(UserGrpcService.actions_enum.deleteUser)
+                .fromLocalToGrpcResponse(userResponseContext);
+
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
@@ -86,10 +90,14 @@ public class UserService extends UserGrpc.UserImplBase {
                 .builder()
                 .status(UserGrpcService.status_enum.success)
                 .isExistState(Optional.ofNullable(isExist))
-                .message("USER_IS_EXIST: " + isExist)
+                .message(StaticGrpcResponseMessage.USER_IS_EXIST)
                 .build();
 
-        responseObserver.onNext(UserMapperFactory.getMapper(UserGrpcService.actions_enum.isExistUserByEmail).fromLocalToGrpcResponse(userResponseContext));
+        UserGrpcService.UserResponse response = UserMapperFactory
+                .getMapper(UserGrpcService.actions_enum.isExistUserByEmail)
+                .fromLocalToGrpcResponse(userResponseContext);
+
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 }

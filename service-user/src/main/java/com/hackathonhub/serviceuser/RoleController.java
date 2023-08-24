@@ -12,16 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoleController {
 
     @Autowired
-    public RoleController(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
     private RoleRepository roleRepository;
 
     @PostMapping("/role/create")
     public Role createRole(@RequestBody Role role) {
-        System.out
-                .println(role);
-        return roleRepository.save(new Role().setRole_name(role.getRole_name()));
+        return roleRepository.save(
+                new Role()
+                        .setRole_name(role.getRole_name())
+        );
     }
 }
