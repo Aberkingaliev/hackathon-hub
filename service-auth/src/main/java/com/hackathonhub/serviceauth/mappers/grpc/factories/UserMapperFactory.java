@@ -5,7 +5,7 @@ import com.hackathonhub.serviceauth.mappers.grpc.UserGetByEmailMapper;
 import com.hackathonhub.serviceauth.mappers.grpc.UserIsExistByEmailMapper;
 import com.hackathonhub.serviceauth.mappers.grpc.UserSaveMapper;
 import com.hackathonhub.serviceauth.mappers.grpc.strategies.UserMapperStrategy;
-import com.hackathonhub.serviceuser.grpc.UserGrpcService;
+import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 
 public class UserMapperFactory {
 

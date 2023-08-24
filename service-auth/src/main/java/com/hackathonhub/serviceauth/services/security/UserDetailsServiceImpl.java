@@ -3,8 +3,8 @@ package com.hackathonhub.serviceauth.services.security;
 
 
 import com.hackathonhub.serviceauth.mappers.grpc.factories.UserMapperFactory;
-import com.hackathonhub.serviceuser.grpc.UserGrpc;
-import com.hackathonhub.serviceuser.grpc.UserGrpcService;
+import com.hackathonhub.serviceauth.grpc.UserGrpc;
+import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
