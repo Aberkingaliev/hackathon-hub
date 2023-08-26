@@ -4,11 +4,13 @@ import com.hackathonhub.serviceuser.models.Role;
 import com.hackathonhub.serviceuser.models.RoleEnum;
 import com.hackathonhub.serviceuser.repositories.RoleRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -28,6 +30,12 @@ public class RoleControllerTest {
 
     @InjectMocks
     RoleController roleController;
+
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
 
 
     @Test

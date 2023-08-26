@@ -25,8 +25,9 @@ public class AuthToken {
     @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
 
-    public void setId(UUID id) {
+    public AuthToken setId(UUID id) {
         this.id = id;
+        return this;
     }
 
     public AuthToken setUserId(UUID userId) {

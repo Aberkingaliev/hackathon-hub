@@ -1,7 +1,7 @@
 package com.hackathonhub.serviceauth.dtos;
 
 
-import com.hackathonhub.serviceuser.grpc.UserGrpcService;
+import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 import lombok.Data;
 
 import java.util.HashMap;
