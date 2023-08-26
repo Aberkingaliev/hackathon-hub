@@ -8,6 +8,7 @@ import com.hackathonhub.serviceauth.repositories.AuthRepository;
 import com.hackathonhub.serviceauth.services.security.UserDetailsImpl;
 import com.hackathonhub.serviceauth.services.security.UserDetailsServiceImpl;
 import com.hackathonhub.serviceauth.utils.JWTUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,19 +20,14 @@ import java.util.Optional;
 
 @Service
 public class LoginService {
-
-
-    public LoginService(AuthRepository authRepository, UserDetailsServiceImpl userDetails, JWTUtils jwtUtils, AuthenticationManager authenticationManager) {
-        this.authRepository = authRepository;
-        this.userDetailsService = userDetails;
-        this.jwtUtils = jwtUtils;
-        this.authenticationManager = authenticationManager;
-    }
-
-    private final AuthRepository authRepository;
-    private final UserDetailsServiceImpl userDetailsService;
-    private final JWTUtils jwtUtils;
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthRepository authRepository;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private JWTUtils jwtUtils;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     public ApiAuthResponse login(UserLoginRequest userLoginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -42,7 +38,11 @@ public class LoginService {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        HashMap<String, String> generatedTokens = jwtUtils.generateToken(authentication.getPrincipal().toString());
+        HashMap<String, String> generatedTokens = jwtUtils.generateToken(
+                authentication
+                        .getPrincipal()
+                        .toString()
+        );
 
         UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(userLoginRequest.getEmail());
 

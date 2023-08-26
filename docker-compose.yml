@@ -1,5 +1,33 @@
 version: '3'
 services:
+#  registry-service:
+#    build:
+#        context: ./service-registry
+#        dockerfile: Dockerfile
+#    ports:
+#      - 8080:8080
+#  auth-service:
+#    build:
+#        context: ./service-auth
+#        dockerfile: Dockerfile
+#    ports:
+#        - 8081:0
+#    depends_on:
+#      registry-service:
+#        condition: service_healthy
+#      tokens-database:
+#        condition: service_healthy
+#  users-service:
+#    build:
+#        context: ./service-user
+#        dockerfile: Dockerfile
+#    ports:
+#        - 8082:0
+#    depends_on:
+#      registry-service:
+#        condition: service_healthy
+#      users-database:
+#        condition: service_healthy
   users-database:
     image: postgres:12
     restart: always

@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Data
 public class ApiAuthResponse {
 
-    HttpStatus status;
-    String message;
-    ApiResponseDataContext data;
+   private HttpStatus status;
+   private String message;
+   private ApiResponseDataContext data;
 }

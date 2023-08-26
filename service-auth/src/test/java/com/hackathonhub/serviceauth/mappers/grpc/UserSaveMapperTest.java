@@ -29,6 +29,7 @@ public class UserSaveMapperTest {
         GIVEN
 
          */
+
         User localUserFromDb = mockStrategy.getUser(MockLocalUserDataType.USER_FROM_DB);
 
         UserResponseContext context= UserResponseContext
@@ -39,6 +40,7 @@ public class UserSaveMapperTest {
                 .build();
 
         UserGrpcService.UserResponse response = mockStrategy.getResponse();
+
         /*
 
         EXECUTE
@@ -65,10 +67,12 @@ public class UserSaveMapperTest {
         GIVEN
 
          */
+
         User localUserFromDb = mockStrategy.getUser(MockLocalUserDataType.USER_FROM_DB);
 
 
         UserGrpcService.UserResponse response = mockStrategy.getResponse();
+
         /*
 
         EXECUTE
@@ -94,6 +98,7 @@ public class UserSaveMapperTest {
         GIVEN
 
          */
+
         User localUserForRequest = mockStrategy.getUser(MockLocalUserDataType.MAPPED_USER_FROM_REQUEST);
 
         UserRequestContext requestContext = UserRequestContext
@@ -103,6 +108,7 @@ public class UserSaveMapperTest {
 
 
         UserGrpcService.UserRequest request = mockStrategy.getRequest();
+
         /*
 
         EXECUTE
@@ -128,10 +134,12 @@ public class UserSaveMapperTest {
         GIVEN
 
          */
+
         User localUserFromRequest = mockStrategy.getUser(MockLocalUserDataType.MAPPED_USER_FROM_REQUEST);
 
 
         UserGrpcService.UserRequest request = mockStrategy.getRequest();
+
         /*
 
         EXECUTE
