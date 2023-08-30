@@ -28,9 +28,18 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8081/eureka
+      defaultZone: http://localhost:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${random.value}
+grpc:
+  server:
+    port: 55002
+  client:
+    service-user:
+      address: 'static://localhost:55001'
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
 jwt:
   secretKey: 0be2557f-8cdc-4fdb-b15b-c01a5813b9f6
 

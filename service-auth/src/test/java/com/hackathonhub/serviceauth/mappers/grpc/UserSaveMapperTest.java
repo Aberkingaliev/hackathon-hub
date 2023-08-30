@@ -4,10 +4,11 @@ import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 import com.hackathonhub.serviceauth.__mocks__.MockLocalUserDataType;
 import com.hackathonhub.serviceauth.__mocks__.UserMockStrategy;
 import com.hackathonhub.serviceauth.__mocks__.UserMocksFactory;
-import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserRequestContext;
-import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserResponseContext;
+import com.hackathonhub.serviceauth.mappers.grpc.user.UserSaveMapper;
+import com.hackathonhub.serviceauth.mappers.grpc.user.contexts.UserRequestContext;
+import com.hackathonhub.serviceauth.mappers.grpc.user.contexts.UserResponseContext;
 import com.hackathonhub.serviceauth.models.User;
-import com.hackathonhub.serviceauth.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceauth.constants.GrpcResponseMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ public class UserSaveMapperTest {
         UserResponseContext context= UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
-                .message(StaticGrpcResponseMessage.USER_SAVED)
+                .message(GrpcResponseMessage.USER_SAVED)
                 .userData(Optional.of(localUserFromDb))
                 .build();
 

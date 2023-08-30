@@ -10,4 +10,5 @@ public class ServiceGatewayApplication {
 		SpringApplication.run(ServiceGatewayApplication.class, args);
 	}
 
+
 }

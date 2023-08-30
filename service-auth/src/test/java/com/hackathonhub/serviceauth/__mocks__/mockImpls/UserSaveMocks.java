@@ -5,7 +5,7 @@ import com.hackathonhub.serviceauth.__mocks__.UserMockStrategy;
 import com.hackathonhub.serviceauth.__mocks__.UserMockTestBase;
 import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 import com.hackathonhub.serviceauth.models.User;
-import com.hackathonhub.serviceauth.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceauth.constants.GrpcResponseMessage;
 
 public class UserSaveMocks extends UserMockTestBase implements UserMockStrategy {
 
@@ -51,7 +51,7 @@ public class UserSaveMocks extends UserMockTestBase implements UserMockStrategy 
                 UserGrpcService.UserResponse
                         .newBuilder()
                         .setStatus(UserGrpcService.status_enum.success)
-                        .setMessage(StaticGrpcResponseMessage.USER_SAVED)
+                        .setMessage(GrpcResponseMessage.USER_SAVED)
                         .setUser(
                                 UserGrpcService.UserResponseData
                                         .newBuilder()

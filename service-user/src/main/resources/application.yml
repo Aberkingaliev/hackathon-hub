@@ -1,3 +1,6 @@
+grpc:
+  server:
+    port: 55001
 server:
   port: 0
 spring:
@@ -25,6 +28,6 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8081/eureka
+      defaultZone: http://localhost:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${random.value}

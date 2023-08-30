@@ -3,7 +3,7 @@ package com.hackathonhub.serviceuser.__mocks__.mockImpls;
 import com.hackathonhub.serviceuser.__mocks__.UserMockTestBase;
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.models.User;
-import com.hackathonhub.serviceuser.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceuser.constants.GrpcResponseMessage;
 import com.hackathonhub.serviceuser.__mocks__.MockLocalUserDataType;
 import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
 
@@ -51,7 +51,7 @@ public class UserSaveMocks extends UserMockTestBase implements UserMockStrategy 
                 UserGrpcService.UserResponse
                         .newBuilder()
                         .setStatus(UserGrpcService.status_enum.success)
-                        .setMessage(StaticGrpcResponseMessage.USER_SAVED)
+                        .setMessage(GrpcResponseMessage.USER_SAVED)
                         .setUser(
                                 UserGrpcService.UserResponseData
                                         .newBuilder()

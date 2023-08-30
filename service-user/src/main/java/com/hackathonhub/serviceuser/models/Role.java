@@ -1,8 +1,9 @@
 package com.hackathonhub.serviceuser.models;
 
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import java.util.UUID;
 
@@ -12,8 +13,20 @@ import java.util.UUID;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @PrePersist
+    public void generateId() {
+        this.id = UUID.randomUUID();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public RoleEnum getRole_name() {
+        return role_name;
+    }
 
     public Role setId(UUID id) {
         this.id = id;
@@ -25,7 +38,7 @@ public class Role {
         return this;
     }
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private RoleEnum role_name;
 }

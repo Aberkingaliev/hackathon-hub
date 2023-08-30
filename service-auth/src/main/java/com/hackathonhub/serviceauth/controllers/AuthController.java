@@ -1,12 +1,13 @@
 package com.hackathonhub.serviceauth.controllers;
 
+import com.hackathonhub.serviceauth.constants.AuthApiResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
 import com.hackathonhub.serviceauth.models.User;
 import com.hackathonhub.serviceauth.services.LoginService;
 import com.hackathonhub.serviceauth.services.RegistrationService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,7 @@ public class AuthController {
                             .get()
                             .getRefreshToken());
             refreshTokenCookie.setMaxAge((int) TimeUnit.DAYS.toMillis(30));
+            refreshTokenCookie.setPath("/");
 
             responseServlet.addCookie(refreshTokenCookie);
 
@@ -79,7 +81,7 @@ public class AuthController {
                 .body(ApiAuthResponse
                         .builder()
                         .status(HttpStatus.OK)
-                        .message("LOGOUT_SUCCESSFUL")
+                        .message(AuthApiResponseMessage.USER_SUCCESS_LOGOUT)
                         .build());
     }
 

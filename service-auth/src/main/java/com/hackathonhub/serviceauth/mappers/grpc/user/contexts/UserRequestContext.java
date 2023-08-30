@@ -1,4 +1,4 @@
-package com.hackathonhub.serviceauth.mappers.grpc.contexts;
+package com.hackathonhub.serviceauth.mappers.grpc.user.contexts;
 
 import com.hackathonhub.serviceauth.models.User;
 import lombok.Builder;

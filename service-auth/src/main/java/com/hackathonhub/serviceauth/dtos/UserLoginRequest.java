@@ -2,7 +2,7 @@ package com.hackathonhub.serviceauth.dtos;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
+import javax.persistence.Entity;
 import lombok.Builder;
 import lombok.Data;
 

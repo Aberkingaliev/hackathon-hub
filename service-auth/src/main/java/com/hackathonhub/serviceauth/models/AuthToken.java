@@ -1,12 +1,7 @@
 package com.hackathonhub.serviceauth.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.UniqueConstraint;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import javax.persistence.*;
+
 import lombok.Data;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -22,8 +17,12 @@ import java.util.UUID;
 })
 public class AuthToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
+
+    @PrePersist
+    public void generateId() {
+        this.id = UUID.randomUUID();
+    }
 
     public AuthToken setId(UUID id) {
         this.id = id;

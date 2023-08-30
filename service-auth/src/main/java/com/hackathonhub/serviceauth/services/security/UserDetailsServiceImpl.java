@@ -1,12 +1,10 @@
 package com.hackathonhub.serviceauth.services.security;
 
-
-
-import com.hackathonhub.serviceauth.mappers.grpc.factories.UserMapperFactory;
+import com.hackathonhub.serviceauth.mappers.grpc.user.factories.UserMapperFactory;
 import com.hackathonhub.serviceauth.grpc.UserGrpc;
 import com.hackathonhub.serviceauth.grpc.UserGrpcService;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
+import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,12 +12,15 @@ import org.springframework.stereotype.Service;
 
 
 @Service
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
+
+    @GrpcClient("service-user")
+    private UserGrpc.UserBlockingStub userStub;
+
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:55000").usePlaintext().build();
-        UserGrpc.UserBlockingStub stub = UserGrpc.newBlockingStub(channel);
-
         UserGrpcService.UserRequest request = UserGrpcService.UserRequest
                 .newBuilder()
                 .setUserForGetByEmail(UserGrpcService.UserGetByEmailRequest
@@ -29,9 +30,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .setAction(UserGrpcService.actions_enum.getUserByEmail)
                 .build();
 
-        UserGrpcService.UserResponse response = stub.getUserByEmail(request);
+        UserGrpcService.UserResponse response = userStub.getUserByEmail(request);
 
         if (!response.hasUser()) {
+            log.error("User {} not found", email);
             throw new UsernameNotFoundException("User " + email + " not found");
         }
 

@@ -4,7 +4,7 @@ import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
 import com.hackathonhub.serviceuser.models.User;
-import com.hackathonhub.serviceuser.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceuser.constants.GrpcResponseMessage;
 import com.hackathonhub.serviceuser.__mocks__.MockLocalUserDataType;
 import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
 import com.hackathonhub.serviceuser.__mocks__.UserMocksFactory;
@@ -34,7 +34,7 @@ public class UserSaveMapperTest {
         UserResponseContext context= UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
-                .message(StaticGrpcResponseMessage.USER_SAVED)
+                .message(GrpcResponseMessage.USER_SAVED)
                 .userData(Optional.of(localUserFromDb))
                 .build();
 

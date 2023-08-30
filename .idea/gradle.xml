@@ -12,6 +12,11 @@
                   <project path="$PROJECT_DIR$/service-auth" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/service-gateway" name="service-gateway">
+                <projects>
+                  <project path="$PROJECT_DIR$/service-gateway" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/service-registry" name="service-registry">
                 <projects>
                   <project path="$PROJECT_DIR$/service-registry" />
@@ -31,6 +36,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/service-auth" />
+            <option value="$PROJECT_DIR$/service-gateway" />
             <option value="$PROJECT_DIR$/service-registry" />
             <option value="$PROJECT_DIR$/service-user" />
           </set>

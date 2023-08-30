@@ -5,7 +5,7 @@ import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
 import com.hackathonhub.serviceuser.__mocks__.UserMockTestBase;
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.models.User;
-import com.hackathonhub.serviceuser.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceuser.constants.GrpcResponseMessage;
 
 public class UserDeletByIdMocks extends UserMockTestBase implements UserMockStrategy {
 
@@ -34,7 +34,7 @@ public class UserDeletByIdMocks extends UserMockTestBase implements UserMockStra
         return UserGrpcService.UserResponse
                 .newBuilder()
                 .setStatus(UserGrpcService.status_enum.success)
-                .setMessage(StaticGrpcResponseMessage.USER_DELETED)
+                .setMessage(GrpcResponseMessage.USER_DELETED)
                 .build();
     }
 

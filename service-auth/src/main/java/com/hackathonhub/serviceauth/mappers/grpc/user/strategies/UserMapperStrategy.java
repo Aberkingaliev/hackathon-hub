@@ -1,7 +1,7 @@
-package com.hackathonhub.serviceauth.mappers.grpc.strategies;
+package com.hackathonhub.serviceauth.mappers.grpc.user.strategies;
 
-import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserRequestContext;
-import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserResponseContext;
+import com.hackathonhub.serviceauth.mappers.grpc.user.contexts.UserRequestContext;
+import com.hackathonhub.serviceauth.mappers.grpc.user.contexts.UserResponseContext;
 import com.hackathonhub.serviceauth.models.User;
 import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 

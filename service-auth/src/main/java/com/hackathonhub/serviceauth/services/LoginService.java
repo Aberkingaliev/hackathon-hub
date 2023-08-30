@@ -1,5 +1,6 @@
 package com.hackathonhub.serviceauth.services;
 
+import com.hackathonhub.serviceauth.constants.AuthApiResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
 import com.hackathonhub.serviceauth.dtos.contexts.ApiResponseDataContext;
@@ -8,6 +9,7 @@ import com.hackathonhub.serviceauth.repositories.AuthRepository;
 import com.hackathonhub.serviceauth.services.security.UserDetailsImpl;
 import com.hackathonhub.serviceauth.services.security.UserDetailsServiceImpl;
 import com.hackathonhub.serviceauth.utils.JWTUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class LoginService {
     @Autowired
@@ -30,41 +33,54 @@ public class LoginService {
     private AuthenticationManager authenticationManager;
 
     public ApiAuthResponse login(UserLoginRequest userLoginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        userLoginRequest.getEmail(),
-                        userLoginRequest.getPassword()
-                )
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userLoginRequest.getEmail(),
+                            userLoginRequest.getPassword()
+                    )
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        HashMap<String, String> generatedTokens = jwtUtils.generateToken(
-                authentication
-                        .getPrincipal()
-                        .toString()
-        );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            HashMap<String, String> generatedTokens = jwtUtils.generateToken(
+                    authentication
+                            .getPrincipal()
+                            .toString(),
+                    authentication.getAuthorities()
+            );
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(userLoginRequest.getEmail());
+            UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService
+                    .loadUserByUsername(userLoginRequest.getEmail());
 
-        AuthToken newTokens = new AuthToken()
-                .setUserId(userDetails.getId())
-                .setRefreshToken(generatedTokens.get("refreshToken"))
-                .setAccessToken(generatedTokens.get("accessToken"))
-                .setCreatedAt(System.currentTimeMillis());
+            AuthToken newTokens = new AuthToken()
+                    .setUserId(userDetails.getId())
+                    .setRefreshToken(generatedTokens.get("refreshToken"))
+                    .setAccessToken(generatedTokens.get("accessToken"))
+                    .setCreatedAt(System.currentTimeMillis());
 
-        AuthToken savedTokens = authRepository.save(newTokens);
+            AuthToken savedTokens = authRepository.save(newTokens);
 
-        ApiResponseDataContext apiResponseDataContext = ApiResponseDataContext
-                .builder()
-                .data(Optional.of(savedTokens))
-                .build();
+            ApiResponseDataContext apiResponseDataContext = ApiResponseDataContext
+                    .builder()
+                    .data(Optional.of(savedTokens))
+                    .build();
 
-        return ApiAuthResponse
-                .builder()
-                .status(HttpStatus.OK)
-                .message("USER_SUCCESS_AUTHORIZED")
-                .data(apiResponseDataContext)
-                .build();
+            return ApiAuthResponse
+                    .builder()
+                    .status(HttpStatus.OK)
+                    .message(AuthApiResponseMessage.USER_SUCCESS_AUTHORIZED)
+                    .data(apiResponseDataContext)
+                    .build();
+
+        } catch (Exception e) {
+
+            log.error("Login failed: {}", e.getMessage());
+            return ApiAuthResponse
+                    .builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .message(AuthApiResponseMessage.authenticationFailed(e.getMessage()))
+                    .build();
+        }
 
     }
 }
