@@ -11,6 +11,18 @@ import java.util.UUID;
 @Getter
 public class UserRequestContext {
 
+        public Optional<User> getUserData() {
+                return userData;
+        }
+
+        public Optional<UUID> getUserId() {
+                return userId;
+        }
+
+        public Optional<String> getUserEmail() {
+                return userEmail;
+        }
+
         private Optional<User> userData;
         private Optional<UUID> userId;
         private Optional<String> userEmail;

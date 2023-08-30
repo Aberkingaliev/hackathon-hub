@@ -1,8 +1,8 @@
-package com.hackathonhub.serviceauth.mappers.grpc;
+package com.hackathonhub.serviceauth.mappers.grpc.user;
 
-import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserRequestContext;
-import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserResponseContext;
-import com.hackathonhub.serviceauth.mappers.grpc.strategies.UserMapperStrategy;
+import com.hackathonhub.serviceauth.mappers.grpc.user.contexts.UserRequestContext;
+import com.hackathonhub.serviceauth.mappers.grpc.user.contexts.UserResponseContext;
+import com.hackathonhub.serviceauth.mappers.grpc.user.strategies.UserMapperStrategy;
 import com.hackathonhub.serviceauth.models.Role;
 import com.hackathonhub.serviceauth.models.RoleEnum;
 import com.hackathonhub.serviceauth.models.User;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-public class UserGetByEmailMapper implements UserMapperStrategy {
+public class UserSaveMapper implements UserMapperStrategy {
     @Override
     public UserGrpcService.UserResponse fromLocalToGrpcResponse(UserResponseContext context) {
         User user = context.getUserData().orElseThrow(()-> {
@@ -36,10 +36,6 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
                         .build())
                 .toList();
 
-
-
-
-
         UserGrpcService.UserResponseData data = UserGrpcService.UserResponseData
                 .newBuilder()
                 .setId(UuidUtils.uuidToString(user.getId()))
@@ -56,27 +52,75 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
                 .newBuilder()
                 .setStatus(context.getStatus())
                 .setMessage(context.getMessage())
+                .setAction(UserGrpcService.actions_enum.saveUser)
                 .setUser(data)
                 .build();
     }
 
     @Override
     public UserGrpcService.UserRequest fromLocalToGrpcRequest(UserRequestContext context) {
-        UserGrpcService.UserGetByEmailRequest data = UserGrpcService.UserGetByEmailRequest
+        User user = context.getUserData().orElseThrow(()-> {
+            log.error("USER_NOT_FOUND_FOR_MAPPING: " + context.getUserData());
+            return new RuntimeException("USER_NOT_FOUND_FOR_MAPPING: " + context.getUserData());
+        });;
+
+        List<UserGrpcService.UserRole> userRoles = user
+                .getRoles()
+                .stream()
+                .map(role -> UserGrpcService.UserRole.newBuilder()
+                        .setId(UuidUtils.uuidToString(role.getId()))
+                        .setRole(
+                                UserGrpcService.role_enum.valueOf(
+                                        role.getRole_name().toString()
+                                )
+                        )
+                        .build())
+                .toList();
+
+        UserGrpcService.UserSaveRequest request = UserGrpcService.UserSaveRequest
                 .newBuilder()
-                .setEmail(context.getUserEmail().orElseThrow(
-                        () -> {
-                            log.error("EMAIL_NOT_FOUND_FOR_MAPPING: " + context.getUserEmail());
-                            return new RuntimeException("EMAIL_NOT_FOUND_FOR_MAPPING" + context.getUserEmail());
-                        }
-                ))
+                .setUsername(user.getUsername())
+                .setFullName(user.getFullName())
+                .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
+                .setIsActivated(user.getIsActivated())
+                .setTeamId(UuidUtils.uuidToString(user.getTeamId()))
+                .addAllRoles(userRoles)
                 .build();
 
         return UserGrpcService.UserRequest
                 .newBuilder()
-                .setAction(UserGrpcService.actions_enum.getUserByEmail)
-                .setUserForGetByEmail(data)
+                .setAction(UserGrpcService.actions_enum.saveUser)
+                .setUserForSave(request)
                 .build();
+    }
+
+    @Override
+    public User fromGrpcRequestToLocal(UserGrpcService.UserRequest userRequest) {
+        UserGrpcService.UserSaveRequest user = userRequest.getUserForSave();
+
+        HashSet<Role> roles = new HashSet<>(
+                user
+                        .getRolesList()
+                        .stream()
+                        .map(role -> new Role()
+                                .setId(UuidUtils.stringToUUID(role.getId()))
+                                .setRole_name(
+                                        RoleEnum.valueOf(
+                                                role.getRole().toString()
+                                        )
+                                )
+                        )
+                        .toList());
+
+        return new User()
+                .setUsername(user.getUsername())
+                .setFullName(user.getFullName())
+                .setEmail(user.getEmail())
+                .setPassword(user.getPassword())
+                .setActivated(user.getIsActivated())
+                .setTeamId(UuidUtils.stringToUUID(user.getTeamId()))
+                .setRole(roles);
     }
 
     @Override
@@ -90,12 +134,10 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
                                 .setId(UuidUtils.stringToUUID(role.getId()))
                                 .setRole_name(
                                         RoleEnum.valueOf(
-                                                role.getRole()
-                                                        .toString()
+                                                role.getRole().toString()
                                         )
                                 )
-                        )
-                        .toList()
+                        ).toList()
         );
         return new User()
                 .setId(UuidUtils.stringToUUID(user.getId()))
@@ -104,8 +146,7 @@ public class UserGetByEmailMapper implements UserMapperStrategy {
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
                 .setActivated(user.getIsActivated())
-                .setTeamId(UuidUtils.stringToUUID(user.getTeamId()))
+                .setTeamId(UUID.fromString(user.getTeamId()))
                 .setRole(roles);
-
     }
 }

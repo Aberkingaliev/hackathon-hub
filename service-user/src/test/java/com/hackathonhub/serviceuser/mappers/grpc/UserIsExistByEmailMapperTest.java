@@ -3,7 +3,7 @@ package com.hackathonhub.serviceuser.mappers.grpc;
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
-import com.hackathonhub.serviceuser.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceuser.constants.GrpcResponseMessage;
 import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
 import com.hackathonhub.serviceuser.__mocks__.UserMocksFactory;
 import org.junit.jupiter.api.Assertions;
@@ -30,7 +30,7 @@ public class UserIsExistByEmailMapperTest {
         UserResponseContext context= UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
-                .message(StaticGrpcResponseMessage.USER_IS_EXIST)
+                .message(GrpcResponseMessage.USER_IS_EXIST)
                 .isExistState(Optional.of(true))
                 .build();
 

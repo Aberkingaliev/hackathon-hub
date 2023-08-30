@@ -3,7 +3,7 @@ package com.hackathonhub.serviceuser.mappers.grpc;
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserRequestContext;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
-import com.hackathonhub.serviceuser.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceuser.constants.GrpcResponseMessage;
 import com.hackathonhub.serviceuser.__mocks__.UserMockStrategy;
 import com.hackathonhub.serviceuser.__mocks__.UserMocksFactory;
 import com.hackathonhub.serviceuser.utils.UuidUtils;
@@ -31,7 +31,7 @@ public class UserDeleteMapperTest {
         UserResponseContext context= UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
-                .message(StaticGrpcResponseMessage.USER_DELETED)
+                .message(GrpcResponseMessage.USER_DELETED)
                 .build();
 
         UserGrpcService.UserResponse response = mockStrategy.getResponse();

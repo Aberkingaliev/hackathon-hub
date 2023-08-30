@@ -5,7 +5,7 @@ import com.hackathonhub.serviceauth.__mocks__.UserMockStrategy;
 import com.hackathonhub.serviceauth.__mocks__.UserMockTestBase;
 import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 import com.hackathonhub.serviceauth.models.User;
-import com.hackathonhub.serviceauth.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceauth.constants.GrpcResponseMessage;
 
 public class UserIsExistByEmailMocks extends UserMockTestBase implements UserMockStrategy {
 
@@ -34,7 +34,7 @@ public class UserIsExistByEmailMocks extends UserMockTestBase implements UserMoc
         return UserGrpcService.UserResponse
                 .newBuilder()
                 .setStatus(UserGrpcService.status_enum.success)
-                .setMessage(StaticGrpcResponseMessage.USER_IS_EXIST)
+                .setMessage(GrpcResponseMessage.USER_IS_EXIST)
                 .setIsUserAlreadyExist(true)
                 .build();
     }

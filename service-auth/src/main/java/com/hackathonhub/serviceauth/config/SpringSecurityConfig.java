@@ -1,7 +1,5 @@
 package com.hackathonhub.serviceauth.config;
 
-import com.hackathonhub.serviceauth.config.jwt.AuthFilter;
-import com.hackathonhub.serviceauth.config.jwt.AuthTokenValidationFilter;
 import com.hackathonhub.serviceauth.exceptions.AccessDeniedExceptionHandler;
 import com.hackathonhub.serviceauth.exceptions.AuthEntryPoint;
 import com.hackathonhub.serviceauth.repositories.AuthRepository;
@@ -28,22 +26,17 @@ public class SpringSecurityConfig {
 
     public SpringSecurityConfig(UserDetailsServiceImpl userDetailsService,
                                 AuthEntryPoint authEntryPoint,
-                                AccessDeniedExceptionHandler accessDeniedExceptionHandler,
-                                JWTUtils jwtUtils, AuthRepository authRepository) {
+                                AccessDeniedExceptionHandler accessDeniedExceptionHandler) {
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
         this.accessDeniedExceptionHandler = accessDeniedExceptionHandler;
-        this.jwtUtils = jwtUtils;
-        this.authRepository = authRepository;
         this.bcryptPasswordEncoder = new BcryptPasswordEncoder();
     }
 
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPoint authEntryPoint;
     private final AccessDeniedExceptionHandler accessDeniedExceptionHandler;
-    private final JWTUtils jwtUtils;
     private final BcryptPasswordEncoder bcryptPasswordEncoder;
-    private final AuthRepository authRepository;
 
 
     @Bean
@@ -59,19 +52,7 @@ public class SpringSecurityConfig {
                 .authenticationManager(
                         authenticationManager(userDetailsService, bcryptPasswordEncoder)
                 )
-                .authorizeHttpRequests(
-                        r -> r
-                                .requestMatchers("/api/login",
-                                        "/api/registration",
-                                        "/actuator/info").permitAll()
-                                .requestMatchers("/api/test").hasRole("USER")
-                                .requestMatchers("/api/admintest").hasRole("ADMIN")
-                                .anyRequest().authenticated()
-                )
-                .addFilterBefore(new AuthTokenValidationFilter(jwtUtils, authRepository),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new AuthFilter(jwtUtils, userDetailsService),
-                        UsernamePasswordAuthenticationFilter.class);
+                .authorizeHttpRequests().antMatchers("/api/login", "/api/registration").permitAll();
 
 
         return http.build();

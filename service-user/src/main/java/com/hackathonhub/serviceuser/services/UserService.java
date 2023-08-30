@@ -1,6 +1,7 @@
 package com.hackathonhub.serviceuser.services;
 
 
+import com.hackathonhub.serviceuser.constants.GrpcResponseMessage;
 import com.hackathonhub.serviceuser.grpc.UserGrpc;
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
 import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
@@ -8,13 +9,13 @@ import com.hackathonhub.serviceuser.mappers.grpc.factories.UserMapperFactory;
 import com.hackathonhub.serviceuser.models.User;
 import com.hackathonhub.serviceuser.repositories.UserRepository;
 import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
+@GrpcService
 public class UserService extends UserGrpc.UserImplBase {
     @Autowired
     private UserRepository userRepository;
@@ -32,7 +33,7 @@ public class UserService extends UserGrpc.UserImplBase {
                 .builder()
                     .status(UserGrpcService.status_enum.success)
                     .userData(Optional.of(savedUser))
-                    .message(StaticGrpcResponseMessage.USER_SAVED)
+                    .message(GrpcResponseMessage.USER_SAVED)
                 .build();
 
         UserGrpcService.UserResponse response = UserMapperFactory
@@ -52,7 +53,7 @@ public class UserService extends UserGrpc.UserImplBase {
                 .builder()
                 .status(UserGrpcService.status_enum.success)
                 .userData(Optional.ofNullable(user))
-                .message(StaticGrpcResponseMessage.USER_BY_EMAIL_FOUNDED)
+                .message(GrpcResponseMessage.USER_BY_EMAIL_FOUNDED)
                 .build();
 
         UserGrpcService.UserResponse response = UserMapperFactory
@@ -71,7 +72,7 @@ public class UserService extends UserGrpc.UserImplBase {
         UserResponseContext userResponseContext = UserResponseContext
                 .builder()
                 .status(UserGrpcService.status_enum.success)
-                .message(StaticGrpcResponseMessage.USER_DELETED)
+                .message(GrpcResponseMessage.USER_DELETED)
                 .build();
 
         UserGrpcService.UserResponse response = UserMapperFactory
@@ -90,7 +91,7 @@ public class UserService extends UserGrpc.UserImplBase {
                 .builder()
                 .status(UserGrpcService.status_enum.success)
                 .isExistState(Optional.ofNullable(isExist))
-                .message(StaticGrpcResponseMessage.USER_IS_EXIST)
+                .message(GrpcResponseMessage.USER_IS_EXIST)
                 .build();
 
         UserGrpcService.UserResponse response = UserMapperFactory

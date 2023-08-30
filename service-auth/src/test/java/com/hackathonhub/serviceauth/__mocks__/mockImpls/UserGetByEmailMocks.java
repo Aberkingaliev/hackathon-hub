@@ -5,7 +5,7 @@ import com.hackathonhub.serviceauth.__mocks__.UserMockStrategy;
 import com.hackathonhub.serviceauth.__mocks__.UserMockTestBase;
 import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 import com.hackathonhub.serviceauth.models.User;
-import com.hackathonhub.serviceauth.services.StaticGrpcResponseMessage;
+import com.hackathonhub.serviceauth.constants.GrpcResponseMessage;
 
 public class UserGetByEmailMocks extends UserMockTestBase implements UserMockStrategy {
 
@@ -46,7 +46,7 @@ public class UserGetByEmailMocks extends UserMockTestBase implements UserMockStr
         return UserGrpcService.UserResponse
                 .newBuilder()
                 .setStatus(UserGrpcService.status_enum.success)
-                .setMessage(StaticGrpcResponseMessage.USER_BY_EMAIL_FOUNDED)
+                .setMessage(GrpcResponseMessage.USER_BY_EMAIL_FOUNDED)
                 .setUser(
                         UserGrpcService.UserResponseData
                                 .newBuilder()

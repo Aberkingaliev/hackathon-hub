@@ -1,6 +1,6 @@
 package com.hackathonhub.serviceuser.models;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -15,9 +15,45 @@ import java.util.UUID;
         @UniqueConstraint(columnNames = "username")
 })
 public class User {
+    public UUID getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Boolean getIsActivated() {
+        return isActivated;
+    }
+
+    public UUID getTeamId() {
+        return teamId;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @PrePersist
+    public void generateId() {
+        this.id = UUID.randomUUID();
+    }
 
     @Column(name = "username")
     private String username;

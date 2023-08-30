@@ -1,20 +1,18 @@
 package com.hackathonhub.serviceauth.utils;
 
-
-
+import com.hackathonhub.serviceauth.models.RoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Base64;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -49,12 +47,13 @@ public class JWTUtils {
                     .getExpiration()
                     .after(new Date());
         } catch (Exception e) {
-            log.error("Jwt util validate :" + e.getMessage());
+            log.error("Jwt util validate: " + e.getMessage());
             return false;
         }
     }
 
-    public HashMap<String, String> generateToken (String email) {
+    public HashMap<String, String> generateToken (String email,
+                                                  Collection<? extends GrantedAuthority> authorities) {
 
         Date currentTime = new Date();
 
@@ -62,15 +61,21 @@ public class JWTUtils {
         Date accessTokenExpiration =
                 new Date(currentTime.getTime() + fifteenMinutesMillis);
 
-        long thirtyDaysMillis = TimeUnit.HOURS.toMillis(1);
+        long thirtyDaysMillis = TimeUnit.HOURS.toMillis(15);
         Date refreshTokenExpiration =
                 new Date(currentTime.getTime() + thirtyDaysMillis);
+
+
+        Set<String> authoritiesList = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
 
 
         return new HashMap<String, String>(
                 Map.ofEntries(
                         Map.entry("accessToken", Jwts
                                 .builder()
+                                .setClaims(Map.of("authorities", authoritiesList))
                                 .setSubject(email)
                                 .setIssuedAt(currentTime)
                                 .setExpiration(accessTokenExpiration)
@@ -79,6 +84,7 @@ public class JWTUtils {
                                 .compact()),
                         Map.entry("refreshToken", Jwts
                                 .builder()
+                                .setClaims(Map.of("authorities", authoritiesList))
                                 .setSubject(email)
                                 .setIssuedAt(currentTime)
                                 .setExpiration(refreshTokenExpiration)
@@ -87,6 +93,19 @@ public class JWTUtils {
                                 .compact())
                 )
         );
+    }
+
+    public Set<RoleEnum> getRolesFromToken(String token) {
+        List<String> authoritiesFromToken =
+                (List<String>)
+                getClaimsFromToken(token)
+                        .get("authorities");
+
+
+        return authoritiesFromToken
+                .stream()
+                .map(RoleEnum::valueOf)
+                .collect(Collectors.toSet());
     }
 
     public String getUserSubject(String token) {
@@ -109,5 +128,6 @@ public class JWTUtils {
 
         return null;
     }
+
 
 }

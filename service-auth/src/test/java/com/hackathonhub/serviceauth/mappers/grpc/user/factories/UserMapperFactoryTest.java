@@ -1,12 +1,11 @@
-package com.hackathonhub.serviceauth.mappers.grpc.factories;
+package com.hackathonhub.serviceauth.mappers.grpc.user.factories;
 
 import com.hackathonhub.serviceauth.grpc.UserGrpcService;
-import com.hackathonhub.serviceauth.mappers.grpc.UserDeleteMapper;
-import com.hackathonhub.serviceauth.mappers.grpc.UserGetByEmailMapper;
-import com.hackathonhub.serviceauth.mappers.grpc.UserIsExistByEmailMapper;
-import com.hackathonhub.serviceauth.mappers.grpc.UserSaveMapper;
-import com.hackathonhub.serviceauth.mappers.grpc.factories.UserMapperFactory;
-import com.hackathonhub.serviceauth.mappers.grpc.strategies.UserMapperStrategy;
+import com.hackathonhub.serviceauth.mappers.grpc.user.UserDeleteMapper;
+import com.hackathonhub.serviceauth.mappers.grpc.user.UserGetByEmailMapper;
+import com.hackathonhub.serviceauth.mappers.grpc.user.UserIsExistByEmailMapper;
+import com.hackathonhub.serviceauth.mappers.grpc.user.UserSaveMapper;
+import com.hackathonhub.serviceauth.mappers.grpc.user.strategies.UserMapperStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

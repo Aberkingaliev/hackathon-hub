@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -121,14 +121,16 @@ public class JWTUtilsTest {
          */
 
         String email = "jwtUtilsTest@gmail.com";
-
+        List<String> roles = List.of("ROLE_USER");
+        List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new)
+                .toList();
         /*
 
         EXECUTE
 
          */
 
-        HashMap<String, String> result = jwtUtils.generateToken(email);
+        HashMap<String, String> result = jwtUtils.generateToken(email, authorities);
 
         /*
 

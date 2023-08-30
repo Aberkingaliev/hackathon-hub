@@ -1,8 +1,8 @@
-package com.hackathonhub.serviceauth.mappers.grpc;
+package com.hackathonhub.serviceauth.mappers.grpc.user;
 
-import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserRequestContext;
-import com.hackathonhub.serviceauth.mappers.grpc.contexts.UserResponseContext;
-import com.hackathonhub.serviceauth.mappers.grpc.strategies.UserMapperStrategy;
+import com.hackathonhub.serviceauth.mappers.grpc.user.contexts.UserRequestContext;
+import com.hackathonhub.serviceauth.mappers.grpc.user.contexts.UserResponseContext;
+import com.hackathonhub.serviceauth.mappers.grpc.user.strategies.UserMapperStrategy;
 import com.hackathonhub.serviceauth.grpc.UserGrpcService;
 import com.hackathonhub.serviceauth.utils.UuidUtils;
 import lombok.extern.slf4j.Slf4j;
