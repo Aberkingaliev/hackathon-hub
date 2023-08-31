@@ -12,6 +12,11 @@
                   <project path="$PROJECT_DIR$/service-auth" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/service-cloud-config" name="service-cloud-config">
+                <projects>
+                  <project path="$PROJECT_DIR$/service-cloud-config" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/service-gateway" name="service-gateway">
                 <projects>
                   <project path="$PROJECT_DIR$/service-gateway" />
@@ -36,6 +41,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/service-auth" />
+            <option value="$PROJECT_DIR$/service-cloud-config" />
             <option value="$PROJECT_DIR$/service-gateway" />
             <option value="$PROJECT_DIR$/service-registry" />
             <option value="$PROJECT_DIR$/service-user" />
@@ -47,6 +53,14 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/service-auth" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/service-cloud-config" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/service-cloud-config" />
           </set>
         </option>
       </GradleProjectSettings>

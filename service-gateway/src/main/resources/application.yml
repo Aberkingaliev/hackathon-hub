@@ -1,28 +1,5 @@
-grpc:
-  server:
-    port: 55003
-  client:
-    service-auth:
-      address: 'static://localhost:55002'
-      enableKeepAlive: true
-      keepAliveWithoutCalls: true
-      negotiationType: plaintext
-server:
-  port: 8082
 spring:
-  cloud:
-      gateway:
-        discovery:
-          locator:
-            enabled: true
-            lower-case-service-id: true
-  main:
-    allow-bean-definition-overriding: true
   application:
     name: service-gateway
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    instance-id: ${spring.application.name}:${random.value}
+  config:
+    import: optional:configserver:http://localhost:8888
