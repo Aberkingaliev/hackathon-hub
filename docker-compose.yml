@@ -1,38 +1,76 @@
 version: '3'
 services:
-#  registry-service:
-#    build:
-#        context: ./service-registry
-#        dockerfile: Dockerfile
-#    ports:
-#      - 8080:8080
-#  auth-service:
-#    build:
-#        context: ./service-auth
-#        dockerfile: Dockerfile
-#    ports:
-#        - 8081:0
-#    depends_on:
-#      registry-service:
-#        condition: service_healthy
-#      tokens-database:
-#        condition: service_healthy
-#  users-service:
-#    build:
-#        context: ./service-user
-#        dockerfile: Dockerfile
-#    ports:
-#        - 8082:0
-#    depends_on:
-#      registry-service:
-#        condition: service_healthy
-#      users-database:
-#        condition: service_healthy
+  service-cloud-config:
+    build: ./service-cloud-config
+    ports:
+      - "8888:8888"
+    volumes:
+        - configs:/tmp/config-repo
+    healthcheck:
+        test: timeout 10s bash -c ':> /dev/tcp/service-cloud-config/8888' || exit 1
+        interval: 10s
+        retries: 5
+  service-registry:
+    build: ./service-registry
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: timeout 10s bash -c ':> /dev/tcp/service-registry/8761' || exit 1
+      interval: 10s
+      retries: 5
+  service-user:
+    build: ./service-user
+    ports:
+      - "8001:8001"
+      - "55001:55001"
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      service-cloud-config:
+        condition: service_healthy
+      users-database:
+        condition: service_started
+    volumes:
+      - ./service-user/build/libs/service-user-0.0.1-SNAPSHOT.jar:/app.jar
+  service-auth:
+    build: ./service-auth
+    ports:
+      - "8002:8002"
+      - "55002:55002"
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      service-cloud-config:
+        condition: service_healthy
+      tokens-database:
+        condition: service_started
+      tokens-redis:
+        condition: service_started
+    volumes:
+      - ./service-auth/build/libs/service-auth-0.0.1-SNAPSHOT.jar:/app.jar
+  service-gateway:
+    build: ./service-gateway
+    ports:
+      - "8082:8082"
+      - "55003:55003"
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      service-cloud-config:
+        condition: service_healthy
+      service-user:
+        condition: service_started
+      service-auth:
+        condition: service_started
+    volumes:
+      - ./service-gateway/build/libs/service-gateway-0.0.1-SNAPSHOT.jar:/app.jar
   users-database:
     image: postgres:12
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
+    volumes:
+      - users_database:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: usersControl
       POSTGRES_USER: admin
@@ -41,7 +79,9 @@ services:
     image: postgres:12
     restart: always
     ports:
-      - 5400:5432
+      - "5400:5432"
+    volumes:
+      - tokens_database:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: tokensControl
       POSTGRES_USER: admin
@@ -50,10 +90,16 @@ services:
     image: redis:latest
     restart: always
     ports:
-      - 6379:6379
+      - "6379:6379"
     volumes:
       - cache:/data
 
 volumes:
+  configs:
+    driver: local
+  users_database:
+    driver: local
+  tokens_database:
+    driver: local
   cache:
     driver: local

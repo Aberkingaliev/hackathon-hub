@@ -1,0 +1,21 @@
+server:
+  port: 8888
+spring:
+  profiles:
+    active: default
+  application:
+    name: service-cloud-config
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Aberkingaliev/service-cloud-configs-tmp.git
+          username: Aberkingaliev
+          password: {token}
+          clone-on-start: true
+          basedir: file://tmp/config-repo
+management:
+  endpoints:
+      web:
+        exposure:
+          include: "*"
