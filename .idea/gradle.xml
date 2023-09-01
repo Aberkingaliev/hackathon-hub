@@ -81,6 +81,14 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/service-team" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/service-team" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/service-user" />
         <option name="modules">
           <set>
