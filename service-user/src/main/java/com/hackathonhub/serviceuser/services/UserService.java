@@ -1,6 +1,5 @@
 package com.hackathonhub.serviceuser.services;
 
-
 import com.hackathonhub.serviceuser.constants.GrpcResponseMessage;
 import com.hackathonhub.serviceuser.grpc.UserGrpc;
 import com.hackathonhub.serviceuser.grpc.UserGrpcService;
