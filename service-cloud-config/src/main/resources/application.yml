@@ -11,7 +11,7 @@ spring:
         git:
           uri: https://github.com/Aberkingaliev/service-cloud-configs-tmp.git
           username: Aberkingaliev
-          password: {access_key}
+          password: {token}
           clone-on-start: true
           basedir: file://tmp/config-repo
 management:
