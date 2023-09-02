@@ -1,0 +1,4 @@
+syntax = "proto3";
+
+package services.user_service;
+import "services/user_service/messages.proto";
