@@ -40,6 +40,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/common-proto" />
             <option value="$PROJECT_DIR$/service-auth" />
             <option value="$PROJECT_DIR$/service-cloud-config" />
             <option value="$PROJECT_DIR$/service-gateway" />
