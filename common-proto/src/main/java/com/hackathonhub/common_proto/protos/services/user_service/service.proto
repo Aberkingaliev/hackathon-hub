@@ -2,3 +2,14 @@ syntax = "proto3";
 
 package services.user_service;
 import "services/user_service/messages.proto";
+import "common/entities.proto";
+
+
+service UserService {
+  rpc CreateUser (CreateUserRequest) returns (common.User);
+  rpc GetUserById (GetUserByIdRequest) returns (common.User);
+  rpc GetUserByEmail (GetUserByEmailRequest) returns (common.User);
+  rpc CheckUserExistenceByEmail (CheckUserExistenceByEmailRequest)
+      returns (CheckUserExistenceByEmailResponse);
+  rpc GetUsersByTeamId (GetUsersByTeamIdRequest) returns (GetUsersByTeamIdResponse);
+}
