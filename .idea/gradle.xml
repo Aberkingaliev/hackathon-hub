@@ -7,6 +7,11 @@
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
+              <build path="$PROJECT_DIR$/common-proto" name="common-proto">
+                <projects>
+                  <project path="$PROJECT_DIR$/common-proto" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/service-auth" name="service-auth">
                 <projects>
                   <project path="$PROJECT_DIR$/service-auth" />
@@ -36,7 +41,6 @@
           </compositeBuild>
         </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -45,54 +49,6 @@
             <option value="$PROJECT_DIR$/service-cloud-config" />
             <option value="$PROJECT_DIR$/service-gateway" />
             <option value="$PROJECT_DIR$/service-registry" />
-            <option value="$PROJECT_DIR$/service-user" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/service-auth" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/service-auth" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/service-cloud-config" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/service-cloud-config" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/service-gateway" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/service-gateway" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/service-registry" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/service-registry" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/service-team" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/service-team" />
-          </set>
-        </option>
-      </GradleProjectSettings>
-      <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/service-user" />
-        <option name="modules">
-          <set>
             <option value="$PROJECT_DIR$/service-user" />
           </set>
         </option>

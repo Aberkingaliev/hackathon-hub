@@ -1,7 +1,7 @@
 package com.hackathonhub.serviceuser.models;
 
 import javax.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,43 +9,12 @@ import java.util.UUID;
 
 
 @Entity
-@Data
+@Getter
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email"),
         @UniqueConstraint(columnNames = "username")
 })
 public class User {
-    public UUID getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Boolean getIsActivated() {
-        return isActivated;
-    }
-
-    public UUID getTeamId() {
-        return teamId;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
 
     @Id
     private UUID id;

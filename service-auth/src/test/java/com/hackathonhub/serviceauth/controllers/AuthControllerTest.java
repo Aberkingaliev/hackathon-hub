@@ -173,7 +173,7 @@ public class AuthControllerTest {
                 ApiAuthResponse
                         .builder()
                         .status(HttpStatus.OK)
-                        .message("LOGOUT_SUCCESSFUL")
+                        .message("USER_SUCCESS_LOGOUT")
                         .build()
         );
 

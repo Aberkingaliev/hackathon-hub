@@ -4,6 +4,8 @@ package common;
 import "common/types.proto";
 import "google/protobuf/timestamp.proto";
 
+option java_package = "com.hackathonhub.common.grpc";
+
 enum Role {
   ROLE_USER = 0;
   ROLE_ADMIN = 1;
@@ -17,7 +19,7 @@ message User {
   string password = 5;
   bool is_activated = 6;
   UUID team_id = 7;
-  Role roles = 8;
+  repeated Role roles = 8;
 }
 
 message AuthTokens {
