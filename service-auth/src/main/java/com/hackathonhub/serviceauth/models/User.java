@@ -1,14 +1,14 @@
 package com.hackathonhub.serviceauth.models;
 
 import lombok.Data;
-
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 
 @Data
-public class User {
+public class User implements Serializable {
 
     public User setId(UUID id) {
         this.id = id;

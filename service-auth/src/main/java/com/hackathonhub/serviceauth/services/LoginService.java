@@ -3,7 +3,6 @@ package com.hackathonhub.serviceauth.services;
 import com.hackathonhub.serviceauth.constants.AuthApiResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
-import com.hackathonhub.serviceauth.dtos.contexts.ApiResponseDataContext;
 import com.hackathonhub.serviceauth.models.AuthToken;
 import com.hackathonhub.serviceauth.repositories.AuthRepository;
 import com.hackathonhub.serviceauth.services.security.UserDetailsImpl;
@@ -18,7 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
-import java.util.Optional;
+
 
 @Slf4j
 @Service
@@ -32,7 +31,10 @@ public class LoginService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public ApiAuthResponse login(UserLoginRequest userLoginRequest) {
+    public ApiAuthResponse<AuthToken> login(UserLoginRequest userLoginRequest) {
+        ApiAuthResponse.ApiAuthResponseBuilder<AuthToken> responseBuilder =  ApiAuthResponse
+                .builder();
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -60,25 +62,17 @@ public class LoginService {
 
             AuthToken savedTokens = authRepository.save(newTokens);
 
-            ApiResponseDataContext apiResponseDataContext = ApiResponseDataContext
-                    .builder()
-                    .data(Optional.of(savedTokens))
-                    .build();
-
-            return ApiAuthResponse
-                    .builder()
-                    .status(HttpStatus.OK)
+            return responseBuilder
                     .message(AuthApiResponseMessage.USER_SUCCESS_AUTHORIZED)
-                    .data(apiResponseDataContext)
+                    .status(HttpStatus.OK)
+                    .data(savedTokens)
                     .build();
 
         } catch (Exception e) {
-
             log.error("Login failed: {}", e.getMessage());
-            return ApiAuthResponse
-                    .builder()
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return responseBuilder
                     .message(AuthApiResponseMessage.authenticationFailed(e.getMessage()))
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build();
         }
 

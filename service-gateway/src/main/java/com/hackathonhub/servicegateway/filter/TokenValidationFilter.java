@@ -1,7 +1,8 @@
 package com.hackathonhub.servicegateway.filter;
 
-import com.hackathonhub.serviceauth.grpc.TokensGrpc;
-import com.hackathonhub.serviceauth.grpc.TokensGrpcService;
+import com.hackathonhub.auth_protos.grpc.Messages;
+import com.hackathonhub.auth_protos.grpc.TokensServiceGrpc;
+import com.hackathonhub.common.grpc.Entities;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
 public class TokenValidationFilter extends BaseFilter {
 
     @GrpcClient("service-auth")
-    private TokensGrpc.TokensBlockingStub tokensStub;
+    private TokensServiceGrpc.TokensServiceBlockingStub tokensStub;
 
     @Override
     public Mono<Void> customFilter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -27,13 +28,13 @@ public class TokenValidationFilter extends BaseFilter {
                 .getCookies()
                 .getFirst("refreshToken").getValue();
 
-        TokensGrpcService.TokenValidationRequest request =
-                TokensGrpcService.TokenValidationRequest.newBuilder()
-                        .setAccessToken(accessToken)
-                        .setRefreshToken(refreshToken)
-                        .build();
+        Messages.ValidateTokensRequest request = Messages.ValidateTokensRequest
+                .newBuilder()
+                .setAccessToken(accessToken)
+                .setRefreshToken(refreshToken)
+                .build();
 
-        TokensGrpcService.TokenValidationResponse response = tokensStub.tokensValidation(request);
+        Messages.ValidateTokensResponse response = tokensStub.validateTokens(request);
 
         if(!response.getIsRefreshTokenValid()) {
             exchange.getResponse().setStatusCode(org.springframework.http.HttpStatus.UNAUTHORIZED);
@@ -44,33 +45,30 @@ public class TokenValidationFilter extends BaseFilter {
             return chain.filter(exchange);
         }
 
-        TokensGrpcService.RefreshTokensRequest refreshRequest =
-                TokensGrpcService.RefreshTokensRequest.newBuilder()
-                        .setRefreshToken(refreshToken)
-                        .build();
+        Messages.UpdateTokensRequest refreshRequest = Messages.UpdateTokensRequest
+                .newBuilder()
+                .setRefreshToken(refreshToken)
+                .build();
 
-        TokensGrpcService.RefreshTokensResponse refreshResponse =
-                tokensStub.refreshTokens(refreshRequest);
-
-        TokensGrpcService.AuthTokens updatedTokens = refreshResponse.getUpdatedTokens();
+        Entities.AuthTokens refreshResponse = tokensStub.updateTokens(refreshRequest);
 
         ServerWebExchange mutatedExchange = exchange
                 .mutate()
                 .request(exchange.getRequest()
                             .mutate()
-                            .headers(h -> h.setBearerAuth(updatedTokens.getAccessToken()))
+                            .headers(h -> h.setBearerAuth(refreshResponse.getAccessToken()))
                             .build())
                 .build();
 
         ResponseCookie cookie = ResponseCookie
-                .from("refreshToken", updatedTokens.getRefreshToken())
+                .from("refreshToken", refreshResponse.getRefreshToken())
                 .path("/")
                 .build();
 
         mutatedExchange.getResponse().getCookies().add("refreshToken", cookie);
         mutatedExchange.getResponse()
                 .getHeaders()
-                .setBearerAuth(updatedTokens.getAccessToken());
+                .setBearerAuth(refreshResponse.getAccessToken());
 
         return chain.filter(mutatedExchange);
     }

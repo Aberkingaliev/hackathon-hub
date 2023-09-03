@@ -4,3 +4,5 @@ includeBuild("service-auth")
 includeBuild("service-user")
 includeBuild("service-gateway")
 includeBuild("service-cloud-config")
+includeBuild('common-proto')
+

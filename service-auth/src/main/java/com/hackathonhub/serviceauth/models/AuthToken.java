@@ -1,21 +1,18 @@
 package com.hackathonhub.serviceauth.models;
 
 import javax.persistence.*;
-
 import lombok.Data;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
-
-
-
 
 @Entity
 @Data
 @Table(name = "authTokens", uniqueConstraints = {
         @UniqueConstraint(columnNames = "refreshToken")
 })
-public class AuthToken {
+public class AuthToken implements Serializable {
     @Id
     protected UUID id;
 

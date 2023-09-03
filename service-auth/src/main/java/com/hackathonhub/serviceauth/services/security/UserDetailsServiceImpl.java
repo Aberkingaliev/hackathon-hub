@@ -1,8 +1,10 @@
 package com.hackathonhub.serviceauth.services.security;
 
-import com.hackathonhub.serviceauth.mappers.grpc.user.factories.UserMapperFactory;
-import com.hackathonhub.serviceauth.grpc.UserGrpc;
-import com.hackathonhub.serviceauth.grpc.UserGrpcService;
+import com.hackathonhub.common.grpc.Entities;
+import com.hackathonhub.serviceauth.mappers.grpc.common.UserEntityMapper;
+import com.hackathonhub.serviceauth.models.User;
+import com.hackathonhub.user_protos.grpc.Messages;
+import com.hackathonhub.user_protos.grpc.UserServiceGrpc;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,32 +18,26 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @GrpcClient("service-user")
-    private UserGrpc.UserBlockingStub userStub;
+    private UserServiceGrpc.UserServiceBlockingStub userStub;
 
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserGrpcService.UserRequest request = UserGrpcService.UserRequest
+        Messages.GetUserByEmailRequest request = Messages.GetUserByEmailRequest
                 .newBuilder()
-                .setUserForGetByEmail(UserGrpcService.UserGetByEmailRequest
-                        .newBuilder()
-                        .setEmail(email)
-                        .build())
-                .setAction(UserGrpcService.actions_enum.getUserByEmail)
+                .setEmail(email)
                 .build();
 
-        UserGrpcService.UserResponse response = userStub.getUserByEmail(request);
+        Entities.User response = userStub.getUserByEmail(request);
 
-        if (!response.hasUser()) {
+        if (!response.hasId()) {
             log.error("User {} not found", email);
             throw new UsernameNotFoundException("User " + email + " not found");
         }
 
+        User mappedUser = UserEntityMapper.toEntity(response);
+
         return UserDetailsImpl
-                .build(
-                        UserMapperFactory
-                        .getMapper(UserGrpcService.actions_enum.getUserByEmail)
-                        .fromGrpcResponseToLocal(response)
-                );
+                .build(mappedUser);
     }
 }

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package services.user_service;
+import "services/user_service/enums.proto";
+import "common/types.proto";
+import "common/entities.proto";
+
+option java_package = "com.hackathonhub.user_protos.grpc";
+
+message CreateUserRequest {
+  string username = 1;
+  string full_name = 2;
+  string email = 3;
+  string password = 4;
+  bool is_activated = 5;
+}
+
+message GetUserByEmailRequest {
+  string email = 1;
+}
+
+message GetUsersByTeamIdRequest {
+  common.UUID teamId = 1;
+}
+
+message GetUsersByTeamIdResponse {
+  repeated common.User users = 1;
+}
+
+message GetUserByIdRequest {
+  common.UUID id = 1;
+}
+
+message CheckUserExistenceByEmailRequest {
+  string email = 1;
+}
+
+message CheckUserExistenceByEmailResponse {
+  bool isExist = 1;
+}

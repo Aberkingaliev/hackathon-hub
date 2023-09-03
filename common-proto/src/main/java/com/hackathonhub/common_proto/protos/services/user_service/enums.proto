@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package services.user_service;
+
+option java_package = "com.hackathonhub.user_protos.grpc";
