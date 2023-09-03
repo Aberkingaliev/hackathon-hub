@@ -82,4 +82,5 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
+
 }

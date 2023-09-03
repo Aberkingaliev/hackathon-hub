@@ -3,11 +3,14 @@ package com.hackathonhub.serviceauth.controllers;
 import com.hackathonhub.serviceauth.constants.AuthApiResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
+import com.hackathonhub.serviceauth.models.AuthToken;
 import com.hackathonhub.serviceauth.models.User;
 import com.hackathonhub.serviceauth.services.LoginService;
-import com.hackathonhub.serviceauth.services.RegistrationService;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
+import com.hackathonhub.serviceauth.services.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,8 +34,8 @@ public class AuthController {
 
 
     @PostMapping("/registration")
-    public ResponseEntity<ApiAuthResponse> registration(@RequestBody User user) {
-        ApiAuthResponse response = registrationService.registration(user);
+    public ResponseEntity<ApiAuthResponse<User>> registration(@RequestBody User user) {
+        ApiAuthResponse<User> response = registrationService.registration(user);
         return ResponseEntity
                 .status(response.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -40,26 +43,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiAuthResponse> login(@RequestBody UserLoginRequest loginRequest,
-                                  HttpServletResponse responseServlet) {
-        ApiAuthResponse response = loginService.login(loginRequest);
+    public ResponseEntity<ApiAuthResponse<AuthToken>> login(
+            @RequestBody UserLoginRequest loginRequest,
+            HttpServletResponse responseServlet) {
+        ApiAuthResponse<AuthToken> response = loginService.login(loginRequest);
         if (response.getStatus() == HttpStatus.OK) {
             Cookie refreshTokenCookie = new Cookie("refreshToken",
-                    response
-                            .getData()
-                            .getData()
-                            .get()
-                            .getRefreshToken());
+                    response.getData().getRefreshToken());
+
             refreshTokenCookie.setMaxAge((int) TimeUnit.DAYS.toMillis(30));
             refreshTokenCookie.setPath("/");
 
             responseServlet.addCookie(refreshTokenCookie);
 
-            responseServlet.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + response
-                    .getData()
-                    .getData()
-                    .get()
-                    .getAccessToken());
+            responseServlet.setHeader(HttpHeaders.AUTHORIZATION,
+                    "Bearer " + response.getData().getAccessToken());
         }
 
         return ResponseEntity

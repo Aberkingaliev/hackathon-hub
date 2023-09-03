@@ -2,13 +2,14 @@ syntax = "proto3";
 
 package services.auth_service;
 import "services/auth_service/messages.proto";
+import "common/entities.proto";
 
 option java_package = "com.hackathonhub.auth_protos.grpc";
 option java_multiple_files = true;
 
 service TokensService {
   rpc ValidateTokens (ValidateTokensRequest) returns (ValidateTokensResponse);
-  rpc UpdateTokens (UpdateTokensRequest) returns (UpdateTokensResponse);
+  rpc UpdateTokens (UpdateTokensRequest) returns (common.AuthTokens);
 }
 
 service AuthorityService {
