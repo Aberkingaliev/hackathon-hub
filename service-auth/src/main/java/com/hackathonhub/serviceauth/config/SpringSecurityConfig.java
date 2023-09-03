@@ -2,9 +2,7 @@ package com.hackathonhub.serviceauth.config;
 
 import com.hackathonhub.serviceauth.exceptions.AccessDeniedExceptionHandler;
 import com.hackathonhub.serviceauth.exceptions.AuthEntryPoint;
-import com.hackathonhub.serviceauth.repositories.AuthRepository;
 import com.hackathonhub.serviceauth.services.security.UserDetailsServiceImpl;
-import com.hackathonhub.serviceauth.utils.JWTUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration

@@ -1,7 +1,6 @@
 package com.hackathonhub.serviceauth.models;
 
 import lombok.Data;
-
 import java.util.UUID;
 
 @Data

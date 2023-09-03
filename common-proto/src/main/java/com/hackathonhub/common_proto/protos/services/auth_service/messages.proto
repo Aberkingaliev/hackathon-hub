@@ -19,10 +19,6 @@ message UpdateTokensRequest {
   string refreshToken = 1;
 }
 
-message UpdateTokensResponse {
-  common.AuthTokens updatedTokens = 1;
-}
-
 message CheckAuthorityRequest {
   string accessToken = 1;
   string route = 2;

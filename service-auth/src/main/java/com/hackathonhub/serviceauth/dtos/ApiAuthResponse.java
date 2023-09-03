@@ -1,16 +1,17 @@
 package com.hackathonhub.serviceauth.dtos;
 
-import com.hackathonhub.serviceauth.dtos.contexts.ApiResponseDataContext;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+import java.io.Serializable;
+
 
 @Builder
 @Data
-public class ApiAuthResponse {
+public class ApiAuthResponse<T extends Serializable> {
 
    private HttpStatus status;
    private String message;
-   private ApiResponseDataContext data;
+   private T data;
 }
