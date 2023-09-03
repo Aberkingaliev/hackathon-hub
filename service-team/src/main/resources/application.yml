@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: service-team
+  config:
+    import: optional:configserver:http://service-cloud-config:8888

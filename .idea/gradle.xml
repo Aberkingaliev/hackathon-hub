@@ -32,6 +32,11 @@
                   <project path="$PROJECT_DIR$/service-registry" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/service-team" name="service-team">
+                <projects>
+                  <project path="$PROJECT_DIR$/service-team" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/service-user" name="service-user">
                 <projects>
                   <project path="$PROJECT_DIR$/service-user" />
@@ -49,6 +54,7 @@
             <option value="$PROJECT_DIR$/service-cloud-config" />
             <option value="$PROJECT_DIR$/service-gateway" />
             <option value="$PROJECT_DIR$/service-registry" />
+            <option value="$PROJECT_DIR$/service-team" />
             <option value="$PROJECT_DIR$/service-user" />
           </set>
         </option>
