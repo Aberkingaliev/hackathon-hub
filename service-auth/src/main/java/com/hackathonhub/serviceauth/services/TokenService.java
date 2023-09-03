@@ -9,6 +9,7 @@ import com.hackathonhub.serviceauth.models.RoleEnum;
 import com.hackathonhub.serviceauth.repositories.AuthRepository;
 import com.hackathonhub.serviceauth.utils.JWTUtils;
 import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
+@GrpcService
 public class TokenService extends TokensServiceGrpc.TokensServiceImplBase {
     @Autowired
     JWTUtils jwtUtils;

@@ -48,20 +48,6 @@ services:
         condition: service_started
     volumes:
       - ./service-auth/build/libs/service-auth-0.0.1-SNAPSHOT.jar:/app.jar
-  service-team:
-    build: ./service-team
-    ports:
-      - "8003:8003"
-      - "55004:55004"
-    depends_on:
-      service-registry:
-        condition: service_healthy
-      service-cloud-config:
-        condition: service_healthy
-      teams-database:
-        condition: service_started
-    volumes:
-      - ./service-team/build/libs/service-team-0.0.1-SNAPSHOT.jar:/app.jar
   service-gateway:
     build: ./service-gateway
     ports:
@@ -75,8 +61,6 @@ services:
       service-user:
         condition: service_started
       service-auth:
-        condition: service_started
-      service-team:
         condition: service_started
     volumes:
       - ./service-gateway/build/libs/service-gateway-0.0.1-SNAPSHOT.jar:/app.jar
@@ -102,17 +86,6 @@ services:
       POSTGRES_DB: tokensControl
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-  teams-database:
-    image: postgres:12
-    restart: always
-    ports:
-      - "5401:5432"
-    volumes:
-      - teams_database:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: teamsControl
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
   tokens-redis:
     image: redis:latest
     restart: always
@@ -127,8 +100,6 @@ volumes:
   users_database:
     driver: local
   tokens_database:
-    driver: local
-  teams_database:
     driver: local
   cache:
     driver: local

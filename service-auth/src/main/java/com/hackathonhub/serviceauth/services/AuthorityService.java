@@ -6,10 +6,13 @@ import com.hackathonhub.serviceauth.constants.ApiRolePermission;
 import com.hackathonhub.serviceauth.models.RoleEnum;
 import com.hackathonhub.serviceauth.utils.JWTUtils;
 import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
+
+@GrpcService
 public class AuthorityService extends AuthorityServiceGrpc.AuthorityServiceImplBase {
     @Autowired
     JWTUtils jwtUtils;

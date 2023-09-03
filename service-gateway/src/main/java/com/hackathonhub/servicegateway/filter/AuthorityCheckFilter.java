@@ -1,7 +1,7 @@
 package com.hackathonhub.servicegateway.filter;
 
-import com.hackathonhub.serviceauth.grpc.AuthorityGrpc;
-import com.hackathonhub.serviceauth.grpc.AuthorityGrpcService;
+import com.hackathonhub.auth_protos.grpc.AuthorityServiceGrpc;
+import com.hackathonhub.auth_protos.grpc.Messages;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class AuthorityCheckFilter extends BaseFilter {
 
     @GrpcClient("service-auth")
-    private AuthorityGrpc.AuthorityBlockingStub authorityStub;
+    private AuthorityServiceGrpc.AuthorityServiceBlockingStub authorityStub;
 
     @Override
     public Mono<Void> customFilter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -28,13 +28,13 @@ public class AuthorityCheckFilter extends BaseFilter {
             return exchange.getResponse().setComplete();
         }
 
-        AuthorityGrpcService.AuthorityAccessRequest request =
-                AuthorityGrpcService.AuthorityAccessRequest.newBuilder()
-                        .setAccessToken(token)
-                        .setRoute(exchange.getRequest().getPath().toString())
-                        .build();
+        Messages.CheckAuthorityRequest request = Messages.CheckAuthorityRequest
+                .newBuilder()
+                .setAccessToken(token)
+                .setRoute(exchange.getRequest().getPath().toString())
+                .build();
 
-        AuthorityGrpcService.AuthorityAccessResponse response = authorityStub.authorityAccessCheck(request);
+        Messages.CheckAuthorityResponse response = authorityStub.checkAuthority(request);
 
         if(!response.getHasAccess()) {
             exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
