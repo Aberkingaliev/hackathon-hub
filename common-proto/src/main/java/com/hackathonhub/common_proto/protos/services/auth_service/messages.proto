@@ -3,6 +3,8 @@ syntax = "proto3";
 package services.auth_service;
 import "common/entities.proto";
 
+option java_package = "com.hackathonhub.auth_protos.grpc";
+
 message ValidateTokensRequest {
   string accessToken = 1;
   string refreshToken = 2;

@@ -5,6 +5,8 @@ import "services/user_service/enums.proto";
 import "common/types.proto";
 import "common/entities.proto";
 
+option java_package = "com.hackathonhub.user_protos.grpc";
+
 message CreateUserRequest {
   string username = 1;
   string full_name = 2;

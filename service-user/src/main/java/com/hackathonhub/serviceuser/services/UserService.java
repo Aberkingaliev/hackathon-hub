@@ -1,101 +1,83 @@
 package com.hackathonhub.serviceuser.services;
 
-import com.hackathonhub.serviceuser.constants.GrpcResponseMessage;
-import com.hackathonhub.serviceuser.grpc.UserGrpc;
-import com.hackathonhub.serviceuser.grpc.UserGrpcService;
-import com.hackathonhub.serviceuser.mappers.grpc.contexts.UserResponseContext;
-import com.hackathonhub.serviceuser.mappers.grpc.factories.UserMapperFactory;
+
+import com.hackathonhub.common.grpc.Entities;
+import com.hackathonhub.serviceuser.mappers.grpc.GetUserByTeamIdMapper;
+import com.hackathonhub.serviceuser.mappers.grpc.common.TypeMapper;
+import com.hackathonhub.serviceuser.mappers.grpc.UserCreateMapper;
+import com.hackathonhub.serviceuser.mappers.grpc.common.UserEntityMapper;
 import com.hackathonhub.serviceuser.models.User;
 import com.hackathonhub.serviceuser.repositories.UserRepository;
+import com.hackathonhub.user_protos.grpc.Messages;
+import com.hackathonhub.user_protos.grpc.UserServiceGrpc;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @GrpcService
-public class UserService extends UserGrpc.UserImplBase {
+public class UserService extends UserServiceGrpc.UserServiceImplBase {
     @Autowired
     private UserRepository userRepository;
 
-    @Override
-    public void saveUser(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
-
-        User mappedUser = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.saveUser)
-                .fromGrpcRequestToLocal(request);
-
-        User savedUser = userRepository.save(mappedUser);
-
-        UserResponseContext userResponseContext = UserResponseContext
-                .builder()
-                    .status(UserGrpcService.status_enum.success)
-                    .userData(Optional.of(savedUser))
-                    .message(GrpcResponseMessage.USER_SAVED)
-                .build();
-
-        UserGrpcService.UserResponse response = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.saveUser)
-                .fromLocalToGrpcResponse(userResponseContext);
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
-    }
-
 
     @Override
-    public void getUserByEmail(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
-        User user = userRepository.getByEmail(request.getUserForGetByEmail().getEmail());
+    public void createUser(Messages.CreateUserRequest request,
+                           StreamObserver<Entities.User> responseObserver) {
+        User user = UserCreateMapper.toCreateDto(request);
 
-        UserResponseContext userResponseContext = UserResponseContext
-                .builder()
-                .status(UserGrpcService.status_enum.success)
-                .userData(Optional.ofNullable(user))
-                .message(GrpcResponseMessage.USER_BY_EMAIL_FOUNDED)
-                .build();
+        User savedUser = userRepository.save(user);
 
-        UserGrpcService.UserResponse response = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.getUserByEmail)
-                .fromLocalToGrpcResponse(userResponseContext);
+        System.out.println("User created: " + savedUser);
 
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
-    }
-
-
-    @Override
-    public void deleteUser(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
-        userRepository.deleteById(UUID.fromString(request.getUserForDelete().getId()));
-
-        UserResponseContext userResponseContext = UserResponseContext
-                .builder()
-                .status(UserGrpcService.status_enum.success)
-                .message(GrpcResponseMessage.USER_DELETED)
-                .build();
-
-        UserGrpcService.UserResponse response = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.deleteUser)
-                .fromLocalToGrpcResponse(userResponseContext);
+        Entities.User response = UserEntityMapper
+                .toGrpcEntity(savedUser);
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void isExistUserByEmail(UserGrpcService.UserRequest request, StreamObserver<UserGrpcService.UserResponse> responseObserver) {
-        Boolean isExist = userRepository.existByEmail(request.getUserIsExistByEmail().getEmail());
+    public void getUserByEmail(Messages.GetUserByEmailRequest request,
+                               StreamObserver<Entities.User> responseObserver) {
+        String email = request.getEmail();
 
-        UserResponseContext userResponseContext = UserResponseContext
-                .builder()
-                .status(UserGrpcService.status_enum.success)
-                .isExistState(Optional.ofNullable(isExist))
-                .message(GrpcResponseMessage.USER_IS_EXIST)
+        User user = userRepository.getByEmail(email);
+
+        Entities.User response = UserEntityMapper
+                .toGrpcEntity(user);
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUsersByTeamId(Messages.GetUsersByTeamIdRequest request,
+                                 StreamObserver<Messages.GetUsersByTeamIdResponse> responseObserver) {
+        UUID teamId = TypeMapper.toOriginalyUuid(request.getTeamId());
+
+        Set<User> users = userRepository.getUsersByTeamId(teamId);
+
+        Messages.GetUsersByTeamIdResponse response = GetUserByTeamIdMapper.toGrpcEntity(users);
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void checkUserExistenceByEmail(Messages.CheckUserExistenceByEmailRequest request,
+                                          StreamObserver<Messages.CheckUserExistenceByEmailResponse> responseObserver) {
+        String email = request.getEmail();
+
+        Boolean exists = userRepository.existByEmail(email);
+
+        Messages.CheckUserExistenceByEmailResponse response =
+                Messages.CheckUserExistenceByEmailResponse
+                .newBuilder()
+                .setIsExist(exists)
                 .build();
-
-        UserGrpcService.UserResponse response = UserMapperFactory
-                .getMapper(UserGrpcService.actions_enum.isExistUserByEmail)
-                .fromLocalToGrpcResponse(userResponseContext);
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
