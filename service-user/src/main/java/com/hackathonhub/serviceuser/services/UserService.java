@@ -30,8 +30,6 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
 
         User savedUser = userRepository.save(user);
 
-        System.out.println("User created: " + savedUser);
-
         Entities.User response = UserEntityMapper
                 .toGrpcEntity(savedUser);
 

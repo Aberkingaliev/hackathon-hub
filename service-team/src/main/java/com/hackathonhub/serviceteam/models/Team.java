@@ -1,59 +1,54 @@
 package com.hackathonhub.serviceteam.models;
 
-import com.sun.istack.NotNull;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.Column;
-import javax.persistence.PrePersist;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
 @Getter
-@Table(name = "teams")
-public class Team {
+@ToString
+@Table(name = "teams", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "name")
+})
+public class Team implements Serializable {
 
     @Id
     private UUID id;
 
     @PrePersist
-    public void generateId() {
+    public void prePersistValues() {
         this.id = UUID.randomUUID();
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
+
+    @Column(name = "name")
+    private String name;
 
     public Team setName(String name) {
         this.name = name;
         return this;
     }
 
+    @Column(name = "description")
+    private String description;
+
     public Team setDescription(String description) {
         this.description = description;
         return this;
     }
+
+    @Column(name = "founder_id")
+    private UUID founderId;
 
     public Team setFounderId(UUID founderId) {
         this.founderId = founderId;
         return this;
     }
 
-    @Column(name = "name")
-    @NotNull
-    private String name;
-
-    @Column(name = "description")
-    private String description;
-
-
-    @Column(name = "founder_id")
-    @NotNull
-    private UUID founderId;
-
     @Column(name = "created_at")
-    @CreatedDate
-    @NotNull
     private Timestamp createdAt;
 }
