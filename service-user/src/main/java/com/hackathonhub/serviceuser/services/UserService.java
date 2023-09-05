@@ -2,6 +2,7 @@ package com.hackathonhub.serviceuser.services;
 
 
 import com.hackathonhub.common.grpc.Entities;
+import com.hackathonhub.serviceuser.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceuser.mappers.grpc.GetUserByTeamIdMapper;
 import com.hackathonhub.serviceuser.mappers.grpc.common.TypeMapper;
 import com.hackathonhub.serviceuser.mappers.grpc.UserCreateMapper;
@@ -11,13 +12,16 @@ import com.hackathonhub.serviceuser.repositories.UserRepository;
 import com.hackathonhub.user_protos.grpc.Messages;
 import com.hackathonhub.user_protos.grpc.UserServiceGrpc;
 import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
 import java.util.Set;
 import java.util.UUID;
 
 @GrpcService
+@Slf4j
 public class UserService extends UserServiceGrpc.UserServiceImplBase {
     @Autowired
     private UserRepository userRepository;
@@ -29,8 +33,6 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
         User user = UserCreateMapper.toCreateDto(request);
 
         User savedUser = userRepository.save(user);
-
-        System.out.println("User created: " + savedUser);
 
         Entities.User response = UserEntityMapper
                 .toGrpcEntity(savedUser);
@@ -81,6 +83,37 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+    }
+
+    public ApiAuthResponse<User> updateUser(User user) {
+        ApiAuthResponse.ApiAuthResponseBuilder<User> responseBuilder = ApiAuthResponse.builder();
+
+        try {
+            User foundedUser = userRepository.getByEmail(user.getEmail());
+
+            if(foundedUser == null) {
+                return responseBuilder
+                        .status(HttpStatus.NOT_FOUND)
+                        .message("User not found")
+                        .build();
+            };
+
+            User updatedUser = userRepository.save(foundedUser.from(user));
+
+            return responseBuilder
+                    .status(HttpStatus.OK)
+                    .message("User updated successfully")
+                    .data(updatedUser)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Error while updating user: ", e);
+            return responseBuilder
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .message("Error while updating user")
+                    .build();
+        }
+
     }
 
 }
