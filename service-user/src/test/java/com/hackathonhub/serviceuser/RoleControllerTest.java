@@ -1,5 +1,6 @@
 package com.hackathonhub.serviceuser;
 
+import com.hackathonhub.serviceuser.controllers.RoleController;
 import com.hackathonhub.serviceuser.models.Role;
 import com.hackathonhub.serviceuser.models.RoleEnum;
 import com.hackathonhub.serviceuser.repositories.RoleRepository;

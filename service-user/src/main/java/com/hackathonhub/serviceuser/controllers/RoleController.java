@@ -1,4 +1,4 @@
-package com.hackathonhub.serviceuser;
+package com.hackathonhub.serviceuser.controllers;
 
 
 import com.hackathonhub.serviceuser.models.Role;

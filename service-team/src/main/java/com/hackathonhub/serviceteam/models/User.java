@@ -1,53 +1,34 @@
-package com.hackathonhub.serviceuser.models;
+package com.hackathonhub.serviceteam.models;
 
-import javax.persistence.*;
-import lombok.Getter;
-
-import java.io.Serializable;
+import lombok.Data;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 
-@Entity
-@Getter
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email"),
-        @UniqueConstraint(columnNames = "username")
-})
-public class User implements Serializable {
+@Data
+public class User {
 
-    @Id
+
     private UUID id;
 
-    @PrePersist
-    public void generateId() {
-        this.id = UUID.randomUUID();
-    }
-
-    @Column(name = "username")
     private String username;
 
-    @Column(name = "fullName")
+
     private String fullName;
 
-    @Column(name = "email")
+
     private String email;
 
-    @Column(name = "password")
+
     private String password;
 
-    @Column(name = "isActivated")
+
     private Boolean isActivated;
 
-    @Column(name = "teamId")
+
     private UUID teamId;
 
-    @Column(name = "roles")
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_to_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     public User setId(UUID id) {
