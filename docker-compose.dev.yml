@@ -28,7 +28,7 @@ services:
         condition: service_healthy
       service-cloud-config:
         condition: service_healthy
-      users-database:
+      hackathon-hub-db:
         condition: service_started
     volumes:
       - ./service-user/build/libs/service-user-0.0.1-SNAPSHOT.jar:/app.jar
@@ -42,7 +42,7 @@ services:
         condition: service_healthy
       service-cloud-config:
         condition: service_healthy
-      tokens-database:
+      hackathon-hub-db:
         condition: service_started
       tokens-redis:
         condition: service_started
@@ -58,7 +58,7 @@ services:
         condition: service_healthy
       service-cloud-config:
         condition: service_healthy
-      teams-database:
+      hackathon-hub-db:
         condition: service_started
     volumes:
       - ./service-team/build/libs/service-team-0.0.1-SNAPSHOT.jar:/app.jar
@@ -66,7 +66,7 @@ services:
     build: ./service-gateway
     ports:
       - "8082:8082"
-      - "55003:55003"
+      - "55004:55004"
     depends_on:
       service-registry:
         condition: service_healthy
@@ -80,37 +80,15 @@ services:
         condition: service_started
     volumes:
       - ./service-gateway/build/libs/service-gateway-0.0.1-SNAPSHOT.jar:/app.jar
-  users-database:
+  hackathon-hub-db:
     image: postgres:12
     restart: always
     ports:
       - "5432:5432"
     volumes:
-      - users_database:/var/lib/postgresql/data
+      - hackathonhub_db:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: usersControl
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-  tokens-database:
-    image: postgres:12
-    restart: always
-    ports:
-      - "5400:5432"
-    volumes:
-      - tokens_database:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: tokensControl
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-  teams-database:
-    image: postgres:12
-    restart: always
-    ports:
-      - "5401:5432"
-    volumes:
-      - teams_database:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: teamsControl
+      POSTGRES_DB: hackathon-hub
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
   tokens-redis:
@@ -124,11 +102,7 @@ services:
 volumes:
   configs:
     driver: local
-  users_database:
-    driver: local
-  tokens_database:
-    driver: local
-  teams_database:
+  hackathonhub_db:
     driver: local
   cache:
     driver: local
