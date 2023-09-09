@@ -8,21 +8,15 @@ import java.util.Optional;
 public class UserEntityMapper {
 
     public static Entities.User toGrpcEntity (User user) {
-        Entities.User.Builder userBuilder = Entities.User.newBuilder()
+        return Entities.User.newBuilder()
                 .setId(TypeMapper.toGrpcUuid(user.getId()))
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
                 .setIsActivated(user.getIsActivated())
-                .addAllRoles(RoleMapper.toGrpcEntity(user.getRoles()));
-
-
-        if (user.getTeamId() == null) {
-            return userBuilder.build();
-        }
-
-        return userBuilder.setTeamId(TypeMapper.toGrpcUuid(user.getTeamId())).build();
+                .addAllRoles(RoleMapper.toGrpcEntity(user.getRoles()))
+                .build();
     }
 
     public static User toEntity (Entities.User user) {
@@ -32,7 +26,6 @@ public class UserEntityMapper {
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
-                .setTeamId(TypeMapper.toOriginalyUuid(user.getTeamId()))
                 .setActivated(user.getIsActivated())
                 .setRole(RoleMapper.toOriginalyRole(user.getRolesList()));
     }

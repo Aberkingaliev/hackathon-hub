@@ -18,7 +18,6 @@ message User {
   string email = 4;
   string password = 5;
   bool is_activated = 6;
-  UUID team_id = 7;
   repeated Role roles = 8;
 }
 

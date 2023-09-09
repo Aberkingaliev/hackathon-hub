@@ -28,7 +28,7 @@ public class User implements Serializable {
     @Column(name = "username")
     private String username;
 
-    @Column(name = "fullName")
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "email")
@@ -37,11 +37,8 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "isActivated")
+    @Column(name = "is_activated")
     private Boolean isActivated;
-
-    @Column(name = "teamId")
-    private UUID teamId;
 
     @Column(name = "roles")
     @ManyToMany(fetch = FetchType.EAGER)
@@ -80,11 +77,6 @@ public class User implements Serializable {
         return this;
     }
 
-    public User setTeamId(UUID teamId) {
-        this.teamId = teamId;
-        return this;
-    }
-
     public User setRole(HashSet<Role> roles) {
         this.roles = roles;
         return this;
@@ -98,7 +90,6 @@ public class User implements Serializable {
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
                 .setActivated(user.getIsActivated())
-                .setTeamId(user.getTeamId())
                 .setRole(new HashSet<>(user.getRoles()));
     }
 }

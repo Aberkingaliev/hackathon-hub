@@ -19,14 +19,6 @@ message GetUserByEmailRequest {
   string email = 1;
 }
 
-message GetUsersByTeamIdRequest {
-  common.UUID teamId = 1;
-}
-
-message GetUsersByTeamIdResponse {
-  repeated common.User users = 1;
-}
-
 message GetUserByIdRequest {
   common.UUID id = 1;
 }
