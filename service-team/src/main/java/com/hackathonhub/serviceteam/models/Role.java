@@ -2,14 +2,22 @@ package com.hackathonhub.serviceteam.models;
 
 
 import lombok.Data;
+
+import javax.persistence.*;
 import java.util.UUID;
 
-
+@Entity
 @Data
+@Table(name = "roles")
 public class Role {
 
-
+    @Id
     private UUID id;
+
+    @PrePersist
+    public void generateId() {
+        this.id = UUID.randomUUID();
+    }
 
     public UUID getId() {
         return id;
@@ -29,5 +37,7 @@ public class Role {
         return this;
     }
 
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private RoleEnum role_name;
 }

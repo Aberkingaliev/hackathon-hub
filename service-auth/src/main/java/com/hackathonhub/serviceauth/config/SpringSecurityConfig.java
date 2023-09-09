@@ -49,7 +49,9 @@ public class SpringSecurityConfig {
                 .authenticationManager(
                         authenticationManager(userDetailsService, bcryptPasswordEncoder)
                 )
-                .authorizeHttpRequests().antMatchers("/api/login", "/api/registration").permitAll();
+                .authorizeHttpRequests()
+                .antMatchers("/api/login", "/api/registration")
+                .permitAll();
 
 
         return http.build();
@@ -57,7 +59,8 @@ public class SpringSecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, BcryptPasswordEncoder passwordEncoder) throws Exception {
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
+                                                       BcryptPasswordEncoder passwordEncoder) throws Exception {
         return authentication -> {
             String email = authentication.getPrincipal().toString();
             String password = authentication.getCredentials().toString();

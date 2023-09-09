@@ -27,8 +27,6 @@ public class User implements Serializable {
 
     private Boolean isActivated;
 
-    private UUID teamId;
-
     private Set<Role> roles = new HashSet<>();
 
 
@@ -57,11 +55,6 @@ public class User implements Serializable {
         return this;
     }
 
-    public User setTeamId(UUID teamId) {
-        this.teamId = teamId;
-        return this;
-    }
-
     public User setRole(Set<Role> roles) {
         this.roles = roles;
         return this;
@@ -74,7 +67,6 @@ public class User implements Serializable {
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
                 .setActivated(user.getIsActivated())
-                .setTeamId(user.getTeamId())
                 .setRole(new HashSet<>(user.getRoles()));
     }
 

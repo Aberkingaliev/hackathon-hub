@@ -6,6 +6,8 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -51,4 +53,10 @@ public class Team implements Serializable {
 
     @Column(name = "created_at")
     private Timestamp createdAt;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_to_team",
+            joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> members = new HashSet<>();
 }

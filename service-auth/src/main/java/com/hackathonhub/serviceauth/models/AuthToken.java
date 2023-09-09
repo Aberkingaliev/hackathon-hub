@@ -9,8 +9,8 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "authTokens", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "refreshToken")
+@Table(name = "auth_tokens", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "refresh_token")
 })
 public class AuthToken implements Serializable {
     @Id
@@ -46,15 +46,15 @@ public class AuthToken implements Serializable {
         return this;
     }
 
-    @Column(name = "userId")
+    @Column(name = "user_id")
     protected UUID userId;
 
-    @Column(name = "accessToken", columnDefinition = "TEXT", length = 7000)
+    @Column(name = "access_token", columnDefinition = "TEXT", length = 7000)
     protected String accessToken;
 
-    @Column(name = "refreshToken", columnDefinition = "TEXT", length = 7000)
+    @Column(name = "refresh_token", columnDefinition = "TEXT", length = 7000)
     protected String refreshToken;
 
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     protected Timestamp createdAt;
 }

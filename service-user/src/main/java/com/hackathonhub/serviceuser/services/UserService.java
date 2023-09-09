@@ -3,8 +3,6 @@ package com.hackathonhub.serviceuser.services;
 
 import com.hackathonhub.common.grpc.Entities;
 import com.hackathonhub.serviceuser.dtos.ApiAuthResponse;
-import com.hackathonhub.serviceuser.mappers.grpc.GetUserByTeamIdMapper;
-import com.hackathonhub.serviceuser.mappers.grpc.common.TypeMapper;
 import com.hackathonhub.serviceuser.mappers.grpc.UserCreateMapper;
 import com.hackathonhub.serviceuser.mappers.grpc.common.UserEntityMapper;
 import com.hackathonhub.serviceuser.models.User;
@@ -16,9 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
-import java.util.Set;
-import java.util.UUID;
 
 @GrpcService
 @Slf4j
@@ -50,19 +45,6 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
 
         Entities.User response = UserEntityMapper
                 .toGrpcEntity(user);
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
-    }
-
-    @Override
-    public void getUsersByTeamId(Messages.GetUsersByTeamIdRequest request,
-                                 StreamObserver<Messages.GetUsersByTeamIdResponse> responseObserver) {
-        UUID teamId = TypeMapper.toOriginalyUuid(request.getTeamId());
-
-        Set<User> users = userRepository.getUsersByTeamId(teamId);
-
-        Messages.GetUsersByTeamIdResponse response = GetUserByTeamIdMapper.toGrpcEntity(users);
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
