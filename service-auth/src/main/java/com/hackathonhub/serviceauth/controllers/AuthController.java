@@ -11,6 +11,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.hackathonhub.serviceauth.services.RegistrationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,6 +38,17 @@ public class AuthController {
     private LoginService loginService;
 
 
+    @Operation(summary = "User registration", description = "If the response is successful, the created user will be " +
+            "returned in the response body (data: User)")
+    @ApiResponses(value =
+            {
+                    @ApiResponse(responseCode = "201", description = "User created"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request",
+                        content = @Content(schema = @Schema(implementation = ApiAuthResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                            content = @Content(schema = @Schema(implementation = ApiAuthResponse.class)))
+            }
+    )
     @PostMapping("/registration")
     public ResponseEntity<ApiAuthResponse<User>> registration(@RequestBody User user) {
         ApiAuthResponse<User> response = registrationService.registration(user);
@@ -42,6 +58,17 @@ public class AuthController {
                 .body(response);
     }
 
+    @Operation(summary = "Login", description = "If the response is successful, a pair of tokens will be " +
+            "returned in the response body (data: AuthTokens)")
+    @ApiResponses(value =
+            {
+                    @ApiResponse(responseCode = "201", description = "User authorized"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized",
+                            content = @Content(schema = @Schema(implementation = ApiAuthResponse.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                            content = @Content(schema = @Schema(implementation = ApiAuthResponse.class)))
+            }
+    )
     @PostMapping("/login")
     public ResponseEntity<ApiAuthResponse<AuthToken>> login(
             @RequestBody UserLoginRequest loginRequest,
@@ -66,6 +93,15 @@ public class AuthController {
                 .body(response);
     }
 
+    @Operation(summary = "Logout", description = "If the response is successful, nothing will be " +
+            "returned in the response body (data: null)")
+    @ApiResponses(value =
+            {
+                    @ApiResponse(responseCode = "201", description = "User logged out"),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                            content = @Content(schema = @Schema(implementation = ApiAuthResponse.class)))
+            }
+    )
     @PostMapping("/logout")
     public ResponseEntity<ApiAuthResponse> logout(HttpServletResponse responseServlet) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", "");
@@ -79,7 +115,7 @@ public class AuthController {
                 .body(ApiAuthResponse
                         .builder()
                         .status(HttpStatus.OK)
-                        .message(AuthApiResponseMessage.USER_SUCCESS_LOGOUT)
+                        .message(AuthApiResponseMessage.USER_SUCCESS_LOGGED_OUT)
                         .build());
     }
 

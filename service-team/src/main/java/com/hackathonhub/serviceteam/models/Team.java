@@ -1,5 +1,6 @@
 package com.hackathonhub.serviceteam.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
 })
 public class Team implements Serializable {
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Id
     private UUID id;
 
@@ -51,9 +53,11 @@ public class Team implements Serializable {
         return this;
     }
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "created_at")
     private Timestamp createdAt;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY, defaultValue = "[]")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_to_team",
             joinColumns = @JoinColumn(name = "team_id"),

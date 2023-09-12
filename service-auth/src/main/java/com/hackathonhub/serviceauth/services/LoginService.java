@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
+import java.util.Optional;
 
 
 @Slf4j
@@ -73,6 +74,7 @@ public class LoginService {
             return responseBuilder
                     .message(AuthApiResponseMessage.authenticationFailed(e.getMessage()))
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .data(null)
                     .build();
         }
 

@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class RegistrationService {
@@ -30,7 +32,7 @@ public class RegistrationService {
             if (isUserExist) {
                 return responseBuilder
                         .status(HttpStatus.BAD_REQUEST)
-                        .message(AuthApiResponseMessage.USER_ALREADY_REGISTRED)
+                        .message(AuthApiResponseMessage.USER_ALREADY_REGISTERED)
                         .build();
             }
 
@@ -47,6 +49,7 @@ public class RegistrationService {
             return responseBuilder
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .message(AuthApiResponseMessage.registrationFailed(e.getMessage()))
+                    .data(null)
                     .build();
         }
 

@@ -10,6 +10,7 @@ import com.hackathonhub.serviceuser.repositories.UserRepository;
 import com.hackathonhub.user_protos.grpc.Messages;
 import com.hackathonhub.user_protos.grpc.UserServiceGrpc;
 import io.grpc.stub.StreamObserver;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,10 @@ import org.springframework.http.HttpStatus;
 
 @GrpcService
 @Slf4j
+@Tag(name = "UserService gRPC")
 public class UserService extends UserServiceGrpc.UserServiceImplBase {
     @Autowired
     private UserRepository userRepository;
-
 
     @Override
     public void createUser(Messages.CreateUserRequest request,

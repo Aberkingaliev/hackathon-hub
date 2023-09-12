@@ -26,7 +26,7 @@ public class UserEntityMapper {
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
-                .setActivated(user.getIsActivated())
-                .setRole(RoleMapper.toOriginalyRole(user.getRolesList()));
+                .setIsActivated(user.getIsActivated())
+                .setRoles(RoleMapper.toOriginalyRole(user.getRolesList()));
     }
 }

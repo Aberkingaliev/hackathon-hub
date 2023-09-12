@@ -2,17 +2,21 @@ package com.hackathonhub.serviceuser.models;
 
 
 import javax.persistence.*;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
 @Data
 @Table(name = "roles")
-public class Role {
+public class Role implements Serializable {
 
     @Id
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID id;
 
     @PrePersist

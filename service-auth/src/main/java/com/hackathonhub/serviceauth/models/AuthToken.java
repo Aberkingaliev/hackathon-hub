@@ -1,6 +1,8 @@
 package com.hackathonhub.serviceauth.models;
 
 import javax.persistence.*;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -55,6 +57,7 @@ public class AuthToken implements Serializable {
     @Column(name = "refresh_token", columnDefinition = "TEXT", length = 7000)
     protected String refreshToken;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "created_at")
     protected Timestamp createdAt;
 }

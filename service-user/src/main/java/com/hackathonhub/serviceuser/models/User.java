@@ -72,12 +72,12 @@ public class User implements Serializable {
         return this;
     }
 
-    public User setActivated(Boolean activated) {
+    public User setIsActivated(Boolean activated) {
         isActivated = activated;
         return this;
     }
 
-    public User setRole(HashSet<Role> roles) {
+    public User setRoles(HashSet<Role> roles) {
         this.roles = roles;
         return this;
     }
@@ -89,7 +89,7 @@ public class User implements Serializable {
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
-                .setActivated(user.getIsActivated())
-                .setRole(new HashSet<>(user.getRoles()));
+                .setIsActivated(user.getIsActivated())
+                .setRoles(new HashSet<>(user.getRoles()));
     }
 }

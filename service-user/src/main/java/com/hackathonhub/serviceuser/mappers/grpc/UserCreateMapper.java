@@ -11,7 +11,7 @@ public class UserCreateMapper {
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
-                .setActivated(user.getIsActivated());
+                .setIsActivated(user.getIsActivated());
     }
 
 }

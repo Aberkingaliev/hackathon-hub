@@ -17,7 +17,14 @@ public abstract class BaseFilter implements GlobalFilter, Ordered {
         excludeRoutes = new HashSet<>(
                 Set.of(
                         "/service-auth/api/login",
-                        "/service-auth/api/registration"
+                        "/service-auth/api/registration",
+                        "/service-user/api/docs",
+                        "/service-user/swagger-ui/index.html",
+                        "/service-team/api/docs",
+                        "/service-team/swagger-ui/index.html",
+                        "/service-auth/api/docs",
+                        "/service-auth/swagger-ui/index.html"
+
                 )
         );
     }

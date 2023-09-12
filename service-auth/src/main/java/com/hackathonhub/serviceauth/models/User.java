@@ -1,5 +1,6 @@
 package com.hackathonhub.serviceauth.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ public class User implements Serializable {
         return this;
     }
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID id;
 
     private String username;
@@ -27,6 +29,7 @@ public class User implements Serializable {
 
     private Boolean isActivated;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Set<Role> roles = new HashSet<>();
 
 
@@ -50,12 +53,12 @@ public class User implements Serializable {
         return this;
     }
 
-    public User setActivated(Boolean activated) {
+    public User setIsActivated(Boolean activated) {
         isActivated = activated;
         return this;
     }
 
-    public User setRole(Set<Role> roles) {
+    public User setRoles(Set<Role> roles) {
         this.roles = roles;
         return this;
     }
@@ -66,8 +69,8 @@ public class User implements Serializable {
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
-                .setActivated(user.getIsActivated())
-                .setRole(new HashSet<>(user.getRoles()));
+                .setIsActivated(user.getIsActivated())
+                .setRoles(new HashSet<>(user.getRoles()));
     }
 
 }

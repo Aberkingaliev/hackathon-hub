@@ -1,5 +1,6 @@
 package com.hackathonhub.serviceteam.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -40,6 +41,7 @@ public class User implements Serializable {
     @Column(name = "is_activated")
     private Boolean isActivated;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "roles")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_to_role",
