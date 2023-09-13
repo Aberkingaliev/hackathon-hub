@@ -21,8 +21,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "Update user", description = "If the response is successful, an updated user will be " +
-            "returned in the response body (data: User)")
+    @Operation(summary = "Update user")
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "200", description = "User updated"),

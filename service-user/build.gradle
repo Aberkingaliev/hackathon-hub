@@ -79,6 +79,7 @@ jacocoTestReport {
 test {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
+	systemProperties 'spring.profiles.active': 'test'
 }
 
 tasks.named('test') {

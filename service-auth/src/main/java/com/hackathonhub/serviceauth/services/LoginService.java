@@ -1,6 +1,6 @@
 package com.hackathonhub.serviceauth.services;
 
-import com.hackathonhub.serviceauth.constants.AuthApiResponseMessage;
+import com.hackathonhub.serviceauth.constants.ApiAuthResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
 import com.hackathonhub.serviceauth.models.AuthToken;
@@ -17,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
-import java.util.Optional;
 
 
 @Slf4j
@@ -64,7 +63,7 @@ public class LoginService {
             AuthToken savedTokens = authRepository.save(newTokens);
 
             return responseBuilder
-                    .message(AuthApiResponseMessage.USER_SUCCESS_AUTHORIZED)
+                    .message(ApiAuthResponseMessage.USER_SUCCESS_AUTHORIZED)
                     .status(HttpStatus.OK)
                     .data(savedTokens)
                     .build();
@@ -72,7 +71,7 @@ public class LoginService {
         } catch (Exception e) {
             log.error("Login failed: {}", e.getMessage());
             return responseBuilder
-                    .message(AuthApiResponseMessage.authenticationFailed(e.getMessage()))
+                    .message(ApiAuthResponseMessage.authenticationFailed(e.getMessage()))
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .data(null)
                     .build();

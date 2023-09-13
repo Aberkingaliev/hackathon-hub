@@ -1,7 +1,7 @@
 package com.hackathonhub.serviceauth.services;
 
 import com.hackathonhub.common.grpc.Entities;
-import com.hackathonhub.serviceauth.constants.AuthApiResponseMessage;
+import com.hackathonhub.serviceauth.constants.ApiAuthResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceauth.mappers.grpc.UserCreateMapper;
 import com.hackathonhub.serviceauth.mappers.grpc.common.UserEntityMapper;
@@ -13,8 +13,6 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,7 +30,7 @@ public class RegistrationService {
             if (isUserExist) {
                 return responseBuilder
                         .status(HttpStatus.BAD_REQUEST)
-                        .message(AuthApiResponseMessage.USER_ALREADY_REGISTERED)
+                        .message(ApiAuthResponseMessage.USER_ALREADY_REGISTERED)
                         .build();
             }
 
@@ -41,14 +39,14 @@ public class RegistrationService {
 
             return responseBuilder
                     .status(HttpStatus.CREATED)
-                    .message(AuthApiResponseMessage.USER_SUCCESS_REGISTERED)
+                    .message(ApiAuthResponseMessage.USER_SUCCESS_REGISTERED)
                     .data(mappedUser)
                     .build();
         } catch (Exception e) {
             log.error("Registration failed: {}", e.getMessage());
             return responseBuilder
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(AuthApiResponseMessage.registrationFailed(e.getMessage()))
+                    .message(ApiAuthResponseMessage.registrationFailed(e.getMessage()))
                     .data(null)
                     .build();
         }

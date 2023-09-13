@@ -1,6 +1,6 @@
 package com.hackathonhub.serviceauth.controllers;
 
-import com.hackathonhub.serviceauth.constants.AuthApiResponseMessage;
+import com.hackathonhub.serviceauth.constants.ApiAuthResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
 import com.hackathonhub.serviceauth.models.AuthToken;
@@ -115,7 +115,7 @@ public class AuthController {
                 .body(ApiAuthResponse
                         .builder()
                         .status(HttpStatus.OK)
-                        .message(AuthApiResponseMessage.USER_SUCCESS_LOGGED_OUT)
+                        .message(ApiAuthResponseMessage.USER_SUCCESS_LOGGED_OUT)
                         .build());
     }
 

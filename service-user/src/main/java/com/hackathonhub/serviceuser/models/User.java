@@ -1,6 +1,7 @@
 package com.hackathonhub.serviceuser.models;
 
 import javax.persistence.*;
+
 import lombok.Getter;
 
 import java.io.Serializable;
