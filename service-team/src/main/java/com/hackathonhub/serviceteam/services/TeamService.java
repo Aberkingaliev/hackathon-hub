@@ -1,4 +1,4 @@
-package com.hackathonhub.serviceteam;
+package com.hackathonhub.serviceteam.services;
 
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
 import com.hackathonhub.serviceteam.models.Team;
