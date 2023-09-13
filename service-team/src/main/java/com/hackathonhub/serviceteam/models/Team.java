@@ -56,11 +56,4 @@ public class Team implements Serializable {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "created_at")
     private Timestamp createdAt;
-
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY, defaultValue = "[]")
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_to_team",
-            joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> members = new HashSet<>();
 }
