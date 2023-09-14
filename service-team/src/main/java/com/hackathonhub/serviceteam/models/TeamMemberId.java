@@ -14,6 +14,16 @@ import java.util.UUID;
 @Getter
 public class TeamMemberId implements Serializable {
 
+    public TeamMemberId userId(UUID userId) {
+        this.userId = userId;
+        return this;
+    }
+
+    public TeamMemberId teamId(UUID teamId) {
+        this.teamId = teamId;
+        return this;
+    }
+
     @Column(name = "user_id")
     private UUID userId;
 
