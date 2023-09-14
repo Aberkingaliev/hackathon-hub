@@ -7,9 +7,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -57,10 +55,10 @@ public class Team implements Serializable {
     @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY, defaultValue = "[]")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_to_team",
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> members = new HashSet<>();
+    private Set<User> members;
 }

@@ -1,8 +1,9 @@
-package com.hackathonhub.serviceteam;
+package com.hackathonhub.serviceteam.controllers;
 
 
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
 import com.hackathonhub.serviceteam.models.Team;
+import com.hackathonhub.serviceteam.services.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

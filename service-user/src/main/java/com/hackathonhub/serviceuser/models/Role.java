@@ -3,9 +3,9 @@ package com.hackathonhub.serviceuser.models;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -13,6 +13,7 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "roles")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Role implements Serializable {
 
     @Id
