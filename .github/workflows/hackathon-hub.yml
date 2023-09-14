@@ -13,6 +13,14 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
+      - name: Build service registry
+        run: ./gradlew :service-registry:build
+
+      - name: Build service config
+        run: ./gradlew :service-cloud-config:build
+        env:
+          GITHUB_TOKEN: ${{ secrets.CONFIG_TOKEN }}
+
       - name: Docker containers up
         uses: isbang/compose-action@v1.5.1
         with:

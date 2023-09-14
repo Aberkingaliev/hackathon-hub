@@ -6,6 +6,8 @@ services:
       - "8888:8888"
     volumes:
         - configs:/tmp/config-repo
+    environment:
+      - GITHUB_TOKEN=${CONFIG_TOKEN}
     healthcheck:
         test: timeout 10s bash -c ':> /dev/tcp/service-cloud-config/8888' || exit 1
         interval: 10s
