@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -43,67 +42,103 @@ public class TeamMemberServiceTest {
     @Autowired
     private TeamMemberService teamMemberService;
 
+    private UUID teamId;
+    private UUID userId;
+
     @BeforeEach
     void setup() {
+        teamId = UUID.randomUUID();
+        userId = UUID.randomUUID();
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
     public void addMember_TestValid() {
-        UUID teamId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
                 .thenReturn(Optional.empty());
         when(teamMemberRepository.save(any(TeamMember.class)))
                 .thenReturn(new TeamMember());
 
-        ApiAuthResponse<String> result = teamMemberService.addMember(teamId, userId);
+        ApiAuthResponse<String> result = teamMemberService.addMember(this.teamId, this.userId);
 
         verify(teamMemberRepository).findById(any(TeamMemberId.class));
         verify(teamMemberRepository).save(any(TeamMember.class));
 
         Assertions.assertEquals(HttpStatus.OK, result.getStatus());
-        Assertions.assertEquals(ApiTeamMemberResponseMessage.USER_ADDED_TO_TEAM, result.getMessage());
+        Assertions.assertEquals(
+                ApiTeamMemberResponseMessage.USER_ADDED_TO_TEAM, result.getMessage()
+        );
     }
 
     @Test
     public void addMember_TestAlreadyInTeam() {
-        UUID teamId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
                 .thenReturn(Optional.of(new TeamMember()));
 
-        ApiAuthResponse<String> result = teamMemberService.addMember(teamId, userId);
+        ApiAuthResponse<String> result = teamMemberService.addMember(this.teamId, this.userId);
 
         verify(teamMemberRepository).findById(any(TeamMemberId.class));
         verify(teamMemberRepository, times(0)).save(any(TeamMember.class));
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatus());
-        Assertions.assertEquals(ApiTeamMemberResponseMessage.USER_ALREADY_IN_TEAM, result.getMessage());
+        Assertions.assertEquals(
+                ApiTeamMemberResponseMessage.USER_ALREADY_IN_TEAM, result.getMessage()
+        );
     }
 
 
     @Test
     public void getMembers_TestValid () {
-        UUID team_id = UUID.randomUUID();
         UUID cursor = UUID.randomUUID();
         int limit = 10;
 
         Pageable pageRequest = PageRequest.of(0, limit);
         List<User> allMembers = List.of(new User());
 
-        when(teamMemberRepository.findMembersByTeamId(team_id, cursor, pageRequest)).thenReturn(allMembers);
+        when(teamMemberRepository.findMembersByTeamId(this.teamId, cursor, pageRequest))
+                .thenReturn(allMembers);
 
-        ApiAuthResponse<HashSet<User>> result = teamMemberService.getMembers(team_id, cursor, limit);
+        ApiAuthResponse<HashSet<User>> result = teamMemberService
+                .getMembers(this.teamId, cursor, limit);
 
-        verify(teamMemberRepository).findMembersByTeamId(team_id, cursor, pageRequest);
+        verify(teamMemberRepository).findMembersByTeamId(this.teamId, cursor, pageRequest);
 
         Assertions.assertEquals(HttpStatus.OK, result.getStatus());
-        Assertions.assertEquals(ApiTeamMemberResponseMessage.MEMBERS_RECEIVED, result.getMessage());
+        Assertions.assertEquals(
+                ApiTeamMemberResponseMessage.MEMBERS_RECEIVED, result.getMessage()
+        );
         Assertions.assertEquals(new HashSet<>(allMembers), result.getData());
 
+    }
+
+    @Test
+    public void deleteMember_TestValid() {
+        when(teamMemberRepository.findById(any(TeamMemberId.class)))
+                .thenReturn(Optional.of(new TeamMember()));
+
+        ApiAuthResponse<String> result = teamMemberService.deleteMember(this.teamId, this.userId);
+
+        verify(teamMemberRepository).findById(any(TeamMemberId.class));
+        verify(teamMemberRepository).deleteById(any(TeamMemberId.class));
+
+        Assertions.assertEquals(HttpStatus.OK, result.getStatus());
+    }
+
+    @Test
+    public void deleteMember_TestNotFound() {
+        when(teamMemberRepository.findById(any(TeamMemberId.class)))
+                .thenReturn(Optional.empty());
+
+        ApiAuthResponse<String> result = teamMemberService.deleteMember(this.teamId, this.userId);
+
+        verify(teamMemberRepository).findById(any(TeamMemberId.class));
+        verify(teamMemberRepository, times(0))
+                .deleteById(any(TeamMemberId.class));
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatus());
+        Assertions.assertEquals(
+                ApiTeamMemberResponseMessage.USER_NOT_FOUND_IN_TEAM, result.getMessage()
+        );
     }
 
 }

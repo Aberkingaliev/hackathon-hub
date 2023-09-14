@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -30,8 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,8 +48,13 @@ public class TeamMemberControllerTest {
     private MockMvc mockMvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private UUID teamId;
+    private UUID userId;
+
     @BeforeEach
     public void setup() {
+        teamId = UUID.randomUUID();
+        userId = UUID.randomUUID();
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(teamMemberController).build();
     }
@@ -59,8 +62,6 @@ public class TeamMemberControllerTest {
 
     @Test
     public void addMember_TestValid() throws Exception {
-        UUID teamId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.OK)
                 .message(ApiTeamMemberResponseMessage.USER_ADDED_TO_TEAM)
@@ -69,23 +70,21 @@ public class TeamMemberControllerTest {
         String responseJson = objectMapper.writeValueAsString(response);
 
 
-        when(teamMemberService.addMember(teamId, userId))
+        when(teamMemberService.addMember(this.teamId, this.userId))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/api/team/{id}/member", teamId)
+        mockMvc.perform(post("/api/team/{id}/member", this.teamId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"userId\": \"" + userId + "\" }"))
+                .content("{ \"userId\": \"" + this.userId + "\" }"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(responseJson));
 
-        verify(teamMemberService).addMember(teamId, userId);
+        verify(teamMemberService).addMember(this.teamId, this.userId);
     }
 
     @Test
     public void addMember_TestAlreadyInTeam() throws Exception {
-        UUID teamId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(ApiTeamMemberResponseMessage.USER_ALREADY_IN_TEAM)
@@ -94,22 +93,21 @@ public class TeamMemberControllerTest {
         String responseJson = objectMapper.writeValueAsString(response);
 
 
-        when(teamMemberService.addMember(teamId, userId))
+        when(teamMemberService.addMember(this.teamId, this.userId))
                 .thenReturn(response);
 
-        mockMvc.perform(post("/api/team/{id}/member", teamId)
+        mockMvc.perform(post("/api/team/{id}/member", this.teamId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"userId\": \"" + userId + "\" }"))
+                        .content("{ \"userId\": \"" + this.userId + "\" }"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(responseJson));
 
-        verify(teamMemberService).addMember(teamId, userId);
+        verify(teamMemberService).addMember(this.teamId, this.userId);
     }
 
     @Test
     public void getMembers_TestValid() throws Exception {
-        UUID teamId = UUID.randomUUID();
         UUID cursor = UUID.randomUUID();
         ApiAuthResponse<HashSet<User>> response = ApiAuthResponse.<HashSet<User>>builder()
                 .status(HttpStatus.OK)
@@ -119,17 +117,61 @@ public class TeamMemberControllerTest {
 
         String responseJson = objectMapper.writeValueAsString(response);
 
-        when(teamMemberService.getMembers(eq(teamId), any(UUID.class), any(Integer.class)))
+        when(teamMemberService.getMembers(eq(this.teamId), any(UUID.class), any(Integer.class)))
                 .thenReturn(response);
 
-        mockMvc.perform(get("/api/team/{id}/member", teamId)
+        mockMvc.perform(get("/api/team/{id}/member", this.teamId)
                         .param("cursor", cursor.toString())
                         .param("limit", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(responseJson));
 
-        verify(teamMemberService).getMembers(eq(teamId), any(UUID.class), any(Integer.class));
+        verify(teamMemberService).getMembers(eq(this.teamId), any(UUID.class), any(Integer.class));
+    }
+
+    @Test
+    public void deleteMember_TestValid() throws Exception {
+        ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
+                .status(HttpStatus.OK)
+                .message(ApiTeamMemberResponseMessage.USER_DELETED_FROM_TEAM)
+                .build();
+
+        String responseJson = objectMapper.writeValueAsString(response);
+
+        when(teamMemberService.deleteMember(this.teamId, this.userId))
+                .thenReturn(response);
+
+        mockMvc.perform(delete("/api/team/{id}/member", this.teamId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{ \"userId\": \"" + this.userId + "\" }"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(responseJson));
+
+        verify(teamMemberService).deleteMember(this.teamId, this.userId);
+    }
+
+    @Test
+    public void deleteMember_TestNotFound() throws Exception {
+        ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .message(ApiTeamMemberResponseMessage.USER_NOT_FOUND_IN_TEAM)
+                .build();
+
+        String responseJson = objectMapper.writeValueAsString(response);
+
+        when(teamMemberService.deleteMember(this.teamId, this.userId))
+                .thenReturn(response);
+
+        mockMvc.perform(delete("/api/team/{id}/member", this.teamId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{ \"userId\": \"" + this.userId + "\" }"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(responseJson));
+
+        verify(teamMemberService).deleteMember(this.teamId, this.userId);
     }
 
 }

@@ -2,8 +2,6 @@ package com.hackathonhub.serviceteam.controllers;
 
 
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
-import com.hackathonhub.serviceteam.models.TeamMember;
-import com.hackathonhub.serviceteam.models.TeamMemberId;
 import com.hackathonhub.serviceteam.models.User;
 import com.hackathonhub.serviceteam.services.TeamMemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +41,20 @@ public class TeamMemberController {
             @RequestParam(value = "cursor", required = false) UUID cursor
     ) {
         ApiAuthResponse<HashSet<User>> response = teamMemberService.getMembers(teamId, cursor, limit);
+
+        return ResponseEntity
+                .status(response.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @DeleteMapping("/team/{id}/member")
+    public ResponseEntity<ApiAuthResponse<String>> deleteMember(
+            @RequestBody HashMap<String, UUID> userIdObject,
+            @PathVariable("id") UUID teamId
+    ) {
+        ApiAuthResponse<String> response = teamMemberService
+                .deleteMember(teamId, userIdObject.get("userId"));
 
         return ResponseEntity
                 .status(response.getStatus())

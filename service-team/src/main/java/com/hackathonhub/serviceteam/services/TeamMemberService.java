@@ -82,4 +82,36 @@ public class TeamMemberService {
                     .build();
         }
     }
+
+    public ApiAuthResponse<String> deleteMember(UUID teamId, UUID userId) {
+        ApiAuthResponse.ApiAuthResponseBuilder<String> responseBuilder = ApiAuthResponse.builder();
+        TeamMemberId teamMemberId = new TeamMemberId()
+                .teamId(teamId)
+                .userId(userId);
+
+        try {
+            Optional<TeamMember> foundedTeamMember = teamMemberRepository.findById(teamMemberId);
+
+            if (foundedTeamMember.isEmpty()) {
+                return responseBuilder
+                        .status(HttpStatus.BAD_REQUEST)
+                        .message(ApiTeamMemberResponseMessage.USER_NOT_FOUND_IN_TEAM)
+                        .build();
+            }
+
+            teamMemberRepository.deleteById(teamMemberId);
+
+            return responseBuilder
+                    .status(HttpStatus.OK)
+                    .message(ApiTeamMemberResponseMessage.USER_DELETED_FROM_TEAM)
+                    .build();
+        } catch (Exception e) {
+            log.error("Error deleting team member: {}", e.getMessage());
+
+            return responseBuilder
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .message(e.getMessage())
+                    .build();
+        }
+    }
 }
