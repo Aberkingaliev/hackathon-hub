@@ -18,9 +18,4 @@ public class TeamMember implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("user_id")
     private User user;
-
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("team_id")
-    private Team team;
 }

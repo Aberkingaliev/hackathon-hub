@@ -1,4 +1,4 @@
-package com.hackathonhub.serviceteam;
+package com.hackathonhub.serviceteam.controllers;
 
 
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
