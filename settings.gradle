@@ -5,5 +5,6 @@ includeBuild("service-user")
 includeBuild("service-team")
 includeBuild("service-gateway")
 includeBuild("service-cloud-config")
+includeBuild("service-contest")
 includeBuild('common-proto')
 
