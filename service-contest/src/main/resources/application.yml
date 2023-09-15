@@ -1,5 +1,5 @@
 spring:
   application:
-    name: service-team
+    name: service-contest
   config:
     import: optional:configserver:http://service-cloud-config:8888
