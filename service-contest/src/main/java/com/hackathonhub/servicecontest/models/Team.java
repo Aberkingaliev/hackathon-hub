@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,12 +14,12 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Getter
 @ToString
 @Table(name = "teams", uniqueConstraints = {
         @UniqueConstraint(columnNames = "name")
 })
 @Data
+@Accessors(chain = true)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Team implements Serializable {
 
@@ -40,26 +41,13 @@ public class Team implements Serializable {
     @Column(name = "name")
     private String name;
 
-    public Team setName(String name) {
-        this.name = name;
-        return this;
-    }
 
     @Column(name = "description")
     private String description;
 
-    public Team setDescription(String description) {
-        this.description = description;
-        return this;
-    }
 
     @Column(name = "founder_id")
     private UUID founderId;
-
-    public Team setFounderId(UUID founderId) {
-        this.founderId = founderId;
-        return this;
-    }
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "created_at")

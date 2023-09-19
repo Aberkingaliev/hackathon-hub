@@ -2,7 +2,10 @@ package com.hackathonhub.servicecontest.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,7 +15,10 @@ import java.util.UUID;
 
 
 @Entity
-@Getter
+@Data
+@Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email"),
         @UniqueConstraint(columnNames = "username")
@@ -51,41 +57,6 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User setId(UUID id) {
-        this.id = id;
-        return this;
-    }
-
-    public User setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public User setFullName(String fullName) {
-        this.fullName = fullName;
-        return this;
-    }
-
-    public User setEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public User setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public User setActivated(Boolean activated) {
-        isActivated = activated;
-        return this;
-    }
-
-    public User setRole(HashSet<Role> roles) {
-        this.roles = roles;
-        return this;
-    }
-
     public User from(User user) {
         return new User()
                 .setId(user.getId())
@@ -93,7 +64,7 @@ public class User implements Serializable {
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
-                .setActivated(user.getIsActivated())
-                .setRole(new HashSet<>(user.getRoles()));
+                .setIsActivated(user.getIsActivated())
+                .setRoles(new HashSet<>(user.getRoles()));
     }
 }

@@ -1,12 +1,18 @@
 package com.hackathonhub.servicecontest.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 @Data
+@Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "roles")
 public class Role {
 
@@ -24,16 +30,6 @@ public class Role {
 
     public RoleEnum getRole_name() {
         return role_name;
-    }
-
-    public Role setId(UUID id) {
-        this.id = id;
-        return this;
-    }
-
-    public Role setRole_name(RoleEnum role_name) {
-        this.role_name = role_name;
-        return this;
     }
 
     @Column(name = "role")

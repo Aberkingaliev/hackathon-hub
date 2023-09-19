@@ -1,21 +1,24 @@
 package com.hackathonhub.servicecontest.models.solution;
 
 
+import com.hackathonhub.servicecontest.dtos.solution.SolutionCreateDto;
 import com.hackathonhub.servicecontest.models.Team;
 import com.hackathonhub.servicecontest.models.contest.Contest;
 import lombok.Data;
-
+import lombok.experimental.Accessors;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "solutions")
+@Accessors(chain = true)
 @Data
-public class Solution {
+public class Solution implements Serializable {
 
     @Id
     private UUID id;
@@ -55,5 +58,14 @@ public class Solution {
 
     @Column(name = "created_at")
     private Date createdAt;
+
+    public Solution fromCreateDto(SolutionCreateDto solutionCreateDto) {
+        return new Solution()
+                .setTeam(new Team().setId(solutionCreateDto.getTeamId()))
+                .setContest(new Contest().setId(solutionCreateDto.getContestId()))
+                .setName(solutionCreateDto.getName())
+                .setDescription(solutionCreateDto.getDescription())
+                .setUrl(solutionCreateDto.getUrl());
+    }
 
 }

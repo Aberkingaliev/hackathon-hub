@@ -1,7 +1,11 @@
 package com.hackathonhub.servicecontest.models.solution;
 
+import com.hackathonhub.servicecontest.dtos.solution.SolutionCommentCreateDto;
 import com.hackathonhub.servicecontest.models.User;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -10,7 +14,10 @@ import java.util.UUID;
 @Entity
 @Table(name = "comment_to_solution")
 @Data
-public class CommentToSolution {
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
+public class SolutionComment {
 
     @Id
     private UUID id;
@@ -34,5 +41,12 @@ public class CommentToSolution {
 
     @Column(name = "created_at")
     private Date createdAt;
+
+    public SolutionComment fromCreateDto(SolutionCommentCreateDto solutionCommentCreateDto) {
+        return new SolutionComment()
+                .setSolution(new Solution().setId(solutionCommentCreateDto.getSolutionId()))
+                .setAuthor(new User().setId(solutionCommentCreateDto.getAuthorId()))
+                .setComment(solutionCommentCreateDto.getComment());
+    }
 
 }
