@@ -41,7 +41,7 @@ public class ContestController {
                 .body(contest);
     }
 
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<ApiAuthResponse<Contest>> updateContest(
             @RequestBody Contest contest
     ) {

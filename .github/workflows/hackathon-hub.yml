@@ -39,3 +39,6 @@ jobs:
 
       - name: Build service team
         run: ./gradlew :service-team:build
+
+      - name: Build service contest
+        run: ./gradlew :service-contest:build

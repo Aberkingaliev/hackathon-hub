@@ -1,5 +1,6 @@
 package com.hackathonhub.servicecontest.services;
 
+import com.hackathonhub.servicecontest.constants.ApiContestResponseMessage;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.contest.ContestCreateDto;
 import com.hackathonhub.servicecontest.dtos.contest.ContestDetailDto;
@@ -36,13 +37,13 @@ public class ContestService {
             return ApiAuthResponse.<Contest>builder()
                     .status(HttpStatus.CREATED)
                     .data(savedContest)
-                    .message("CONTEST_CREATED")
+                    .message(ApiContestResponseMessage.CONTEST_CREATED)
                     .build();
         } catch (Exception e) {
             log.error("Error while creating contest: {}", e.getMessage());
             return ApiAuthResponse.<Contest>builder()
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("ERROR_WHILE_CREATING_CONTEST")
+                    .message(e.getMessage())
                     .build();
         }
     }
@@ -63,14 +64,14 @@ public class ContestService {
             return responseBuilder
                     .status(HttpStatus.OK)
                     .data(foundedContest.orElse(null))
-                    .message("CONTEST_FOUND")
+                    .message(ApiContestResponseMessage.CONTEST_FOUND)
                     .build();
         } catch (Exception e) {
             log.error("Error while getting contest: {}", e.getMessage());
 
             return responseBuilder
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("ERROR_WHILE_GETTING_CONTEST")
+                    .message(e.getMessage())
                     .build();
         }
     }
@@ -85,36 +86,35 @@ public class ContestService {
             return responseBuilder
                     .status(HttpStatus.OK)
                     .data(updatedContest)
-                    .message("CONTEST_UPDATED")
+                    .message(ApiContestResponseMessage.CONTEST_UPDATED)
                     .build();
         } catch (Exception e) {
             log.error("Error while updating contest: {}", e.getMessage());
 
             return responseBuilder
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("ERROR_WHILE_UPDATING_CONTEST")
+                    .message(e.getMessage())
                     .build();
         }
     }
 
     public ApiAuthResponse<String> deleteContest(UUID id) {
         ApiAuthResponse.ApiAuthResponseBuilder<String> responseBuilder =
-                ApiAuthResponse.<String>builder();
+                ApiAuthResponse.builder();
 
         try {
             contestRepository.deleteContestById(id);
 
             return responseBuilder
                     .status(HttpStatus.OK)
-                    .data("CONTEST_DELETED")
-                    .message("CONTEST_DELETED")
+                    .message(ApiContestResponseMessage.CONTEST_DELETED)
                     .build();
         } catch (Exception e) {
             log.error("Error while deleting contest: {}", e.getMessage());
 
             return responseBuilder
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("ERROR_WHILE_DELETING_CONTEST")
+                    .message(e.getMessage())
                     .build();
         }
     }

@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: service-contest
+  config:
+    import: optional:configserver:http://localhost:8888

@@ -16,6 +16,11 @@ flyway {
 	sqlMigrationPrefix = 'CN'
 }
 
+test {
+	useJUnitPlatform()
+	systemProperties 'spring.profiles.active': 'test'
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
