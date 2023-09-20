@@ -17,7 +17,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @NamedEntityGraph(
-        name = "Contest.ContestDto",
+        name = "Contest.ContestDetailed",
         attributeNodes = {
                 @NamedAttributeNode("owner"),
                 @NamedAttributeNode("categories"),
