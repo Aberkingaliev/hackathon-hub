@@ -1,0 +1,44 @@
+name: HackathonHub CI
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Build service registry
+        run: ./gradlew :service-registry:build
+
+      - name: Build service config
+        run: ./gradlew :service-cloud-config:build
+        env:
+          GITHUB_TOKEN: ${{ secrets.CONFIG_TOKEN }}
+
+      - name: Docker containers up
+        uses: isbang/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose.ci.yml"
+        env:
+          CONFIG_TOKEN: ${{ secrets.CONFIG_TOKEN }}
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build service user
+        run: ./gradlew :service-user:build
+
+      - name: Build service auth
+        run: ./gradlew :service-auth:build
+
+      - name: Build service team
+        run: ./gradlew :service-team:build
+
+      - name: Build service contest
+        run: ./gradlew :service-contest:build

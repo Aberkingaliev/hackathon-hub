@@ -49,7 +49,7 @@ public class RoleControllerTest {
 
 
     @Test
-    public void getById_TestValid() throws Exception {
+    void getById_TestValid() throws Exception {
          ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_getById_Success();
          UUID id = roleResponse.getData().getId();
 
@@ -65,7 +65,7 @@ public class RoleControllerTest {
     }
 
     @Test
-    public void getById_TestNotFound() throws Exception {
+    void getById_TestNotFound() throws Exception {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_NotFound();
         UUID id = UUID.randomUUID();
 
@@ -81,7 +81,7 @@ public class RoleControllerTest {
     }
 
     @Test
-    public void update_TestValid() throws Exception {
+    void update_TestValid() throws Exception {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_update_Success();
 
         String roleJson = objectMapper.writeValueAsString(roleResponse.getData());
@@ -98,7 +98,7 @@ public class RoleControllerTest {
     }
 
     @Test
-    public void update_TestNotFound() throws Exception {
+    void update_TestNotFound() throws Exception {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_NotFound();
         Role missignRole = new Role();
 
@@ -116,7 +116,7 @@ public class RoleControllerTest {
     }
 
     @Test
-    public void delete_TestValid() throws Exception {
+    void delete_TestValid() throws Exception {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_delete_Success();
         Role role = RoleData.getRole();
 
@@ -134,7 +134,7 @@ public class RoleControllerTest {
     }
 
     @Test
-    public void delete_TestNotFound() throws Exception {
+    void delete_TestNotFound() throws Exception {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_NotFound();
         Role missingRole = new Role();
 

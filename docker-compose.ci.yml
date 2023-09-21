@@ -1,0 +1,48 @@
+version: '3'
+services:
+  service-cloud-config:
+    build: ./service-cloud-config
+    ports:
+      - "8888:8888"
+    volumes:
+        - configs:/tmp/config-repo
+    environment:
+      - GITHUB_TOKEN=${CONFIG_TOKEN}
+    healthcheck:
+        test: timeout 10s bash -c ':> /dev/tcp/service-cloud-config/8888' || exit 1
+        interval: 10s
+        retries: 5
+  service-registry:
+    build: ./service-registry
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: timeout 10s bash -c ':> /dev/tcp/service-registry/8761' || exit 1
+      interval: 10s
+      retries: 5
+  hackathon-hub-db:
+    image: postgres:12
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - hackathonhub_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: hackathon-hub
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+  tokens-redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache:/data
+
+volumes:
+  configs:
+    driver: local
+  hackathonhub_db:
+    driver: local
+  cache:
+    driver: local

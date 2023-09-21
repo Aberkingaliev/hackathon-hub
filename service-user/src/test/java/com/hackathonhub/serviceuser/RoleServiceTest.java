@@ -42,37 +42,36 @@ public class RoleServiceTest {
     }
 
     @Test
-    public void getById_TestValid() {
+    void getById_TestValid() {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_getById_Success();
         Role role = roleResponse.getData();
 
-        when(roleRepository.getById(role.getId())).thenReturn(role);
+        when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
 
         ApiAuthResponse<Role> foundedRole = roleService.getById(role.getId());
 
-        verify(roleRepository, times(1)).getById(role.getId());
+        verify(roleRepository, times(1)).findById(role.getId());
 
         Assertions.assertEquals(foundedRole, roleResponse);
     }
 
     @Test
-    public void getById_TestNotFound() {
+    void getById_TestNotFound() {
         UUID id = UUID.randomUUID();
-        Role role = new Role();
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_NotFound();
 
-        when(roleRepository.getById(id)).thenReturn(role);
+        when(roleRepository.findById(id)).thenReturn(Optional.empty());
 
         ApiAuthResponse<Role> foundedRole = roleService.getById(id);
 
-        verify(roleRepository, times(1)).getById(id);
+        verify(roleRepository, times(1)).findById(id);
 
-        Assertions.assertEquals(foundedRole, roleResponse);
+        Assertions.assertEquals(roleResponse, foundedRole);
     }
 
 
     @Test
-    public void update_TestValid() {
+    void update_TestValid() {
         UUID id = UUID.randomUUID();
         Role role = new Role().setId(id).setRole_name(RoleEnum.ROLE_ADMIN);
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_update_Success();
@@ -89,7 +88,7 @@ public class RoleServiceTest {
     }
 
     @Test
-    public void update_TestNotFound() {
+    void update_TestNotFound() {
         Role role = RoleData.getRole();
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_NotFound();
 
@@ -103,7 +102,7 @@ public class RoleServiceTest {
     }
 
     @Test
-    public void delete_TestValid() {
+    void delete_TestValid() {
         Role role = RoleData.getRole();
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_delete_Success();
 
@@ -118,7 +117,7 @@ public class RoleServiceTest {
     }
 
     @Test
-    public void delete_TestNotFound() {
+    void delete_TestNotFound() {
         Role role = RoleData.getRole();
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_NotFound();
 

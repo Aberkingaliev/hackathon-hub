@@ -1,5 +1,6 @@
 package com.hackathonhub.serviceteam.repositories;
 
+import com.hackathonhub.serviceteam.dto.MemberDto;
 import com.hackathonhub.serviceteam.models.TeamMember;
 import com.hackathonhub.serviceteam.models.TeamMemberId;
 import com.hackathonhub.serviceteam.models.User;
@@ -14,10 +15,15 @@ import java.util.UUID;
 
 public interface TeamMemberRepository extends JpaRepository<TeamMember, TeamMemberId> {
 
-    @Query(value = "SELECT t.user FROM TeamMember t WHERE t.id.teamId = :teamId " +
-            "AND (CAST(:cursor as text) IS NULL OR t.id.userId > :cursor) " +
-            "ORDER BY t.user.username ASC")
-    List<User> findMembersByTeamId(@Param("teamId") UUID teamId,
-                                 @Param("cursor") UUID cursor,
-                                 Pageable pageable);
+    @Query(value = """
+            SELECT new com.hackathonhub.serviceteam.dto.MemberDto
+            (tu.id, tu.username, tu.email)
+            FROM TeamMember t JOIN t.user tu
+            WHERE t.id.teamId = :teamId
+            AND (CAST(:cursor as text) IS NULL OR t.id.userId > :cursor)
+            ORDER BY t.user.username ASC
+            """)
+    List<MemberDto> findMembersByTeamId(@Param("teamId") UUID teamId,
+                                        @Param("cursor") UUID cursor,
+                                        Pageable pageable);
 }

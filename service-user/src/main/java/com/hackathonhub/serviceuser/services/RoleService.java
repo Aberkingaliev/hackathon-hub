@@ -47,22 +47,17 @@ public class RoleService {
                 ApiAuthResponse.<Role>builder();
 
         try {
-            Role foundedRole = roleRepository.getById(id);
+            Optional<Role> foundedRole = roleRepository.findById(id);
 
-            if(foundedRole.getId() == null) {
-
-                return responseBuilder
-                        .status(HttpStatus.NOT_FOUND)
-                        .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
-                        .build();
-            }
-
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .message(ApiRoleResponseMessage.ROLE_FOUND)
-                    .data(foundedRole)
-                    .build();
-
+            return foundedRole.map(role -> responseBuilder
+                            .status(HttpStatus.OK)
+                            .message(ApiRoleResponseMessage.ROLE_FOUND)
+                            .data(role)
+                            .build())
+                    .orElseGet(() -> responseBuilder
+                            .status(HttpStatus.NOT_FOUND)
+                            .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
+                            .build());
         } catch (Exception e) {
             return responseBuilder
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -77,21 +72,18 @@ public class RoleService {
         try {
             Optional<Role> foundedRole = roleRepository.findById(role.getId());
 
-            if(foundedRole.isEmpty()) {
+            return foundedRole.map(r -> {
+                r.setRole_name(role.getRole_name());
+                Role updatedRole = roleRepository.save(r);
                 return responseBuilder
-                        .status(HttpStatus.NOT_FOUND)
-                        .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
+                        .status(HttpStatus.OK)
+                        .message(ApiRoleResponseMessage.ROLE_UPDATED)
+                        .data(updatedRole)
                         .build();
-            }
-
-            Role updatedRole = foundedRole.get().setRole_name(role.getRole_name());
-            Role savedRole = roleRepository.save(updatedRole);
-
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .message(ApiRoleResponseMessage.ROLE_UPDATED)
-                    .data(savedRole)
-                    .build();
+            }).orElseGet(() -> responseBuilder
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
+                    .build());
         } catch (Exception e) {
             log.error("Error while updating role " + e.getMessage());
 
@@ -109,19 +101,16 @@ public class RoleService {
         try {
             Optional<Role> foundedRole = roleRepository.findById(role.getId());
 
-            if(foundedRole.isEmpty()) {
+            return foundedRole.map(r -> {
+                roleRepository.delete(r);
                 return responseBuilder
-                        .status(HttpStatus.NOT_FOUND)
-                        .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
+                        .status(HttpStatus.OK)
+                        .message(ApiRoleResponseMessage.ROLE_DELETED)
                         .build();
-            }
-
-            roleRepository.delete(foundedRole.get());
-
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .message(ApiRoleResponseMessage.ROLE_DELETED)
-                    .build();
+            }).orElseGet(() -> responseBuilder
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
+                    .build());
         } catch (Exception e) {
             log.error("Error while deleting role " + e.getMessage());
 

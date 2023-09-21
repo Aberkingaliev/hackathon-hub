@@ -2,6 +2,7 @@ package com.hackathonhub.serviceteam.services;
 
 import com.hackathonhub.serviceteam.constants.ApiTeamMemberResponseMessage;
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
+import com.hackathonhub.serviceteam.dto.MemberDto;
 import com.hackathonhub.serviceteam.models.TeamMember;
 import com.hackathonhub.serviceteam.models.TeamMemberId;
 import com.hackathonhub.serviceteam.models.User;
@@ -60,12 +61,12 @@ public class TeamMemberService {
         }
     }
 
-    public ApiAuthResponse<HashSet<User>> getMembers(UUID teamId, UUID cursor, int limit) {
-        ApiAuthResponse.ApiAuthResponseBuilder<HashSet<User>> responseBuilder =
+    public ApiAuthResponse<HashSet<MemberDto>> getMembers(UUID teamId, UUID cursor, int limit) {
+        ApiAuthResponse.ApiAuthResponseBuilder<HashSet<MemberDto>> responseBuilder =
                 ApiAuthResponse.builder();
         try {
             Pageable pageRequest = PageRequest.of(0, limit);
-            List<User> allMembers = teamMemberRepository
+            List<MemberDto> allMembers = teamMemberRepository
                     .findMembersByTeamId(teamId, cursor, pageRequest);
 
             return responseBuilder
