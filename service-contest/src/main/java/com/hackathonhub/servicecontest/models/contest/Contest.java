@@ -1,6 +1,7 @@
 package com.hackathonhub.servicecontest.models.contest;
 
 import com.hackathonhub.servicecontest.dtos.contest.ContestCreateDto;
+import com.hackathonhub.servicecontest.dtos.contest.ContestUpdateDto;
 import com.hackathonhub.servicecontest.models.User;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -73,4 +74,13 @@ public class Contest implements Serializable {
                 .setEndDate(contest.getEndDate()
         );
     }
+
+    public Contest fromUpdateDto(ContestUpdateDto contest) {
+        this.name = contest.getName();
+        this.description = contest.getDescription();
+        this.status = contest.getStatus();
+        this.endDate = contest.getEndDate();
+        return this;
+    }
+
 }

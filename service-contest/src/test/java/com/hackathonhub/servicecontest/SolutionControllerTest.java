@@ -6,6 +6,7 @@ import com.hackathonhub.servicecontest.constants.ApiSolutionResponseMessage;
 import com.hackathonhub.servicecontest.controllers.SolutionController;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.solution.SolutionCreateDto;
+import com.hackathonhub.servicecontest.dtos.solution.SolutionUpdateDto;
 import com.hackathonhub.servicecontest.models.solution.Solution;
 import com.hackathonhub.servicecontest.services.SolutionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-public class SolutionControllerTest {
+class SolutionControllerTest {
 
     @Mock
     private SolutionService solutionService;
@@ -53,7 +54,7 @@ public class SolutionControllerTest {
     }
 
     @Test
-    public void createSolution_TestValid() throws Exception {
+    void createSolution_TestValid() throws Exception {
         SolutionCreateDto solutionCreateDto = new SolutionCreateDto();
         Solution createdSolution = new Solution();
         ApiAuthResponse<Solution> solutionResponse = ApiAuthResponse.<Solution>builder()
@@ -74,7 +75,7 @@ public class SolutionControllerTest {
     }
 
     @Test
-    public void getSolutionById_TestValid() throws Exception {
+    void getSolutionById_TestValid() throws Exception {
         UUID id = UUID.randomUUID();
         Solution solution = new Solution().setId(id);
         ApiAuthResponse<Solution> solutionResponse = ApiAuthResponse.<Solution>builder()
@@ -93,7 +94,7 @@ public class SolutionControllerTest {
     }
 
     @Test
-    public void getSolutionById_TestNotFound() throws Exception {
+    void getSolutionById_TestNotFound() throws Exception {
         UUID id = UUID.randomUUID();
         ApiAuthResponse<Solution> solutionResponse = ApiAuthResponse.<Solution>builder()
                 .status(HttpStatus.NOT_FOUND)
@@ -110,9 +111,10 @@ public class SolutionControllerTest {
     }
 
     @Test
-    public void updateSolution_TestValid() throws Exception {
-        Solution solution = new Solution().setName("name");
+    void updateSolution_TestValid() throws Exception {
+        SolutionUpdateDto solution = new SolutionUpdateDto().setName("name");
         Solution updatedSolution = new Solution().setName("updatedName");
+
         ApiAuthResponse<Solution> solutionResponse = ApiAuthResponse.<Solution>builder()
                 .status(HttpStatus.OK)
                 .data(updatedSolution)
@@ -131,8 +133,8 @@ public class SolutionControllerTest {
     }
 
     @Test
-    public void updateSolution_TestNotFound() throws Exception {
-        Solution solution = new Solution().setId(UUID.randomUUID());
+    void updateSolution_TestNotFound() throws Exception {
+        SolutionUpdateDto solution = new SolutionUpdateDto().setId(UUID.randomUUID());
         ApiAuthResponse<Solution> solutionResponse = ApiAuthResponse.<Solution>builder()
                 .status(HttpStatus.NOT_FOUND)
                 .message(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND)
@@ -150,7 +152,7 @@ public class SolutionControllerTest {
     }
 
     @Test
-    public void deleteSolution_TestValid() throws Exception {
+    void deleteSolution_TestValid() throws Exception {
         UUID id = UUID.randomUUID();
         ApiAuthResponse<String> solutionResponse = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.OK)

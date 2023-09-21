@@ -4,6 +4,7 @@ package com.hackathonhub.servicecontest;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.contest.ContestCreateDto;
 import com.hackathonhub.servicecontest.dtos.contest.ContestDetailDto;
+import com.hackathonhub.servicecontest.dtos.contest.ContestUpdateDto;
 import com.hackathonhub.servicecontest.dtos.solution.SolutionMetaDto;
 import com.hackathonhub.servicecontest.models.User;
 import com.hackathonhub.servicecontest.models.contest.Contest;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-public class ContestServiceTest {
+class ContestServiceTest {
 
     @Mock
     private ContestRepository contestRepository;
@@ -50,7 +51,7 @@ public class ContestServiceTest {
     }
 
     @Test
-    public void createContest_TestValid() throws Exception {
+    void createContest_TestValid() throws Exception {
         ContestCreateDto contestCreateDto = new ContestCreateDto(
                 UUID.randomUUID(),
                 "name",
@@ -66,14 +67,14 @@ public class ContestServiceTest {
 
         ApiAuthResponse<Contest> result = contestService.createContest(contestCreateDto);
 
-        Assertions.assertEquals(result.getStatus().value(), 201);
-        Assertions.assertEquals(result.getData().getStatus(), ContestStatus.OPEN_TO_SOLUTIONS);
+        Assertions.assertEquals(201, result.getStatus().value());
+        Assertions.assertEquals(ContestStatus.OPEN_TO_SOLUTIONS, result.getData().getStatus());
 
         verify(contestRepository).save(any(Contest.class));
     }
 
     @Test
-    public void getContestDetailById_TestValid() {
+    void getContestDetailById_TestValid() {
         UUID contestId = UUID.randomUUID();
         Set<SolutionMetaDto> solutions = new HashSet<>();
         Set<ContestCategory> categories = new HashSet<>(
@@ -97,43 +98,50 @@ public class ContestServiceTest {
 
         ApiAuthResponse<ContestDetailDto> result = contestService.getContest(contestId);
 
-        Assertions.assertEquals(result.getStatus().value(), 200);
-        Assertions.assertEquals(result.getData().getSolutions().size(), 10);
-        Assertions.assertEquals(result.getData().getOwner(), user);
-        Assertions.assertEquals(result.getData().getCategories(), categories);
+        Assertions.assertEquals(200, result.getStatus().value());
+        Assertions.assertEquals(10, result.getData().getSolutions().size());
+        Assertions.assertEquals(user, result.getData().getOwner());
+        Assertions.assertEquals(categories, result.getData().getCategories());
 
         verify(contestRepository).getDetailById(contestId);
         verify(solutionRepository).getSolutionMetaListById(contestId,10,null);
     }
 
     @Test
-    public void updateContest_TestValid() {
-        Contest contest = new Contest()
-                .setId(UUID.randomUUID())
+    void updateContest_TestValid() {
+        UUID id = UUID.randomUUID();
+        ContestUpdateDto contest = new ContestUpdateDto()
+                .setId(id)
                 .setStatus(ContestStatus.OPEN_TO_SOLUTIONS);
 
-        Contest updatedContest = new Contest()
-                .setId(contest.getId())
-                .setStatus(ContestStatus.FINISHED);
+        Contest foundedContest = new Contest()
+                .setId(id)
+                .setStatus(ContestStatus.OPEN_TO_SOLUTIONS)
+                .setName("name");
 
-        when(contestRepository.findById(contest.getId())).thenReturn(Optional.of(contest));
-        when(contestRepository.update(contest)).thenReturn(updatedContest);
+        Contest updatedContest = new Contest()
+                .setId(id)
+                .setStatus(ContestStatus.FINISHED)
+                .setName("name");
+
+        when(contestRepository.findById(contest.getId())).thenReturn(Optional.of(foundedContest));
+        when(contestRepository.update(foundedContest)).thenReturn(updatedContest);
 
         ApiAuthResponse<Contest> result = contestService.updateContest(contest);
 
-        Assertions.assertEquals(result.getStatus().value(), 200);
-        Assertions.assertEquals(result.getData().getStatus(), ContestStatus.FINISHED);
+        Assertions.assertEquals(200, result.getStatus().value());
+        Assertions.assertEquals(ContestStatus.FINISHED, result.getData().getStatus());
 
         verify(contestRepository).findById(contest.getId());
-        verify(contestRepository).update(contest);
+        verify(contestRepository).update(foundedContest);
     }
 
     @Test
-    public void deleteContest_TestValid() {
+    void deleteContest_TestValid() {
         UUID contestId = UUID.randomUUID();
         ApiAuthResponse<String> result = contestService.deleteContest(contestId);
 
-        Assertions.assertEquals(result.getStatus().value(), 200);
+        Assertions.assertEquals(200, result.getStatus().value());
 
         verify(contestRepository).deleteById(contestId);
     }

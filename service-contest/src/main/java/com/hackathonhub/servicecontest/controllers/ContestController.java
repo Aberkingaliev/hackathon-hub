@@ -3,6 +3,7 @@ package com.hackathonhub.servicecontest.controllers;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.contest.ContestCreateDto;
 import com.hackathonhub.servicecontest.dtos.contest.ContestDetailDto;
+import com.hackathonhub.servicecontest.dtos.contest.ContestUpdateDto;
 import com.hackathonhub.servicecontest.dtos.solution.SolutionMetaDto;
 import com.hackathonhub.servicecontest.models.contest.Contest;
 import com.hackathonhub.servicecontest.services.ContestService;
@@ -37,7 +38,7 @@ public class ContestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiAuthResponse<ContestDetailDto>> getContestDetailById (
+    public ResponseEntity<ApiAuthResponse<ContestDetailDto>> getContestDetailById(
             @PathVariable("id") UUID id
     ) {
         ApiAuthResponse<ContestDetailDto> contest = contestService.getContest(id);
@@ -48,7 +49,7 @@ public class ContestController {
     }
 
     @GetMapping("/{id}/solutions")
-    public ResponseEntity<ApiAuthResponse<ArrayList<SolutionMetaDto>>> getContestSolutions (
+    public ResponseEntity<ApiAuthResponse<ArrayList<SolutionMetaDto>>> getContestSolutions(
             @PathVariable("id") UUID id,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
             @RequestParam(value = "cursor", required = false) UUID cursor
@@ -63,7 +64,7 @@ public class ContestController {
 
     @PutMapping
     public ResponseEntity<ApiAuthResponse<Contest>> updateContest(
-            @RequestBody Contest contest
+            @RequestBody ContestUpdateDto contest
     ) {
         ApiAuthResponse<Contest> updatedContest = contestService.updateContest(contest);
 

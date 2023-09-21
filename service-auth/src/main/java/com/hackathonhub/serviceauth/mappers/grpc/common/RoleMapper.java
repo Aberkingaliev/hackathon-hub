@@ -14,7 +14,7 @@ public class RoleMapper {
     public static Set<Entities.Role> toGrpcEntity(Set<Role> roles) {
         return roles.stream()
                 .map(role ->
-                        Entities.Role.valueOf(role.getRole_name().toString()
+                        Entities.Role.valueOf(role.getRoleName().toString()
                         )
                 )
                 .collect(Collectors.toSet());
@@ -24,7 +24,7 @@ public class RoleMapper {
         return roles.stream()
                 .map(role ->
                         new Role()
-                                .setRole_name(RoleEnum.valueOf(role.toString()))
+                                .setRoleName(RoleEnum.valueOf(role.toString()))
                 )
                 .collect(Collectors.toCollection(HashSet::new));
     }

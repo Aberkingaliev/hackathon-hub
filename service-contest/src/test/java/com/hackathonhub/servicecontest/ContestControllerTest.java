@@ -6,6 +6,7 @@ import com.hackathonhub.servicecontest.controllers.ContestController;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.contest.ContestCreateDto;
 import com.hackathonhub.servicecontest.dtos.contest.ContestDetailDto;
+import com.hackathonhub.servicecontest.dtos.contest.ContestUpdateDto;
 import com.hackathonhub.servicecontest.models.contest.Contest;
 import com.hackathonhub.servicecontest.services.ContestService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-public class ContestControllerTest {
+class ContestControllerTest {
 
     @Mock
     private ContestService contestService;
@@ -54,7 +55,7 @@ public class ContestControllerTest {
     }
 
     @Test
-    public void createContest_TestValid() throws Exception {
+    void createContest_TestValid() throws Exception {
         Contest contest = new Contest();
         ContestCreateDto contestCreateDto = new ContestCreateDto();
         ApiAuthResponse<Contest> contestResponse = ApiAuthResponse.
@@ -78,7 +79,7 @@ public class ContestControllerTest {
     }
 
     @Test
-    public void getContestDetailById_TestValid() throws Exception {
+    void getContestDetailById_TestValid() throws Exception {
         ContestDetailDto contest = new ContestDetailDto();
         ApiAuthResponse<ContestDetailDto> contestResponse = ApiAuthResponse.
                 <ContestDetailDto>builder()
@@ -101,8 +102,9 @@ public class ContestControllerTest {
 
 
     @Test
-    public void updateContest_TestValid() throws Exception {
+    void updateContest_TestValid() throws Exception {
         Contest contest = new Contest();
+        ContestUpdateDto contestUpdateDto = new ContestUpdateDto();
         ApiAuthResponse<Contest> contestResponse = ApiAuthResponse.
                 <Contest>builder()
                 .status(HttpStatus.OK)
@@ -110,21 +112,21 @@ public class ContestControllerTest {
                 .data(contest)
                 .build();
 
-        when(contestService.updateContest(any(Contest.class))).thenReturn(contestResponse);
+        when(contestService.updateContest(any(ContestUpdateDto.class))).thenReturn(contestResponse);
 
         mockMvc.perform(
                 put("/api/contest")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(contest))
+                        .content(objectMapper.writeValueAsString(contestUpdateDto))
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(contestResponse)));
 
-        verify(contestService).updateContest(any(Contest.class));
+        verify(contestService).updateContest(any(ContestUpdateDto.class));
     }
 
     @Test
-    public void deleteContest_TestValid() throws Exception {
+    void deleteContest_TestValid() throws Exception {
         ApiAuthResponse<String> contestResponse = ApiAuthResponse.
                 <String>builder()
                 .status(HttpStatus.OK)

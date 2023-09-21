@@ -5,6 +5,7 @@ import com.hackathonhub.servicecontest.constants.ApiSolutionResponseMessage;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.solution.SolutionCreateDto;
 import com.hackathonhub.servicecontest.dtos.solution.SolutionMetaDto;
+import com.hackathonhub.servicecontest.dtos.solution.SolutionUpdateDto;
 import com.hackathonhub.servicecontest.models.solution.Solution;
 import com.hackathonhub.servicecontest.repositories.SolutionRepository;
 import com.hackathonhub.servicecontest.services.SolutionService;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-public class SolutionServiceTest {
+class SolutionServiceTest {
 
     @Mock
     private SolutionRepository solutionRepository;
@@ -43,7 +44,7 @@ public class SolutionServiceTest {
     }
 
     @Test
-    public void createSolution_TestValid() {
+    void createSolution_TestValid() {
         SolutionCreateDto solutionCreateDto = new SolutionCreateDto();
         solutionCreateDto.setName("Test solution");
         Solution newSolution = Solution.fromCreateDto(solutionCreateDto);
@@ -56,15 +57,15 @@ public class SolutionServiceTest {
         ApiAuthResponse<Solution> result =
                 solutionService.createSolution(solutionCreateDto);
 
-        Assertions.assertEquals(result.getData().getName(), "Test solution");
-        Assertions.assertEquals(result.getStatus(), HttpStatus.CREATED);
-        Assertions.assertEquals(result.getMessage(), ApiSolutionResponseMessage.SOLUTION_CREATED);
+        Assertions.assertEquals("Test solution", result.getData().getName());
+        Assertions.assertEquals(HttpStatus.CREATED, result.getStatus());
+        Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_CREATED, result.getMessage());
 
         verify(solutionRepository).save(newSolution);
     }
 
     @Test
-    public void getSolutionById_TestValid() {
+    void getSolutionById_TestValid() {
         UUID solutionId = UUID.randomUUID();
         Solution foundedSolution = new Solution()
                 .setId(solutionId)
@@ -75,15 +76,15 @@ public class SolutionServiceTest {
         ApiAuthResponse<Solution> result =
                 solutionService.getSolutionById(solutionId);
 
-        Assertions.assertEquals(result.getData().getId(), solutionId);
-        Assertions.assertEquals(result.getStatus(), HttpStatus.OK);
-        Assertions.assertEquals(result.getMessage(), ApiSolutionResponseMessage.SOLUTION_FOUND);
+        Assertions.assertEquals(solutionId, result.getData().getId());
+        Assertions.assertEquals(HttpStatus.OK, result.getStatus());
+        Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_FOUND, result.getMessage());
 
         verify(solutionRepository).findById(solutionId);
     }
 
     @Test
-    public void getSolutionById_TestNotFound() {
+    void getSolutionById_TestNotFound() {
         UUID solutionId = UUID.randomUUID();
 
         when(solutionRepository.findById(solutionId)).thenReturn(Optional.empty());
@@ -91,14 +92,14 @@ public class SolutionServiceTest {
         ApiAuthResponse<Solution> result =
                 solutionService.getSolutionById(solutionId);
 
-        Assertions.assertEquals(result.getStatus(), HttpStatus.NOT_FOUND);
-        Assertions.assertEquals(result.getMessage(), ApiSolutionResponseMessage.SOLUTION_NOT_FOUND);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, result.getStatus());
+        Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND, result.getMessage());
 
         verify(solutionRepository).findById(solutionId);
     }
 
     @Test
-    public void getSolutionMetaListByContestId_TestValid() {
+    void getSolutionMetaListByContestId_TestValid() {
         UUID contestId = UUID.randomUUID();
         Set<SolutionMetaDto> foundedSolutionMeta = new HashSet<>();
 
@@ -113,40 +114,44 @@ public class SolutionServiceTest {
         ApiAuthResponse<ArrayList<SolutionMetaDto>> result =
                 solutionService.getSolutionMetaByContestId(contestId, 10, null);
 
-        Assertions.assertEquals(result.getData().size(), 10);
-        Assertions.assertEquals(result.getStatus(), HttpStatus.OK);
-        Assertions.assertEquals(result.getMessage(), ApiSolutionResponseMessage.SOLUTION_FOUND);
+        Assertions.assertEquals(10, result.getData().size());
+        Assertions.assertEquals(HttpStatus.OK, result.getStatus());
+        Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_FOUND, result.getMessage());
 
         verify(solutionRepository).getSolutionMetaListById(contestId, 10, null);
     }
 
     @Test
-    public void updateSolution_TestValid() {
-        Solution solution = new Solution()
+    void updateSolution_TestValid() {
+        SolutionUpdateDto solution = new SolutionUpdateDto()
                 .setId(UUID.randomUUID())
+                .setName("Test solution");
+
+        Solution foundedSolution = new Solution()
+                .setId(solution.getId())
                 .setName("Test solution");
 
         Solution updatedSolution = new Solution()
                 .setId(UUID.randomUUID())
                 .setName("Updated test solution");
 
-        when(solutionRepository.findById(solution.getId())).thenReturn(Optional.of(solution));
-        when(solutionRepository.update(solution)).thenReturn(updatedSolution);
+        when(solutionRepository.findById(solution.getId())).thenReturn(Optional.of(foundedSolution));
+        when(solutionRepository.update(foundedSolution.setName("Updated test solution"))).thenReturn(updatedSolution);
 
         ApiAuthResponse<Solution> result =
                 solutionService.updateSolution(solution);
 
-        Assertions.assertEquals(result.getData().getId(), updatedSolution.getId());
-        Assertions.assertEquals(result.getStatus(), HttpStatus.OK);
-        Assertions.assertEquals(result.getMessage(), ApiSolutionResponseMessage.SOLUTION_UPDATED);
+        Assertions.assertEquals(updatedSolution.getId(), result.getData().getId());
+        Assertions.assertEquals(HttpStatus.OK, result.getStatus());
+        Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_UPDATED, result.getMessage());
 
         verify(solutionRepository).findById(solution.getId());
-        verify(solutionRepository).update(solution);
+        verify(solutionRepository).update(foundedSolution.setName("Updated test solution"));
     }
 
     @Test
-    public void updateSolution_TestNotFound() {
-        Solution solution = new Solution()
+    void updateSolution_TestNotFound() {
+        SolutionUpdateDto solution = new SolutionUpdateDto()
                 .setId(UUID.randomUUID())
                 .setName("Test solution");
 
@@ -155,21 +160,21 @@ public class SolutionServiceTest {
         ApiAuthResponse<Solution> result =
                 solutionService.updateSolution(solution);
 
-        Assertions.assertEquals(result.getStatus(), HttpStatus.NOT_FOUND);
-        Assertions.assertEquals(result.getMessage(), ApiSolutionResponseMessage.SOLUTION_NOT_FOUND);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, result.getStatus());
+        Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND, result.getMessage());
 
         verify(solutionRepository).findById(solution.getId());
     }
 
     @Test
-    public void deleteSolution_TestValid() {
+    void deleteSolution_TestValid() {
         UUID solutionId = UUID.randomUUID();
 
         ApiAuthResponse<String> result =
                 solutionService.deleteSolution(solutionId);
 
-        Assertions.assertEquals(result.getStatus(), HttpStatus.OK);
-        Assertions.assertEquals(result.getMessage(), ApiSolutionResponseMessage.SOLUTION_DELETED);
+        Assertions.assertEquals(HttpStatus.OK, result.getStatus());
+        Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_DELETED, result.getMessage());
 
         verify(solutionRepository).deleteById(solutionId);
     }

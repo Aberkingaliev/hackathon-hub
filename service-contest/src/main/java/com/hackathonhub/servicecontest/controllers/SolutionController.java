@@ -3,6 +3,7 @@ package com.hackathonhub.servicecontest.controllers;
 
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.solution.SolutionCreateDto;
+import com.hackathonhub.servicecontest.dtos.solution.SolutionUpdateDto;
 import com.hackathonhub.servicecontest.models.solution.Solution;
 import com.hackathonhub.servicecontest.services.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class SolutionController {
 
     @PutMapping
     public ResponseEntity<ApiAuthResponse<Solution>> updateSolution(
-            @RequestBody Solution solution
+            @RequestBody SolutionUpdateDto solution
     ) {
         ApiAuthResponse<Solution> updatedSolution = solutionService.updateSolution(solution);
 

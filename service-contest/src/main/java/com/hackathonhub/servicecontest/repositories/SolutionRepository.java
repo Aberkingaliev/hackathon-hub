@@ -22,15 +22,14 @@ public class SolutionRepository {
 
         try (Session session = em.unwrap(Session.class)) {
             var query = session.createQuery(
-                    """
-                            SELECT new com.hackathonhub.servicecontest.dtos.solution.SolutionMetaDto
-                            (s.id, s.name, c.createdAt)
-                            FROM Solution s
-                            JOIN s.contest c
-                            WHERE c.id = :contest_id
-                            AND (CAST(:cursor as text) IS NULL OR s.id > :cursor)
-                            """, SolutionMetaDto.class
-            )
+                            """
+                                    SELECT new com.hackathonhub.servicecontest.dtos.solution.SolutionMetaDto
+                                    (s.id, s.name, c.createdAt)
+                                    FROM Solution s
+                                    JOIN s.contest c
+                                    WHERE c.id = :contest_id
+                                    AND (CAST(:cursor as text) IS NULL OR s.id > :cursor)
+                                    """, SolutionMetaDto.class)
                     .setParameter("contest_id", contestId)
                     .setParameter("cursor", cursor)
                     .setMaxResults(limit);
@@ -43,7 +42,7 @@ public class SolutionRepository {
 
     @Transactional
     public Solution save(Solution solution) {
-        try(Session session = em.unwrap(Session.class)) {
+        try (Session session = em.unwrap(Session.class)) {
             session.persist(solution);
         }
 
@@ -53,7 +52,7 @@ public class SolutionRepository {
     @Transactional
     public Optional<Solution> findById(UUID id) {
 
-        try(Session session = em.unwrap(Session.class)) {
+        try (Session session = em.unwrap(Session.class)) {
             Solution foundedSolution = session.find(Solution.class, id);
             return Optional.ofNullable(foundedSolution);
         }
@@ -62,7 +61,7 @@ public class SolutionRepository {
     @Transactional
     public Solution update(Solution solution) {
 
-        try(Session session = em.unwrap(Session.class)) {
+        try (Session session = em.unwrap(Session.class)) {
             session.update(solution);
         }
 

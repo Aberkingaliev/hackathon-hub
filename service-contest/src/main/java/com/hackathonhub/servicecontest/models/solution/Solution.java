@@ -2,6 +2,7 @@ package com.hackathonhub.servicecontest.models.solution;
 
 
 import com.hackathonhub.servicecontest.dtos.solution.SolutionCreateDto;
+import com.hackathonhub.servicecontest.dtos.solution.SolutionUpdateDto;
 import com.hackathonhub.servicecontest.models.Team;
 import com.hackathonhub.servicecontest.models.contest.Contest;
 import lombok.Data;
@@ -66,6 +67,14 @@ public class Solution implements Serializable {
                 .setName(solutionCreateDto.getName())
                 .setDescription(solutionCreateDto.getDescription())
                 .setUrl(solutionCreateDto.getUrl());
+    }
+
+    public Solution fromUpdateDto(SolutionUpdateDto solutionUpdateDto) {
+        return this
+                .setName(solutionUpdateDto.getName())
+                .setDescription(solutionUpdateDto.getDescription())
+                .setStatus(solutionUpdateDto.getStatus())
+                .setUrl(solutionUpdateDto.getUrl());
     }
 
 }

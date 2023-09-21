@@ -16,6 +16,9 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @GrpcService
 @Slf4j
 @Tag(name = "UserService gRPC")
@@ -42,13 +45,15 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
                                StreamObserver<Entities.User> responseObserver) {
         String email = request.getEmail();
 
-        User user = userRepository.getByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email);
 
-        Entities.User response = UserEntityMapper
-                .toGrpcEntity(user);
+        user.ifPresentOrElse(u -> {
+            Entities.User response = UserEntityMapper
+                    .toGrpcEntity(u);
 
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }, () -> responseObserver.onError(new NoSuchElementException("User not found")));
     }
 
     @Override
@@ -60,9 +65,9 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
 
         Messages.CheckUserExistenceByEmailResponse response =
                 Messages.CheckUserExistenceByEmailResponse
-                .newBuilder()
-                .setIsExist(exists)
-                .build();
+                        .newBuilder()
+                        .setIsExist(exists)
+                        .build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
@@ -72,22 +77,19 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
         ApiAuthResponse.ApiAuthResponseBuilder<User> responseBuilder = ApiAuthResponse.builder();
 
         try {
-            User foundedUser = userRepository.getByEmail(user.getEmail());
+            Optional<User> foundedUser = userRepository.findByEmail(user.getEmail());
 
-            if(foundedUser == null) {
+            return foundedUser.map(u -> {
+                User updatedUser = userRepository.save(u.from(user));
                 return responseBuilder
+                        .status(HttpStatus.OK)
+                        .message("User updated successfully")
+                        .data(updatedUser)
+                        .build();
+            }).orElseGet(() -> responseBuilder
                         .status(HttpStatus.NOT_FOUND)
                         .message("User not found")
-                        .build();
-            };
-
-            User updatedUser = userRepository.save(foundedUser.from(user));
-
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .message("User updated successfully")
-                    .data(updatedUser)
-                    .build();
+                        .build());
 
         } catch (Exception e) {
             log.error("Error while updating user: ", e);

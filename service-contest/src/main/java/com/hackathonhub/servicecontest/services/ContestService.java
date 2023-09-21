@@ -4,6 +4,7 @@ import com.hackathonhub.servicecontest.constants.ApiContestResponseMessage;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.contest.ContestCreateDto;
 import com.hackathonhub.servicecontest.dtos.contest.ContestDetailDto;
+import com.hackathonhub.servicecontest.dtos.contest.ContestUpdateDto;
 import com.hackathonhub.servicecontest.dtos.solution.SolutionMetaDto;
 import com.hackathonhub.servicecontest.models.contest.Contest;
 import com.hackathonhub.servicecontest.repositories.ContestRepository;
@@ -57,10 +58,10 @@ public class ContestService {
         try {
             Optional<ContestDetailDto> foundedContest =
                     contestRepository.getDetailById(contestId);
-            Set<SolutionMetaDto> foundedSolutions =
-                    solutionRepository.getSolutionMetaListById(contestId, 10, null);
 
             return foundedContest.map(contest -> {
+                Set<SolutionMetaDto> foundedSolutions =
+                        solutionRepository.getSolutionMetaListById(contestId, 10, null);
                 contest.setSolutions(foundedSolutions);
                 return responseBuilder
                         .status(HttpStatus.OK)
@@ -81,16 +82,16 @@ public class ContestService {
         }
     }
 
-    public ApiAuthResponse<Contest> updateContest(Contest contest) {
+    public ApiAuthResponse<Contest> updateContest(ContestUpdateDto contest) {
         ApiAuthResponse.ApiAuthResponseBuilder<Contest> responseBuilder =
                 ApiAuthResponse.<Contest>builder();
 
         try {
             Optional<Contest> foundedContest = contestRepository.findById(contest.getId());
 
-
             return foundedContest.map(c -> {
-                Contest updatedContest = contestRepository.update(contest);
+                Contest mappedContest = c.fromUpdateDto(contest);
+                Contest updatedContest = contestRepository.update(mappedContest);
                 return responseBuilder
                         .status(HttpStatus.OK)
                         .data(updatedContest)

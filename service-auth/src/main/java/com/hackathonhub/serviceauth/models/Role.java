@@ -13,10 +13,10 @@ public class Role {
         return this;
     }
 
-    public Role setRole_name(RoleEnum role_name) {
-        this.role_name = role_name;
+    public Role setRoleName(RoleEnum roleName) {
+        this.roleName = roleName;
         return this;
     }
 
-    private RoleEnum role_name;
+    private RoleEnum roleName;
 }

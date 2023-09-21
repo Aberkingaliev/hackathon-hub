@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hackathonhub.serviceteam.constants.ApiTeamMemberResponseMessage;
 import com.hackathonhub.serviceteam.controllers.TeamMemberController;
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
+import com.hackathonhub.serviceteam.dto.MemberDto;
 import com.hackathonhub.serviceteam.models.User;
 import com.hackathonhub.serviceteam.services.TeamMemberService;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,10 +110,10 @@ public class TeamMemberControllerTest {
     @Test
     public void getMembers_TestValid() throws Exception {
         UUID cursor = UUID.randomUUID();
-        ApiAuthResponse<HashSet<User>> response = ApiAuthResponse.<HashSet<User>>builder()
+        ApiAuthResponse<HashSet<MemberDto>> response = ApiAuthResponse.<HashSet<MemberDto>>builder()
                 .status(HttpStatus.OK)
                 .message(ApiTeamMemberResponseMessage.MEMBERS_RECEIVED)
-                .data(new HashSet<>(Set.of(new User())))
+                .data(new HashSet<>(Set.of(new MemberDto())))
                 .build();
 
         String responseJson = objectMapper.writeValueAsString(response);

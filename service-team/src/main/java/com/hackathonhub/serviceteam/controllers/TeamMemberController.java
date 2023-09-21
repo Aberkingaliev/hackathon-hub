@@ -2,6 +2,7 @@ package com.hackathonhub.serviceteam.controllers;
 
 
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
+import com.hackathonhub.serviceteam.dto.MemberDto;
 import com.hackathonhub.serviceteam.models.User;
 import com.hackathonhub.serviceteam.services.TeamMemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +36,12 @@ public class TeamMemberController {
     }
 
     @GetMapping("/team/{id}/member")
-    public ResponseEntity<ApiAuthResponse<HashSet<User>>> getAllMembers(
+    public ResponseEntity<ApiAuthResponse<HashSet<MemberDto>>> getAllMembers(
             @PathVariable("id") UUID teamId,
             @RequestParam(value = "limit", defaultValue = "10") int limit,
             @RequestParam(value = "cursor", required = false) UUID cursor
     ) {
-        ApiAuthResponse<HashSet<User>> response = teamMemberService.getMembers(teamId, cursor, limit);
+        ApiAuthResponse<HashSet<MemberDto>> response = teamMemberService.getMembers(teamId, cursor, limit);
 
         return ResponseEntity
                 .status(response.getStatus())

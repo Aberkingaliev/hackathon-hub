@@ -11,6 +11,7 @@ import java.io.Serializable;
 @Getter
 public class ApiAuthResponse<T extends Serializable>{
     private HttpStatus status;
-    private String message;
+    @Builder.Default
+    private String message = "No message";
     private T data;
 }

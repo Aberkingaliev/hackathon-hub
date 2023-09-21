@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
@@ -14,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "roles")
-public class Role {
+public class Role implements Serializable {
 
     @Id
     private UUID id;
@@ -28,11 +29,11 @@ public class Role {
         return id;
     }
 
-    public RoleEnum getRole_name() {
-        return role_name;
+    public RoleEnum getRoleName() {
+        return roleName;
     }
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private RoleEnum role_name;
+    private RoleEnum roleName;
 }
