@@ -99,6 +99,7 @@ public class ContestControllerTest {
         verify(contestService).getContest(any(UUID.class));
     }
 
+
     @Test
     public void updateContest_TestValid() throws Exception {
         Contest contest = new Contest();
