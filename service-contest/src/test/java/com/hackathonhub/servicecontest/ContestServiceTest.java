@@ -88,10 +88,10 @@ public class ContestServiceTest {
         ContestDetailDto contest = new ContestDetailDto()
                 .setId(contestId).setCategories(categories).setOwner(user);
 
-        when(contestRepository.getContestDetailById(contestId))
+        when(contestRepository.getDetailById(contestId))
                 .thenReturn(Optional.ofNullable(contest));
 
-        when(solutionRepository.getSolutionsMetaByContestId(contestId,10,null))
+        when(solutionRepository.getSolutionMetaListById(contestId,10,null))
                 .thenReturn(solutions);
 
 
@@ -102,8 +102,8 @@ public class ContestServiceTest {
         Assertions.assertEquals(result.getData().getOwner(), user);
         Assertions.assertEquals(result.getData().getCategories(), categories);
 
-        verify(contestRepository).getContestDetailById(contestId);
-        verify(solutionRepository).getSolutionsMetaByContestId(contestId,10,null);
+        verify(contestRepository).getDetailById(contestId);
+        verify(solutionRepository).getSolutionMetaListById(contestId,10,null);
     }
 
     @Test
@@ -116,14 +116,16 @@ public class ContestServiceTest {
                 .setId(contest.getId())
                 .setStatus(ContestStatus.FINISHED);
 
-        when(contestRepository.updateContest(contest)).thenReturn(updatedContest);
+        when(contestRepository.findById(contest.getId())).thenReturn(Optional.of(contest));
+        when(contestRepository.update(contest)).thenReturn(updatedContest);
 
         ApiAuthResponse<Contest> result = contestService.updateContest(contest);
 
         Assertions.assertEquals(result.getStatus().value(), 200);
         Assertions.assertEquals(result.getData().getStatus(), ContestStatus.FINISHED);
 
-        verify(contestRepository).updateContest(contest);
+        verify(contestRepository).findById(contest.getId());
+        verify(contestRepository).update(contest);
     }
 
     @Test
@@ -133,6 +135,6 @@ public class ContestServiceTest {
 
         Assertions.assertEquals(result.getStatus().value(), 200);
 
-        verify(contestRepository).deleteContestById(contestId);
+        verify(contestRepository).deleteById(contestId);
     }
 }

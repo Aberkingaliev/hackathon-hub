@@ -3,12 +3,15 @@ package com.hackathonhub.servicecontest.controllers;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
 import com.hackathonhub.servicecontest.dtos.contest.ContestCreateDto;
 import com.hackathonhub.servicecontest.dtos.contest.ContestDetailDto;
+import com.hackathonhub.servicecontest.dtos.solution.SolutionMetaDto;
 import com.hackathonhub.servicecontest.models.contest.Contest;
 import com.hackathonhub.servicecontest.services.ContestService;
+import com.hackathonhub.servicecontest.services.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @RestController
@@ -17,6 +20,9 @@ public class ContestController {
 
     @Autowired
     private ContestService contestService;
+
+    @Autowired
+    private SolutionService solutionService;
 
 
     @PostMapping
@@ -35,6 +41,20 @@ public class ContestController {
             @PathVariable("id") UUID id
     ) {
         ApiAuthResponse<ContestDetailDto> contest = contestService.getContest(id);
+
+        return ResponseEntity
+                .status(contest.getStatus())
+                .body(contest);
+    }
+
+    @GetMapping("/{id}/solutions")
+    public ResponseEntity<ApiAuthResponse<ArrayList<SolutionMetaDto>>> getContestSolutions (
+            @PathVariable("id") UUID id,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "cursor", required = false) UUID cursor
+    ) {
+        ApiAuthResponse<ArrayList<SolutionMetaDto>> contest = solutionService
+                .getSolutionMetaByContestId(id, limit, cursor);
 
         return ResponseEntity
                 .status(contest.getStatus())

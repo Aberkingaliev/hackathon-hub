@@ -29,19 +29,21 @@ public class ContestService {
 
 
     public ApiAuthResponse<Contest> createContest(ContestCreateDto contest) {
+        ApiAuthResponse.ApiAuthResponseBuilder<Contest> responseBuilder =
+                ApiAuthResponse.<Contest>builder();
         Contest newContest = Contest.fromCreateDto(contest);
 
         try {
             Contest savedContest = contestRepository.save(newContest);
 
-            return ApiAuthResponse.<Contest>builder()
+            return responseBuilder
                     .status(HttpStatus.CREATED)
                     .data(savedContest)
                     .message(ApiContestResponseMessage.CONTEST_CREATED)
                     .build();
         } catch (Exception e) {
             log.error("Error while creating contest: {}", e.getMessage());
-            return ApiAuthResponse.<Contest>builder()
+            return responseBuilder
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .message(e.getMessage())
                     .build();
@@ -54,18 +56,21 @@ public class ContestService {
 
         try {
             Optional<ContestDetailDto> foundedContest =
-                    contestRepository.getContestDetailById(contestId);
+                    contestRepository.getDetailById(contestId);
             Set<SolutionMetaDto> foundedSolutions =
-                    solutionRepository.getSolutionsMetaByContestId(contestId,10,null);
-            foundedContest
-                    .ifPresent(contestDto -> contestDto.setSolutions(foundedSolutions));
+                    solutionRepository.getSolutionMetaListById(contestId, 10, null);
 
-
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .data(foundedContest.orElse(null))
-                    .message(ApiContestResponseMessage.CONTEST_FOUND)
-                    .build();
+            return foundedContest.map(contest -> {
+                contest.setSolutions(foundedSolutions);
+                return responseBuilder
+                        .status(HttpStatus.OK)
+                        .data(contest)
+                        .message(ApiContestResponseMessage.CONTEST_FOUND)
+                        .build();
+            }).orElseGet(() -> responseBuilder
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(ApiContestResponseMessage.CONTEST_NOT_FOUND)
+                    .build());
         } catch (Exception e) {
             log.error("Error while getting contest: {}", e.getMessage());
 
@@ -81,13 +86,20 @@ public class ContestService {
                 ApiAuthResponse.<Contest>builder();
 
         try {
-            Contest updatedContest = contestRepository.updateContest(contest);
+            Optional<Contest> foundedContest = contestRepository.findById(contest.getId());
 
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .data(updatedContest)
-                    .message(ApiContestResponseMessage.CONTEST_UPDATED)
-                    .build();
+
+            return foundedContest.map(c -> {
+                Contest updatedContest = contestRepository.update(contest);
+                return responseBuilder
+                        .status(HttpStatus.OK)
+                        .data(updatedContest)
+                        .message(ApiContestResponseMessage.CONTEST_UPDATED)
+                        .build();
+            }).orElseGet(() -> responseBuilder
+                    .status(HttpStatus.NOT_FOUND)
+                    .message(ApiContestResponseMessage.CONTEST_NOT_FOUND)
+                    .build());
         } catch (Exception e) {
             log.error("Error while updating contest: {}", e.getMessage());
 
@@ -103,7 +115,7 @@ public class ContestService {
                 ApiAuthResponse.builder();
 
         try {
-            contestRepository.deleteContestById(id);
+            contestRepository.deleteById(id);
 
             return responseBuilder
                     .status(HttpStatus.OK)

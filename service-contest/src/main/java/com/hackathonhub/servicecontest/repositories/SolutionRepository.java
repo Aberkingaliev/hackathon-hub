@@ -2,7 +2,7 @@ package com.hackathonhub.servicecontest.repositories;
 
 
 import com.hackathonhub.servicecontest.dtos.solution.SolutionMetaDto;
-import lombok.extern.slf4j.Slf4j;
+import com.hackathonhub.servicecontest.models.solution.Solution;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
@@ -12,14 +12,13 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 @Repository
-@Slf4j
 public class SolutionRepository {
 
     @PersistenceContext
     private EntityManager em;
 
     @Transactional
-    public Set<SolutionMetaDto> getSolutionsMetaByContestId(UUID contestId, Integer limit, UUID cursor) {
+    public Set<SolutionMetaDto> getSolutionMetaListById(UUID contestId, Integer limit, UUID cursor) {
 
         try (Session session = em.unwrap(Session.class)) {
             var query = session.createQuery(
@@ -39,10 +38,42 @@ public class SolutionRepository {
             List<SolutionMetaDto> result = query.getResultList();
 
             return new HashSet<>(result);
-        } catch (Exception e) {
-            log.error("Error while getting solutions: {}", e.getMessage());
-            return new HashSet<>();
+        }
+    }
+
+    @Transactional
+    public Solution save(Solution solution) {
+        try(Session session = em.unwrap(Session.class)) {
+            session.persist(solution);
         }
 
+        return solution;
+    }
+
+    @Transactional
+    public Optional<Solution> findById(UUID id) {
+
+        try(Session session = em.unwrap(Session.class)) {
+            Solution foundedSolution = session.find(Solution.class, id);
+            return Optional.ofNullable(foundedSolution);
+        }
+    }
+
+    @Transactional
+    public Solution update(Solution solution) {
+
+        try(Session session = em.unwrap(Session.class)) {
+            session.update(solution);
+        }
+
+        return solution;
+    }
+
+    @Transactional
+    public void deleteById(UUID id) {
+        try (Session session = em.unwrap(Session.class)) {
+            Solution foundedSolution = em.find(Solution.class, id);
+            session.remove(foundedSolution);
+        }
     }
 }

@@ -59,7 +59,7 @@ public class Solution implements Serializable {
     @Column(name = "created_at")
     private Date createdAt;
 
-    public Solution fromCreateDto(SolutionCreateDto solutionCreateDto) {
+    public static Solution fromCreateDto(SolutionCreateDto solutionCreateDto) {
         return new Solution()
                 .setTeam(new Team().setId(solutionCreateDto.getTeamId()))
                 .setContest(new Contest().setId(solutionCreateDto.getContestId()))
