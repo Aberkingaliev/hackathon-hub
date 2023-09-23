@@ -49,6 +49,6 @@ public class RoleData {
     public static Role getRole() {
         return new Role()
                 .setId(UUID.randomUUID())
-                .setRole_name(RoleEnum.ROLE_ADMIN);
+                .setRoleName(RoleEnum.ROLE_ADMIN);
     }
 }

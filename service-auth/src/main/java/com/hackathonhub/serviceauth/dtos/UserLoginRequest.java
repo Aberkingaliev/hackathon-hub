@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Builder
 @Data
-public class UserLoginRequest {
+public class UserLoginRequest implements Serializable {
 
     @JsonCreator
     public UserLoginRequest(@JsonProperty("email") String email,

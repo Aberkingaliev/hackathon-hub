@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class RoleService {
         ApiAuthResponse.ApiAuthResponseBuilder<Role> responseBuilder =
                 ApiAuthResponse.<Role>builder();
         try {
-            Role savedRole = roleRepository.save(new Role().setRole_name(role.getRole_name()));
+            Role savedRole = roleRepository.save(new Role().setRoleName(role.getRoleName()));
 
             return responseBuilder
                     .status(HttpStatus.CREATED)
@@ -54,10 +55,8 @@ public class RoleService {
                             .message(ApiRoleResponseMessage.ROLE_FOUND)
                             .data(role)
                             .build())
-                    .orElseGet(() -> responseBuilder
-                            .status(HttpStatus.NOT_FOUND)
-                            .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
-                            .build());
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
             return responseBuilder
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -73,17 +72,15 @@ public class RoleService {
             Optional<Role> foundedRole = roleRepository.findById(role.getId());
 
             return foundedRole.map(r -> {
-                r.setRole_name(role.getRole_name());
+                r.setRoleName(role.getRoleName());
                 Role updatedRole = roleRepository.save(r);
                 return responseBuilder
                         .status(HttpStatus.OK)
                         .message(ApiRoleResponseMessage.ROLE_UPDATED)
                         .data(updatedRole)
                         .build();
-            }).orElseGet(() -> responseBuilder
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
-                    .build());
+            }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
             log.error("Error while updating role " + e.getMessage());
 
@@ -107,10 +104,8 @@ public class RoleService {
                         .status(HttpStatus.OK)
                         .message(ApiRoleResponseMessage.ROLE_DELETED)
                         .build();
-            }).orElseGet(() -> responseBuilder
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
-                    .build());
+            }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
             log.error("Error while deleting role " + e.getMessage());
 

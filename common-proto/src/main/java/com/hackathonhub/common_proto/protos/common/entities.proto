@@ -6,7 +6,7 @@ import "google/protobuf/timestamp.proto";
 
 option java_package = "com.hackathonhub.common.grpc";
 
-enum Role {
+enum RoleEnum {
   ROLE_USER = 0;
   ROLE_ADMIN = 1;
 }
@@ -19,6 +19,11 @@ message User {
   string password = 5;
   bool is_activated = 6;
   repeated Role roles = 8;
+}
+
+message Role {
+  UUID id = 1;
+  RoleEnum role = 2;
 }
 
 message AuthTokens {

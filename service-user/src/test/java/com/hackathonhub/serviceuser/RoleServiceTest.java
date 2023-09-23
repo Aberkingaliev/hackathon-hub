@@ -73,7 +73,7 @@ public class RoleServiceTest {
     @Test
     void update_TestValid() {
         UUID id = UUID.randomUUID();
-        Role role = new Role().setId(id).setRole_name(RoleEnum.ROLE_ADMIN);
+        Role role = new Role().setId(id).setRoleName(RoleEnum.ROLE_ADMIN);
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_update_Success();
 
         when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));

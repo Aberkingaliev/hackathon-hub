@@ -29,8 +29,8 @@ public class Role implements Serializable {
         return id;
     }
 
-    public RoleEnum getRole_name() {
-        return role_name;
+    public RoleEnum getRoleName() {
+        return roleName;
     }
 
     public Role setId(UUID id) {
@@ -38,12 +38,12 @@ public class Role implements Serializable {
         return this;
     }
 
-    public Role setRole_name(RoleEnum role_name) {
-        this.role_name = role_name;
+    public Role setRoleName(RoleEnum roleName) {
+        this.roleName = roleName;
         return this;
     }
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private RoleEnum role_name;
+    private RoleEnum roleName;
 }

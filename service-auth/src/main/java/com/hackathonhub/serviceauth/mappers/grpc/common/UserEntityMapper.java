@@ -19,7 +19,7 @@ public class UserEntityMapper {
 
     public static User toEntity (Entities.User user) {
         return new User()
-                .setId(TypeMapper.toOriginalyUuid(user.getId()))
+                .setId(TypeMapper.toOriginallyUuid(user.getId()))
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())

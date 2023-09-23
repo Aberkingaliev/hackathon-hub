@@ -21,7 +21,7 @@ public class ApiRolePermission {
     public static boolean isRoleAllowed(String route, Set<RoleEnum> role) {
         Set<RoleEnum> result = API_ROLE_PERMISSION.get(route);
 
-        if (result == null) {
+        if (result.isEmpty()) {
             log.error("Route {} is not found in API_ROLE_PERMISSION", route);
             return false;
         }

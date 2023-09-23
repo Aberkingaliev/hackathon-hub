@@ -2,6 +2,8 @@ package com.hackathonhub.serviceauth.controllers;
 
 import com.hackathonhub.serviceauth.constants.ApiAuthResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
+import com.hackathonhub.serviceauth.dtos.UserCreateDto;
+import com.hackathonhub.serviceauth.dtos.UserDto;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
 import com.hackathonhub.serviceauth.models.AuthToken;
 import com.hackathonhub.serviceauth.models.User;
@@ -50,8 +52,8 @@ public class AuthController {
             }
     )
     @PostMapping("/registration")
-    public ResponseEntity<ApiAuthResponse<User>> registration(@RequestBody User user) {
-        ApiAuthResponse<User> response = registrationService.registration(user);
+    public ResponseEntity<ApiAuthResponse<UserDto>> registration(@RequestBody UserCreateDto user) {
+        ApiAuthResponse<UserDto> response = registrationService.registration(user);
         return ResponseEntity
                 .status(response.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +105,7 @@ public class AuthController {
             }
     )
     @PostMapping("/logout")
-    public ResponseEntity<ApiAuthResponse> logout(HttpServletResponse responseServlet) {
+    public ResponseEntity<ApiAuthResponse<?>> logout(HttpServletResponse responseServlet) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", "");
         refreshTokenCookie.setMaxAge(0);
         responseServlet.addCookie(refreshTokenCookie);

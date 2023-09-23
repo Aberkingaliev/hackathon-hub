@@ -2,7 +2,7 @@ package com.hackathonhub.serviceuser.controllers;
 
 
 import com.hackathonhub.serviceuser.dtos.ApiAuthResponse;
-import com.hackathonhub.serviceuser.models.User;
+import com.hackathonhub.serviceuser.dtos.UserDto;
 import com.hackathonhub.serviceuser.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,8 +32,8 @@ public class UserController {
             }
     )
     @PutMapping("/update")
-    public ResponseEntity<ApiAuthResponse<User>> updateUser(@RequestBody  User user) {
-        ApiAuthResponse<User> response = userService.updateUser(user);
+    public ResponseEntity<ApiAuthResponse<UserDto>> updateUser(@RequestBody UserDto user) {
+        ApiAuthResponse<UserDto> response = userService.updateUser(user);
 
         return ResponseEntity
                 .status(response.getStatus())

@@ -14,17 +14,20 @@ public class RoleMapper {
     public static Set<Entities.Role> toGrpcEntity(Set<Role> roles) {
         return roles.stream()
                 .map(role ->
-                        Entities.Role.valueOf(role.getRole_name().toString()
-                        )
+                        Entities.Role.newBuilder()
+                                .setId(TypeMapper.toGrpcUuid(role.getId()))
+                                .setRole(Entities.RoleEnum.valueOf(role.getRoleName().toString()))
+                                .build()
                 )
                 .collect(Collectors.toSet());
     }
 
-    public static HashSet<Role> toOriginalyRole(List<Entities.Role> roles) {
+    public static Set<Role> toOriginalyRole(List<Entities.Role> roles) {
         return roles.stream()
                 .map(role ->
                         new Role()
-                                .setRole_name(RoleEnum.valueOf(role.toString()))
+                                .setId(TypeMapper.toOriginalyUuid(role.getId()))
+                                .setRoleName(RoleEnum.valueOf(role.getRole().toString()))
                 )
                 .collect(Collectors.toCollection(HashSet::new));
     }

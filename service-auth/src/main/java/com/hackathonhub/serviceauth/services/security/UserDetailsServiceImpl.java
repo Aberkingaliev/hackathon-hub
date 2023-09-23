@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 @Slf4j
@@ -28,16 +30,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .setEmail(email)
                 .build();
 
-        Entities.User response = userStub.getUserByEmail(request);
+        Optional<Entities.User> response = Optional.ofNullable(userStub.getUserEntityByEmail(request));
 
-        if (!response.hasId()) {
+        return response.map(r -> {
+            User mappedUser = UserEntityMapper.toEntity(r);
+
+            return UserDetailsImpl
+                    .build(mappedUser);
+        }).orElseGet(()-> {
             log.error("User {} not found", email);
             throw new UsernameNotFoundException("User " + email + " not found");
-        }
-
-        User mappedUser = UserEntityMapper.toEntity(response);
-
-        return UserDetailsImpl
-                .build(mappedUser);
+        });
     }
 }

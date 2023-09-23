@@ -7,12 +7,14 @@ import "common/entities.proto";
 
 option java_package = "com.hackathonhub.user_protos.grpc";
 
-message CreateUserRequest {
-  string username = 1;
-  string full_name = 2;
-  string email = 3;
-  string password = 4;
-  bool is_activated = 5;
+
+message CreateUserMessage {
+  string username = 2;
+  string fullName = 3;
+  string email = 4;
+  string password = 5;
+  bool isActivated = 6;
+  repeated common.Role roles = 7;
 }
 
 message GetUserByEmailRequest {
