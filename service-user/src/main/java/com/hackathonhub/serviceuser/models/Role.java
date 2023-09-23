@@ -5,7 +5,9 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -13,6 +15,8 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "roles")
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Role implements Serializable {
 

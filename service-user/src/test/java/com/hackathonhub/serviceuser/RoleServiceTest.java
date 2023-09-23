@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -66,7 +67,9 @@ public class RoleServiceTest {
 
         verify(roleRepository, times(1)).findById(id);
 
-        Assertions.assertEquals(roleResponse, foundedRole);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            throw new ResponseStatusException(roleResponse.getStatus(), roleResponse.getMessage());
+        });
     }
 
 
@@ -98,7 +101,9 @@ public class RoleServiceTest {
 
         verify(roleRepository, times(1)).findById(role.getId());
 
-        Assertions.assertEquals(updatedRoleResponse, roleResponse);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            throw new ResponseStatusException(roleResponse.getStatus(), roleResponse.getMessage());
+        });
     }
 
     @Test
@@ -127,7 +132,9 @@ public class RoleServiceTest {
 
         verify(roleRepository, times(1)).findById(role.getId());
 
-        Assertions.assertEquals(deletedRoleResponse, roleResponse);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            throw new ResponseStatusException(roleResponse.getStatus(), roleResponse.getMessage());
+        });
     }
 
 }

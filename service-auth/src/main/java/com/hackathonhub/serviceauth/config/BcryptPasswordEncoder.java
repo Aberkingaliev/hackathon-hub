@@ -6,8 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @Configuration
-public class
-BcryptPasswordEncoder implements PasswordEncoder {
+public class BcryptPasswordEncoder implements PasswordEncoder {
     private static final int SALT = 12;
     @Override
     public String encode(CharSequence rawPassword) {

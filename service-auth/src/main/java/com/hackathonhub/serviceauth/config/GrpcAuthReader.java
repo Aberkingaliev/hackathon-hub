@@ -13,7 +13,8 @@ public class GrpcAuthReader implements GrpcAuthenticationReader {
 
     @Nullable
     @Override
-    public Authentication readAuthentication(ServerCall<?, ?> call, Metadata headers) throws AuthenticationException {
+    public Authentication readAuthentication(ServerCall<?, ?> call, Metadata headers)
+            throws AuthenticationException {
         return null;
     }
 }

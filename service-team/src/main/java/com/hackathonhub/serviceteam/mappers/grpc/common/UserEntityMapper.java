@@ -3,6 +3,8 @@ package com.hackathonhub.serviceteam.mappers.grpc.common;
 import com.hackathonhub.common.grpc.Entities;
 import com.hackathonhub.serviceteam.models.User;
 
+import java.util.HashSet;
+
 public class UserEntityMapper {
 
     public static Entities.User toGrpcEntity (User user) {
@@ -19,12 +21,12 @@ public class UserEntityMapper {
 
     public static User toEntity (Entities.User user) {
         return new User()
-                .setId(TypeMapper.toOriginalyUuid(user.getId()))
+                .setId(TypeMapper.toOriginallyUuid(user.getId()))
                 .setUsername(user.getUsername())
                 .setFullName(user.getFullName())
                 .setEmail(user.getEmail())
                 .setPassword(user.getPassword())
                 .setActivated(user.getIsActivated())
-                .setRole(RoleMapper.toOriginalyRole(user.getRolesList()));
+                .setRole(new HashSet<>(RoleMapper.toOriginallyRole(user.getRolesList())));
     }
 }

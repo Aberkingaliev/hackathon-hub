@@ -3,7 +3,10 @@ package com.hackathonhub.serviceuser.models;
 import javax.persistence.*;
 
 import com.hackathonhub.serviceuser.dtos.UserDto;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -12,7 +15,9 @@ import java.util.UUID;
 
 
 @Entity
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email"),
         @UniqueConstraint(columnNames = "username")
