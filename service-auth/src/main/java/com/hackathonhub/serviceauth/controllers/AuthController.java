@@ -40,8 +40,7 @@ public class AuthController {
     private LoginService loginService;
 
 
-    @Operation(summary = "User registration", description = "If the response is successful, the created user will be " +
-            "returned in the response body (data: User)")
+    @Operation(summary = "User registration")
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "201", description = "User created"),
@@ -60,8 +59,7 @@ public class AuthController {
                 .body(response);
     }
 
-    @Operation(summary = "Login", description = "If the response is successful, a pair of tokens will be " +
-            "returned in the response body (data: AuthTokens)")
+    @Operation(summary = "Login")
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "201", description = "User authorized"),
@@ -76,17 +74,20 @@ public class AuthController {
             @RequestBody UserLoginRequest loginRequest,
             HttpServletResponse responseServlet) {
         ApiAuthResponse<AuthToken> response = loginService.login(loginRequest);
+
         if (response.getStatus() == HttpStatus.OK) {
-            Cookie refreshTokenCookie = new Cookie("refreshToken",
-                    response.getData().getRefreshToken());
+            response.getData().ifPresent(authToken -> {
+                Cookie refreshTokenCookie = new Cookie("refreshToken",
+                        authToken.getRefreshToken());
 
-            refreshTokenCookie.setMaxAge((int) TimeUnit.DAYS.toMillis(30));
-            refreshTokenCookie.setPath("/");
+                refreshTokenCookie.setMaxAge((int) TimeUnit.DAYS.toMillis(30));
+                refreshTokenCookie.setPath("/");
 
-            responseServlet.addCookie(refreshTokenCookie);
+                responseServlet.addCookie(refreshTokenCookie);
 
-            responseServlet.setHeader(HttpHeaders.AUTHORIZATION,
-                    "Bearer " + response.getData().getAccessToken());
+                responseServlet.setHeader(HttpHeaders.AUTHORIZATION,
+                        "Bearer " + authToken.getAccessToken());
+            });
         }
 
         return ResponseEntity
@@ -95,8 +96,7 @@ public class AuthController {
                 .body(response);
     }
 
-    @Operation(summary = "Logout", description = "If the response is successful, nothing will be " +
-            "returned in the response body (data: null)")
+    @Operation(summary = "Logout")
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "201", description = "User logged out"),
@@ -105,7 +105,7 @@ public class AuthController {
             }
     )
     @PostMapping("/logout")
-    public ResponseEntity<ApiAuthResponse<?>> logout(HttpServletResponse responseServlet) {
+    public ResponseEntity<ApiAuthResponse> logout(HttpServletResponse responseServlet) {
         Cookie refreshTokenCookie = new Cookie("refreshToken", "");
         refreshTokenCookie.setMaxAge(0);
         responseServlet.addCookie(refreshTokenCookie);
@@ -114,11 +114,8 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(ApiAuthResponse
-                        .builder()
-                        .status(HttpStatus.OK)
-                        .message(ApiAuthResponseMessage.USER_SUCCESS_LOGGED_OUT)
-                        .build());
+                .body(new ApiAuthResponse<>()
+                        .ok(ApiAuthResponseMessage.USER_SUCCESS_LOGGED_OUT));
     }
 
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Service
@@ -23,78 +24,51 @@ public class SolutionService {
 
 
     public ApiAuthResponse<Solution> createSolution(SolutionCreateDto solution) {
+        ApiAuthResponse<Solution> responseBuilder = new ApiAuthResponse<>();
         Solution newSolution = Solution.fromCreateDto(solution);
 
         try {
             Solution savedSolution = solutionRepository.save(newSolution);
 
-            return ApiAuthResponse.<Solution>builder()
-                    .status(HttpStatus.CREATED)
-                    .data(savedSolution)
-                    .message(ApiSolutionResponseMessage.SOLUTION_CREATED)
-                    .build();
+            return responseBuilder.created(savedSolution, ApiSolutionResponseMessage.SOLUTION_CREATED);
         } catch (Exception e) {
             log.error("Error while creating solution: {}", e.getMessage());
-            return ApiAuthResponse.<Solution>builder()
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
     public ApiAuthResponse<Solution> getSolutionById(UUID id) {
-        ApiAuthResponse.ApiAuthResponseBuilder<Solution> responseBuilder =
-                ApiAuthResponse.<Solution>builder();
+        ApiAuthResponse<Solution> responseBuilder = new ApiAuthResponse<>();
 
         try {
             Optional<Solution> foundedSolution = solutionRepository.findById(id);
 
             return foundedSolution.map(solution ->
-                            responseBuilder
-                                    .status(HttpStatus.OK)
-                                    .data(solution)
-                                    .message(ApiSolutionResponseMessage.SOLUTION_FOUND)
-                                    .build())
-                    .orElseGet(() ->
-                            responseBuilder
-                                    .status(HttpStatus.NOT_FOUND)
-                                    .message(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND)
-                                    .build());
+                            responseBuilder.ok(solution, ApiSolutionResponseMessage.SOLUTION_FOUND))
+                    .orElseGet(() -> responseBuilder.notFound(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND));
         } catch (Exception e) {
             log.error("Error while getting solution: {}", e.getMessage());
-            return ApiAuthResponse.<Solution>builder()
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
     public ApiAuthResponse<ArrayList<SolutionMetaDto>> getSolutionMetaByContestId
             (UUID contestId, Integer limit, UUID cursor) {
-        ApiAuthResponse.ApiAuthResponseBuilder<ArrayList<SolutionMetaDto>> responseBuilder =
-                ApiAuthResponse.<ArrayList<SolutionMetaDto>>builder();
+        ApiAuthResponse<ArrayList<SolutionMetaDto>> responseBuilder = new ApiAuthResponse<>();
 
         try {
             ArrayList<SolutionMetaDto> foundedSolutionMeta =
                     new ArrayList<>(solutionRepository.getSolutionMetaListById(contestId, limit, cursor));
 
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .data(foundedSolutionMeta)
-                    .message(ApiSolutionResponseMessage.SOLUTION_FOUND)
-                    .build();
+            return responseBuilder.ok(foundedSolutionMeta, ApiSolutionResponseMessage.SOLUTION_FOUND);
         } catch (Exception e) {
             log.error("Error while getting solution meta list: {}", e.getMessage());
-            return ApiAuthResponse.<ArrayList<SolutionMetaDto>>builder()
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
     public ApiAuthResponse<Solution> updateSolution(SolutionUpdateDto solution) {
-        ApiAuthResponse.ApiAuthResponseBuilder<Solution> responseBuilder =
-                ApiAuthResponse.<Solution>builder();
+        ApiAuthResponse<Solution> responseBuilder = new ApiAuthResponse<>();
 
         try {
             Optional<Solution> foundedSolution = solutionRepository.findById(solution.getId());
@@ -102,42 +76,23 @@ public class SolutionService {
             return foundedSolution.map(s -> {
                 Solution mappedSolution = s.fromUpdateDto(solution);
                 Solution updatedSolution = solutionRepository.update(mappedSolution);
-                return responseBuilder
-                        .status(HttpStatus.OK)
-                        .data(updatedSolution)
-                        .message(ApiSolutionResponseMessage.SOLUTION_UPDATED)
-                        .build();
-            }).orElseGet(() -> responseBuilder
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND)
-                    .build());
-
+                return responseBuilder.ok(updatedSolution, ApiSolutionResponseMessage.SOLUTION_UPDATED);
+            }).orElseGet(() -> responseBuilder.notFound(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND));
         } catch (Exception e) {
             log.error("Error while updating solution: {}", e.getMessage());
-            return ApiAuthResponse.<Solution>builder()
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
-    public ApiAuthResponse<String> deleteSolution(UUID id) {
-        ApiAuthResponse.ApiAuthResponseBuilder<String> responseBuilder =
-                ApiAuthResponse.builder();
+    public ApiAuthResponse<Serializable> deleteSolution(UUID id) {
+        ApiAuthResponse<Serializable> responseBuilder = new ApiAuthResponse<>();
 
         try {
             solutionRepository.deleteById(id);
-
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .message(ApiSolutionResponseMessage.SOLUTION_DELETED)
-                    .build();
+            return responseBuilder.ok(ApiSolutionResponseMessage.SOLUTION_DELETED);
         } catch (Exception e) {
             log.error("Error while deleting solution: {}", e.getMessage());
-            return ApiAuthResponse.<String>builder()
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 }

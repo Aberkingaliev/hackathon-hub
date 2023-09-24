@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -68,7 +69,7 @@ class ContestServiceTest {
         ApiAuthResponse<Contest> result = contestService.createContest(contestCreateDto);
 
         Assertions.assertEquals(201, result.getStatus().value());
-        Assertions.assertEquals(ContestStatus.OPEN_TO_SOLUTIONS, result.getData().getStatus());
+        Assertions.assertEquals(ContestStatus.OPEN_TO_SOLUTIONS, result.getData().get().getStatus());
 
         verify(contestRepository).save(any(Contest.class));
     }
@@ -99,9 +100,9 @@ class ContestServiceTest {
         ApiAuthResponse<ContestDetailDto> result = contestService.getContest(contestId);
 
         Assertions.assertEquals(200, result.getStatus().value());
-        Assertions.assertEquals(10, result.getData().getSolutions().size());
-        Assertions.assertEquals(user, result.getData().getOwner());
-        Assertions.assertEquals(categories, result.getData().getCategories());
+        Assertions.assertEquals(10, result.getData().get().getSolutions().size());
+        Assertions.assertEquals(user, result.getData().get().getOwner());
+        Assertions.assertEquals(categories, result.getData().get().getCategories());
 
         verify(contestRepository).getDetailById(contestId);
         verify(solutionRepository).getSolutionMetaListById(contestId,10,null);
@@ -130,7 +131,7 @@ class ContestServiceTest {
         ApiAuthResponse<Contest> result = contestService.updateContest(contest);
 
         Assertions.assertEquals(200, result.getStatus().value());
-        Assertions.assertEquals(ContestStatus.FINISHED, result.getData().getStatus());
+        Assertions.assertEquals(ContestStatus.FINISHED, result.getData().get().getStatus());
 
         verify(contestRepository).findById(contest.getId());
         verify(contestRepository).update(foundedContest);
@@ -139,7 +140,7 @@ class ContestServiceTest {
     @Test
     void deleteContest_TestValid() {
         UUID contestId = UUID.randomUUID();
-        ApiAuthResponse<String> result = contestService.deleteContest(contestId);
+        ApiAuthResponse<Serializable> result = contestService.deleteContest(contestId);
 
         Assertions.assertEquals(200, result.getStatus().value());
 

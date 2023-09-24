@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -15,7 +16,7 @@ import java.util.UUID;
 public interface AuthRepository extends JpaRepository<AuthToken, UUID> {
 
     @Query("SELECT a FROM AuthToken a WHERE a.refreshToken = :refreshToken")
-    AuthToken findByRefreshToken(String refreshToken);
+    Optional<AuthToken> findByRefreshToken(String refreshToken);
 
 
 }

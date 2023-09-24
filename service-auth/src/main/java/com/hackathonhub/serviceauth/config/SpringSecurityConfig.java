@@ -1,7 +1,5 @@
 package com.hackathonhub.serviceauth.config;
 
-import com.hackathonhub.serviceauth.exceptions.AccessDeniedExceptionHandler;
-import com.hackathonhub.serviceauth.exceptions.AuthEntryPoint;
 import com.hackathonhub.serviceauth.services.security.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,18 +19,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-    public SpringSecurityConfig(UserDetailsServiceImpl userDetailsService,
-                                AuthEntryPoint authEntryPoint,
-                                AccessDeniedExceptionHandler accessDeniedExceptionHandler) {
+    public SpringSecurityConfig(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
-        this.authEntryPoint = authEntryPoint;
-        this.accessDeniedExceptionHandler = accessDeniedExceptionHandler;
         this.bcryptPasswordEncoder = new BcryptPasswordEncoder();
     }
 
     private final UserDetailsServiceImpl userDetailsService;
-    private final AuthEntryPoint authEntryPoint;
-    private final AccessDeniedExceptionHandler accessDeniedExceptionHandler;
     private final BcryptPasswordEncoder bcryptPasswordEncoder;
 
 
@@ -41,10 +33,6 @@ public class SpringSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .exceptionHandling(
-                        a -> a.authenticationEntryPoint(authEntryPoint)
-                        .accessDeniedHandler(accessDeniedExceptionHandler)
-                )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(
                         authenticationManager(userDetailsService, bcryptPasswordEncoder)
@@ -60,7 +48,7 @@ public class SpringSecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
-                                                       BcryptPasswordEncoder passwordEncoder) throws Exception {
+                                                       BcryptPasswordEncoder passwordEncoder) {
         return authentication -> {
             String email = authentication.getPrincipal().toString();
             String password = authentication.getCredentials().toString();
@@ -69,11 +57,11 @@ public class SpringSecurityConfig {
 
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 throw new BadCredentialsException("Invalid password");
-            };
+            }
 
             return new UsernamePasswordAuthenticationToken(
                     email,
-                    null,
+                    userDetails.getPassword(),
                     userDetails.getAuthorities());
         };
     }

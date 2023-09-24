@@ -2,6 +2,7 @@ package com.hackathonhub.servicecontest;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.hackathonhub.servicecontest.constants.ApiSolutionResponseMessage;
 import com.hackathonhub.servicecontest.controllers.SolutionController;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
@@ -24,6 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Mockito.verify;
@@ -45,7 +48,7 @@ class SolutionControllerTest {
 
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
 
     @BeforeEach
     public void setup() {
@@ -59,7 +62,7 @@ class SolutionControllerTest {
         Solution createdSolution = new Solution();
         ApiAuthResponse<Solution> solutionResponse = ApiAuthResponse.<Solution>builder()
                 .status(HttpStatus.CREATED)
-                .data(createdSolution)
+                .data(Optional.of(createdSolution))
                 .message(ApiSolutionResponseMessage.SOLUTION_CREATED)
                 .build();
 
@@ -80,7 +83,7 @@ class SolutionControllerTest {
         Solution solution = new Solution().setId(id);
         ApiAuthResponse<Solution> solutionResponse = ApiAuthResponse.<Solution>builder()
                 .status(HttpStatus.OK)
-                .data(solution)
+                .data(Optional.ofNullable(solution))
                 .message(ApiSolutionResponseMessage.SOLUTION_FOUND)
                 .build();
 
@@ -117,7 +120,7 @@ class SolutionControllerTest {
 
         ApiAuthResponse<Solution> solutionResponse = ApiAuthResponse.<Solution>builder()
                 .status(HttpStatus.OK)
-                .data(updatedSolution)
+                .data(Optional.ofNullable(updatedSolution))
                 .message(ApiSolutionResponseMessage.SOLUTION_UPDATED)
                 .build();
 
@@ -154,7 +157,7 @@ class SolutionControllerTest {
     @Test
     void deleteSolution_TestValid() throws Exception {
         UUID id = UUID.randomUUID();
-        ApiAuthResponse<String> solutionResponse = ApiAuthResponse.<String>builder()
+        ApiAuthResponse<Serializable> solutionResponse = ApiAuthResponse.<Serializable>builder()
                 .status(HttpStatus.OK)
                 .message(ApiSolutionResponseMessage.SOLUTION_DELETED)
                 .build();

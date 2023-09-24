@@ -1,6 +1,5 @@
 package com.hackathonhub.serviceauth.models;
 
-import com.hackathonhub.serviceauth.dtos.UserDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import java.io.Serializable;

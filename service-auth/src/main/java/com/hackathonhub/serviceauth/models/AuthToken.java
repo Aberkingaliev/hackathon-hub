@@ -15,12 +15,22 @@ import java.util.UUID;
         @UniqueConstraint(columnNames = "refresh_token")
 })
 public class AuthToken implements Serializable {
+
+    public AuthToken(UUID userId, String accessToken, String refreshToken) {
+        this.userId = userId;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
+
+    public AuthToken() {}
+
     @Id
     protected UUID id;
 
     @PrePersist
-    public void generateId() {
+    public void prePersist() {
         this.id = UUID.randomUUID();
+        this.createdAt = Timestamp.from(Instant.now());
     }
 
     public AuthToken setId(UUID id) {
@@ -60,4 +70,5 @@ public class AuthToken implements Serializable {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Column(name = "created_at")
     protected Timestamp createdAt;
+
 }

@@ -5,7 +5,6 @@ import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
 import com.hackathonhub.serviceteam.dto.MemberDto;
 import com.hackathonhub.serviceteam.models.TeamMember;
 import com.hackathonhub.serviceteam.models.TeamMemberId;
-import com.hackathonhub.serviceteam.models.User;
 import com.hackathonhub.serviceteam.repositories.TeamMemberRepository;
 import com.hackathonhub.serviceteam.services.TeamMemberService;
 import org.junit.jupiter.api.Assertions;
@@ -58,14 +57,14 @@ public class TeamMemberServiceTest {
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
                 .thenReturn(Optional.empty());
         when(teamMemberRepository.save(any(TeamMember.class)))
-                .thenReturn(new TeamMember());
+                .thenReturn(new TeamMember().setEmbeddedId(new TeamMemberId(this.userId, this.teamId)));
 
         ApiAuthResponse<String> result = teamMemberService.addMember(this.teamId, this.userId);
 
         verify(teamMemberRepository).findById(any(TeamMemberId.class));
         verify(teamMemberRepository).save(any(TeamMember.class));
 
-        Assertions.assertEquals(HttpStatus.OK, result.getStatus());
+        Assertions.assertEquals(HttpStatus.CREATED, result.getStatus());
         Assertions.assertEquals(
                 ApiTeamMemberResponseMessage.USER_ADDED_TO_TEAM, result.getMessage()
         );
@@ -74,14 +73,14 @@ public class TeamMemberServiceTest {
     @Test
     public void addMember_TestAlreadyInTeam() {
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
-                .thenReturn(Optional.of(new TeamMember()));
+                .thenReturn(Optional.of(new TeamMember().setEmbeddedId(new TeamMemberId(this.userId, this.teamId))));
 
         ApiAuthResponse<String> result = teamMemberService.addMember(this.teamId, this.userId);
 
         verify(teamMemberRepository).findById(any(TeamMemberId.class));
         verify(teamMemberRepository, times(0)).save(any(TeamMember.class));
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatus());
+        Assertions.assertEquals(HttpStatus.CONFLICT, result.getStatus());
         Assertions.assertEquals(
                 ApiTeamMemberResponseMessage.USER_ALREADY_IN_TEAM, result.getMessage()
         );
@@ -108,14 +107,14 @@ public class TeamMemberServiceTest {
         Assertions.assertEquals(
                 ApiTeamMemberResponseMessage.MEMBERS_RECEIVED, result.getMessage()
         );
-        Assertions.assertEquals(new HashSet<>(allMembers), result.getData());
+        Assertions.assertEquals(new HashSet<>(allMembers), result.getData().get());
 
     }
 
     @Test
     public void deleteMember_TestValid() {
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
-                .thenReturn(Optional.of(new TeamMember()));
+                .thenReturn(Optional.of(new TeamMember().setEmbeddedId(new TeamMemberId(this.userId, this.teamId))));
 
         ApiAuthResponse<String> result = teamMemberService.deleteMember(this.teamId, this.userId);
 
@@ -136,7 +135,7 @@ public class TeamMemberServiceTest {
         verify(teamMemberRepository, times(0))
                 .deleteById(any(TeamMemberId.class));
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatus());
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, result.getStatus());
         Assertions.assertEquals(
                 ApiTeamMemberResponseMessage.USER_NOT_FOUND_IN_TEAM, result.getMessage()
         );

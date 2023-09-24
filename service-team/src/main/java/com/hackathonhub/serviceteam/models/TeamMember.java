@@ -11,11 +11,6 @@ import java.io.Serializable;
 @Table(name = "user_to_team")
 public class TeamMember implements Serializable {
 
-    public TeamMember id(TeamMemberId id) {
-        this.id = id;
-        return this;
-    }
-
     @EmbeddedId
     private TeamMemberId id;
 
@@ -23,4 +18,9 @@ public class TeamMember implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("user_id")
     private User user;
+
+    public TeamMember setEmbeddedId(TeamMemberId id) {
+        this.id = id;
+        return this;
+    }
 }

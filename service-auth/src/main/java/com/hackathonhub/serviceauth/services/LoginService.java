@@ -10,13 +10,15 @@ import com.hackathonhub.serviceauth.services.security.UserDetailsServiceImpl;
 import com.hackathonhub.serviceauth.utils.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
+
+import java.util.Map;
 
 
 @Slf4j
@@ -32,8 +34,7 @@ public class LoginService {
     private AuthenticationManager authenticationManager;
 
     public ApiAuthResponse<AuthToken> login(UserLoginRequest userLoginRequest) {
-        ApiAuthResponse.ApiAuthResponseBuilder<AuthToken> responseBuilder =  ApiAuthResponse
-                .builder();
+        ApiAuthResponse<AuthToken> responseBuilder = new ApiAuthResponse<>();
 
         try {
             Authentication authentication = authenticationManager.authenticate(
@@ -44,7 +45,7 @@ public class LoginService {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            HashMap<String, String> generatedTokens = jwtUtils.generateToken(
+            Map<String, String> generatedTokens = jwtUtils.generateToken(
                     authentication
                             .getPrincipal()
                             .toString(),
@@ -54,27 +55,22 @@ public class LoginService {
             UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService
                     .loadUserByUsername(userLoginRequest.getEmail());
 
-            AuthToken newTokens = new AuthToken()
-                    .setUserId(userDetails.getId())
-                    .setRefreshToken(generatedTokens.get("refreshToken"))
-                    .setAccessToken(generatedTokens.get("accessToken"))
-                    .setCreatedAt(System.currentTimeMillis());
+            AuthToken newTokens = new AuthToken(userDetails.getId(),
+                    generatedTokens.get("refreshToken"), generatedTokens.get("accessToken"));
 
             AuthToken savedTokens = authRepository.save(newTokens);
 
-            return responseBuilder
-                    .message(ApiAuthResponseMessage.USER_SUCCESS_AUTHORIZED)
-                    .status(HttpStatus.OK)
-                    .data(savedTokens)
-                    .build();
+            return responseBuilder.ok(savedTokens, ApiAuthResponseMessage.USER_SUCCESS_AUTHORIZED);
 
+        } catch (BadCredentialsException e) {
+            log.info("Invalid password: {}", userLoginRequest.getEmail());
+            return responseBuilder.unauthorized(ApiAuthResponseMessage.INVALID_PASSWORD);
+        } catch (UsernameNotFoundException e) {
+            log.info("User not found: {}", userLoginRequest.getEmail());
+            return responseBuilder.notFound(ApiAuthResponseMessage.USER_NOT_FOUND);
         } catch (Exception e) {
             log.error("Login failed: {}", e.getMessage());
-            return responseBuilder
-                    .message(ApiAuthResponseMessage.authenticationFailed(e.getMessage()))
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .data(null)
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
 
     }

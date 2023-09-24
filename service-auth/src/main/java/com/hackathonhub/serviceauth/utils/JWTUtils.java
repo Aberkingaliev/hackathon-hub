@@ -4,12 +4,10 @@ import com.hackathonhub.serviceauth.models.RoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -21,24 +19,13 @@ public class JWTUtils {
     @Value("${jwt.secretKey}")
     private String secretKey;
 
-    private static final String BEARER_PREFIX = "Bearer ";
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
-    }
-
-
-    public String getParsedSecretKey() {
-        return Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
-    }
-
     public Claims getClaimsFromToken(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getParsedSecretKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+            return Jwts
+                    .parserBuilder()
+                    .setSigningKey(secretKey.getBytes())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
     }
 
     public boolean validateToken(String token) {
@@ -46,22 +33,22 @@ public class JWTUtils {
             return getClaimsFromToken(token)
                     .getExpiration()
                     .after(new Date());
-        } catch (Exception e) {
-            log.error("Jwt util validate: " + e.getMessage());
+        } catch (NullPointerException e) {
+            log.error("Token is empty. Details: " + e.getMessage());
             return false;
         }
     }
 
-    public HashMap<String, String> generateToken (String email,
+    public Map<String, String> generateToken (String email,
                                                   Collection<? extends GrantedAuthority> authorities) {
 
         Date currentTime = new Date();
 
-        long fifteenMinutesMillis = TimeUnit.MINUTES.toMillis(1);
+        long fifteenMinutesMillis = TimeUnit.MINUTES.toMillis(15);
         Date accessTokenExpiration =
                 new Date(currentTime.getTime() + fifteenMinutesMillis);
 
-        long thirtyDaysMillis = TimeUnit.HOURS.toMillis(15);
+        long thirtyDaysMillis = TimeUnit.DAYS.toMillis(30);
         Date refreshTokenExpiration =
                 new Date(currentTime.getTime() + thirtyDaysMillis);
 
@@ -71,7 +58,7 @@ public class JWTUtils {
                 .collect(Collectors.toSet());
 
 
-        return new HashMap<String, String>(
+        return new HashMap<>(
                 Map.ofEntries(
                         Map.entry("accessToken", Jwts
                                 .builder()
@@ -96,11 +83,8 @@ public class JWTUtils {
     }
 
     public Set<RoleEnum> getRolesFromToken(String token) {
-        List<String> authoritiesFromToken =
-                (List<String>)
-                getClaimsFromToken(token)
-                        .get("authorities");
-
+        List<String> authoritiesFromToken = (List<String>)
+                getClaimsFromToken(token).get("authorities");
 
         return authoritiesFromToken
                 .stream()
@@ -109,25 +93,6 @@ public class JWTUtils {
     }
 
     public String getUserSubject(String token) {
-        return  Jwts
-                .parserBuilder()
-                .setSigningKey(getParsedSecretKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody().getSubject();
+        return getClaimsFromToken(token).getSubject();
     }
-
-
-    public String parseAccessToken(HttpServletRequest request) {
-        String authBearer = request.getHeader("Authorization");
-
-        if (authBearer != null
-                && authBearer.startsWith(BEARER_PREFIX)) {
-            return authBearer.substring(BEARER_PREFIX.length());
-        }
-
-        return null;
-    }
-
-
 }

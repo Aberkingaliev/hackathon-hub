@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -74,10 +75,10 @@ public class ContestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiAuthResponse<String>> deleteContest(
+    public ResponseEntity<ApiAuthResponse<Serializable>> deleteContest(
             @PathVariable("id") UUID id
     ) {
-        ApiAuthResponse<String> deletedContest = contestService.deleteContest(id);
+        ApiAuthResponse<Serializable> deletedContest = contestService.deleteContest(id);
 
         return ResponseEntity
                 .status(deletedContest.getStatus())

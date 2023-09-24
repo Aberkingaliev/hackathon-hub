@@ -45,7 +45,7 @@ public class RoleServiceTest {
     @Test
     void getById_TestValid() {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_getById_Success();
-        Role role = roleResponse.getData();
+        Role role = roleResponse.getData().get();
 
         when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
 
@@ -80,7 +80,7 @@ public class RoleServiceTest {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_update_Success();
 
         when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
-        when(roleRepository.save(any(Role.class))).thenReturn(roleResponse.getData());
+        when(roleRepository.save(any(Role.class))).thenReturn(roleResponse.getData().get());
 
         ApiAuthResponse<Role> updatedRoleResponse = roleService.update(role);
 

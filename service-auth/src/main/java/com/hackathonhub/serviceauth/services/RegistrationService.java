@@ -11,9 +11,10 @@ import com.hackathonhub.user_protos.grpc.Messages;
 import com.hackathonhub.user_protos.grpc.UserServiceGrpc;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,42 +24,21 @@ public class RegistrationService {
     private UserServiceGrpc.UserServiceBlockingStub userStub;
 
     public ApiAuthResponse<UserDto> registration (UserCreateDto user) {
-        ApiAuthResponse.ApiAuthResponseBuilder<UserDto> responseBuilder =  ApiAuthResponse
-                .builder();
+        ApiAuthResponse<UserDto> responseBuilder = new ApiAuthResponse<>();
         try {
             if (checkUserExistenceByEmail(user.getEmail())) {
-                return responseBuilder
-                        .status(HttpStatus.BAD_REQUEST)
-                        .message(ApiAuthResponseMessage.USER_ALREADY_REGISTERED)
-                        .build();
+                return responseBuilder.conflict(ApiAuthResponseMessage.USER_ALREADY_REGISTERED);
             }
 
             Dto.UserDto savedUser = createUser(user);
             UserDto mappedUser = UserDtoMapper.toOriginalDto(savedUser);
 
-            return responseBuilder
-                    .status(HttpStatus.CREATED)
-                    .message(ApiAuthResponseMessage.USER_SUCCESS_REGISTERED)
-                    .data(mappedUser)
-                    .build();
+            return responseBuilder.created(mappedUser, ApiAuthResponseMessage.USER_SUCCESS_REGISTERED);
         } catch (Exception e) {
             log.error("Registration failed: {}", e.getMessage());
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(ApiAuthResponseMessage.registrationFailed(e.getMessage()))
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
-
     }
-
-    private Dto.UserDto createUser(UserCreateDto user) {
-        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        user.setPassword(hashedPassword);
-        Messages.CreateUserMessage request = UserCreateMapper.toGrpcDto(user);
-
-        return userStub.createUser(request);
-    }
-
     private boolean checkUserExistenceByEmail (String email) {
         Messages.CheckUserExistenceByEmailRequest request =
                 Messages.CheckUserExistenceByEmailRequest.newBuilder()
@@ -66,5 +46,12 @@ public class RegistrationService {
                         .build();
 
         return userStub.checkUserExistenceByEmail(request).getIsExist();
+    }
+    private Dto.UserDto createUser(UserCreateDto user) {
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedPassword);
+        Messages.CreateUserMessage request = UserCreateMapper.toGrpcDto(user);
+
+        return userStub.createUser(request);
     }
 }

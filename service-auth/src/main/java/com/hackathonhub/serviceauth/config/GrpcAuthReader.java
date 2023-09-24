@@ -8,6 +8,10 @@ import org.springframework.security.core.AuthenticationException;
 import net.devh.boot.grpc.server.security.authentication.GrpcAuthenticationReader;
 
 import javax.annotation.Nullable;
+
+/**
+ * UNUSED BEAN
+ */
 @Configuration
 public class GrpcAuthReader implements GrpcAuthenticationReader {
 

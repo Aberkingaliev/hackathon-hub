@@ -2,6 +2,7 @@ package com.hackathonhub.serviceteam;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.hackathonhub.serviceteam.constants.ApiTeamMemberResponseMessage;
 import com.hackathonhub.serviceteam.controllers.TeamMemberController;
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -47,7 +49,7 @@ public class TeamMemberControllerTest {
     private TeamMemberController teamMemberController;
 
     private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
 
     private UUID teamId;
     private UUID userId;
@@ -113,7 +115,7 @@ public class TeamMemberControllerTest {
         ApiAuthResponse<HashSet<MemberDto>> response = ApiAuthResponse.<HashSet<MemberDto>>builder()
                 .status(HttpStatus.OK)
                 .message(ApiTeamMemberResponseMessage.MEMBERS_RECEIVED)
-                .data(new HashSet<>(Set.of(new MemberDto())))
+                .data(Optional.of(new HashSet<>(Set.of(new MemberDto()))))
                 .build();
 
         String responseJson = objectMapper.writeValueAsString(response);

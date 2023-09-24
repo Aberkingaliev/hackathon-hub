@@ -105,34 +105,24 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
     }
 
     public ApiAuthResponse<UserDto> updateUser(UserDto user) {
-        ApiAuthResponse.ApiAuthResponseBuilder<UserDto> responseBuilder = ApiAuthResponse.builder();
+        ApiAuthResponse<UserDto> responseBuilder = new ApiAuthResponse<>();
 
         if (user == null || user.getId() == null) {
-            return responseBuilder
-                    .status(HttpStatus.BAD_REQUEST)
-                    .message(ApiUserResponseMessage.USERID_REQUIRED)
-                    .build();
+            return responseBuilder.badRequest(ApiUserResponseMessage.USERID_REQUIRED);
         }
 
         try {
-            Optional<User> foundedUser = userRepository.findByEmail(user.getEmail());
+            Optional<User> foundedUser = userRepository.findById(user.getId());
 
             return foundedUser.map(u -> {
-                User mappedUser = u.fromDto(user);
-                UserDto updatedUser = userRepository.save(mappedUser).toDto();
-                return responseBuilder
-                        .status(HttpStatus.OK)
-                        .message(ApiUserResponseMessage.USER_UPDATED)
-                        .data(updatedUser)
-                        .build();
-            }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    ApiUserResponseMessage.USER_NOT_FOUND));
+                        User mappedUser = u.fromDto(user);
+                        UserDto updatedUser = userRepository.save(mappedUser).toDto();
+                        return responseBuilder.ok(updatedUser, ApiUserResponseMessage.USER_UPDATED);
+                    })
+                    .orElseGet(() -> responseBuilder.notFound(ApiUserResponseMessage.USER_NOT_FOUND));
         } catch (Exception e) {
             log.error("Error while updating user: ", e);
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("Error while updating user")
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
 
     }

@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static org.mockito.Mockito.verify;
@@ -57,7 +58,7 @@ class SolutionServiceTest {
         ApiAuthResponse<Solution> result =
                 solutionService.createSolution(solutionCreateDto);
 
-        Assertions.assertEquals("Test solution", result.getData().getName());
+        Assertions.assertEquals("Test solution", result.getData().get().getName());
         Assertions.assertEquals(HttpStatus.CREATED, result.getStatus());
         Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_CREATED, result.getMessage());
 
@@ -76,7 +77,7 @@ class SolutionServiceTest {
         ApiAuthResponse<Solution> result =
                 solutionService.getSolutionById(solutionId);
 
-        Assertions.assertEquals(solutionId, result.getData().getId());
+        Assertions.assertEquals(solutionId, result.getData().get().getId());
         Assertions.assertEquals(HttpStatus.OK, result.getStatus());
         Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_FOUND, result.getMessage());
 
@@ -114,7 +115,7 @@ class SolutionServiceTest {
         ApiAuthResponse<ArrayList<SolutionMetaDto>> result =
                 solutionService.getSolutionMetaByContestId(contestId, 10, null);
 
-        Assertions.assertEquals(10, result.getData().size());
+        Assertions.assertEquals(10, result.getData().get().size());
         Assertions.assertEquals(HttpStatus.OK, result.getStatus());
         Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_FOUND, result.getMessage());
 
@@ -141,7 +142,7 @@ class SolutionServiceTest {
         ApiAuthResponse<Solution> result =
                 solutionService.updateSolution(solution);
 
-        Assertions.assertEquals(updatedSolution.getId(), result.getData().getId());
+        Assertions.assertEquals(updatedSolution.getId(), result.getData().get().getId());
         Assertions.assertEquals(HttpStatus.OK, result.getStatus());
         Assertions.assertEquals(ApiSolutionResponseMessage.SOLUTION_UPDATED, result.getMessage());
 
@@ -170,7 +171,7 @@ class SolutionServiceTest {
     void deleteSolution_TestValid() {
         UUID solutionId = UUID.randomUUID();
 
-        ApiAuthResponse<String> result =
+        ApiAuthResponse<Serializable> result =
                 solutionService.deleteSolution(solutionId);
 
         Assertions.assertEquals(HttpStatus.OK, result.getStatus());

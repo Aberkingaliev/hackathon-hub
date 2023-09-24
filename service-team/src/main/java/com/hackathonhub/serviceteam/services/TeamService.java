@@ -1,15 +1,17 @@
 package com.hackathonhub.serviceteam.services;
 
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
+import com.hackathonhub.serviceteam.dto.TeamCreateDto;
+import com.hackathonhub.serviceteam.dto.TeamDto;
 import com.hackathonhub.serviceteam.models.Team;
 import com.hackathonhub.serviceteam.repositories.TeamRepository;
 import com.hackathonhub.user_protos.grpc.UserServiceGrpc;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,69 +26,43 @@ public class TeamService {
     @Autowired
     private TeamRepository teamRepository;
 
-    public ApiAuthResponse<Team> createTeam(Team team) {
-        ApiAuthResponse.ApiAuthResponseBuilder<Team> responseBuilder = ApiAuthResponse.builder();
+    public ApiAuthResponse<TeamDto> createTeam(TeamCreateDto team) {
+        ApiAuthResponse<TeamDto> responseBuilder = new ApiAuthResponse<>();
+        Team mappedTeam = Team.fromCreateDto(team);
 
         try {
-            Team savedTeam = teamRepository.save(team);
-            return responseBuilder
-                    .status(HttpStatus.CREATED)
-                    .message("Team created successfully")
-                    .data(savedTeam)
-                    .build();
+            Team savedTeam = teamRepository.save(mappedTeam);
+            return responseBuilder.created(savedTeam.toDto(), "Team created successfully");
         } catch (Exception e) {
             log.error("Error creating team: {}", e.getMessage());
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
-    public ApiAuthResponse<Team> getTeamById (String id) {
+    public ApiAuthResponse<TeamDto> getTeamById(String id) {
         UUID parsedId = UUID.fromString(id);
-        ApiAuthResponse.ApiAuthResponseBuilder<Team> responseBuilder = ApiAuthResponse.builder();
+        ApiAuthResponse<TeamDto> responseBuilder = new ApiAuthResponse<>();
 
         try {
             Optional<Team> team = teamRepository.findById(parsedId);
-
-            if(team.isEmpty()) {
-                return responseBuilder
-                        .status(HttpStatus.NOT_FOUND)
-                        .message("Team not found")
-                        .build();
-            }
-
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .message("Team retrieved successfully")
-                    .data(team.get())
-                    .build();
+            return team.map(t -> responseBuilder.ok(t.toDto(), "Team retrieved successfully"))
+                    .orElseGet(() -> responseBuilder.notFound("Team not found"));
         } catch (Exception e) {
             log.error("Error retrieving team: {}", e.getMessage());
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
-    public ApiAuthResponse<Team> deleteTeamById (String id) {
+    public ApiAuthResponse deleteTeamById(String id) {
         UUID parsedId = UUID.fromString(id);
-        ApiAuthResponse.ApiAuthResponseBuilder<Team> responseBuilder = ApiAuthResponse.builder();
+        ApiAuthResponse<Serializable> responseBuilder = new ApiAuthResponse<>();
 
         try {
             teamRepository.deleteById(parsedId);
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .message("Team deleted successfully")
-                    .build();
+            return responseBuilder.ok("Team deleted successfully");
         } catch (Exception e) {
             log.error("Error deleting team: {}", e.getMessage());
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 }
