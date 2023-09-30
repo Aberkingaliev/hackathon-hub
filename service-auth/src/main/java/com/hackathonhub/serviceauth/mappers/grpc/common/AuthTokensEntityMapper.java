@@ -7,11 +7,11 @@ public class AuthTokensEntityMapper {
 
     public static AuthToken toEntity (Entities.AuthTokens authTokens) {
         return new AuthToken()
-                .setId(TypeMapper.toOriginalyUuid(authTokens.getId()))
-                .setUserId(TypeMapper.toOriginalyUuid(authTokens.getUserId()))
+                .setId(TypeMapper.toOriginallyUuid(authTokens.getId()))
+                .setUserId(TypeMapper.toOriginallyUuid(authTokens.getUserId()))
                 .setAccessToken(authTokens.getAccessToken())
                 .setRefreshToken(authTokens.getRefreshToken())
-                .setCreatedAt(TypeMapper.toOriginalyTimestamp(authTokens.getCreatedAt()));
+                .setCreatedAt(TypeMapper.toOriginallyTimestamp(authTokens.getCreatedAt()));
     }
 
 

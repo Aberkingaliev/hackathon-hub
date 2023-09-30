@@ -5,7 +5,9 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -13,6 +15,8 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "roles")
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Role implements Serializable {
 
@@ -29,8 +33,8 @@ public class Role implements Serializable {
         return id;
     }
 
-    public RoleEnum getRole_name() {
-        return role_name;
+    public RoleEnum getRoleName() {
+        return roleName;
     }
 
     public Role setId(UUID id) {
@@ -38,12 +42,12 @@ public class Role implements Serializable {
         return this;
     }
 
-    public Role setRole_name(RoleEnum role_name) {
-        this.role_name = role_name;
+    public Role setRoleName(RoleEnum roleName) {
+        this.roleName = roleName;
         return this;
     }
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private RoleEnum role_name;
+    private RoleEnum roleName;
 }

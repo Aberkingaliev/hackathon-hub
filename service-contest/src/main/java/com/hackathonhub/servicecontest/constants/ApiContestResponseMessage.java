@@ -7,4 +7,5 @@ public class ApiContestResponseMessage {
     public static final String CONTEST_NOT_FOUND = "CONTEST_NOT_FOUND";
     public static final String CONTEST_UPDATED = "CONTEST_UPDATED";
     public static final String CONTEST_DELETED = "CONTEST_DELETED";
+    public static final String INVALID_ID = "INVALID_ID";
 }

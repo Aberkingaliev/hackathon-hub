@@ -1,6 +1,7 @@
 package com.hackathonhub.servicecontest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.hackathonhub.servicecontest.constants.ApiContestResponseMessage;
 import com.hackathonhub.servicecontest.controllers.ContestController;
 import com.hackathonhub.servicecontest.dtos.ApiAuthResponse;
@@ -24,6 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.Serializable;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -46,7 +49,7 @@ class ContestControllerTest {
 
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
 
     @BeforeEach
     public void setup() {
@@ -62,7 +65,7 @@ class ContestControllerTest {
                 <Contest>builder()
                 .status(HttpStatus.CREATED)
                 .message(ApiContestResponseMessage.CONTEST_CREATED)
-                .data(contest)
+                .data(Optional.of(contest))
                 .build();
 
         when(contestService.createContest(any(ContestCreateDto.class))).thenReturn(contestResponse);
@@ -85,7 +88,7 @@ class ContestControllerTest {
                 <ContestDetailDto>builder()
                 .status(HttpStatus.OK)
                 .message(ApiContestResponseMessage.CONTEST_FOUND)
-                .data(contest)
+                .data(Optional.of(contest))
                 .build();
 
         when(contestService.getContest(any(UUID.class))).thenReturn(contestResponse);
@@ -109,7 +112,7 @@ class ContestControllerTest {
                 <Contest>builder()
                 .status(HttpStatus.OK)
                 .message(ApiContestResponseMessage.CONTEST_UPDATED)
-                .data(contest)
+                .data(Optional.of(contest))
                 .build();
 
         when(contestService.updateContest(any(ContestUpdateDto.class))).thenReturn(contestResponse);
@@ -127,8 +130,8 @@ class ContestControllerTest {
 
     @Test
     void deleteContest_TestValid() throws Exception {
-        ApiAuthResponse<String> contestResponse = ApiAuthResponse.
-                <String>builder()
+        ApiAuthResponse<Serializable> contestResponse = ApiAuthResponse.
+                <Serializable>builder()
                 .status(HttpStatus.OK)
                 .message(ApiContestResponseMessage.CONTEST_DELETED)
                 .build();

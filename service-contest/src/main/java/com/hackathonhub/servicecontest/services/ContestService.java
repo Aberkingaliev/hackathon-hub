@@ -11,9 +11,9 @@ import com.hackathonhub.servicecontest.repositories.ContestRepository;
 import com.hackathonhub.servicecontest.repositories.SolutionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -28,32 +28,22 @@ public class ContestService {
     @Autowired
     private SolutionRepository solutionRepository;
 
-
     public ApiAuthResponse<Contest> createContest(ContestCreateDto contest) {
-        ApiAuthResponse.ApiAuthResponseBuilder<Contest> responseBuilder =
-                ApiAuthResponse.<Contest>builder();
+        ApiAuthResponse<Contest> responseBuilder = new ApiAuthResponse<>();
         Contest newContest = Contest.fromCreateDto(contest);
 
         try {
             Contest savedContest = contestRepository.save(newContest);
 
-            return responseBuilder
-                    .status(HttpStatus.CREATED)
-                    .data(savedContest)
-                    .message(ApiContestResponseMessage.CONTEST_CREATED)
-                    .build();
+            return responseBuilder.created(savedContest, ApiContestResponseMessage.CONTEST_CREATED);
         } catch (Exception e) {
-            log.error("Error while creating contest: {}", e.getMessage());
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            log.error("Error while creating contest: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
     public ApiAuthResponse<ContestDetailDto> getContest(UUID contestId) {
-        ApiAuthResponse.ApiAuthResponseBuilder<ContestDetailDto> responseBuilder =
-                ApiAuthResponse.<ContestDetailDto>builder();
+        ApiAuthResponse<ContestDetailDto> responseBuilder = new ApiAuthResponse<>();
 
         try {
             Optional<ContestDetailDto> foundedContest =
@@ -63,28 +53,16 @@ public class ContestService {
                 Set<SolutionMetaDto> foundedSolutions =
                         solutionRepository.getSolutionMetaListById(contestId, 10, null);
                 contest.setSolutions(foundedSolutions);
-                return responseBuilder
-                        .status(HttpStatus.OK)
-                        .data(contest)
-                        .message(ApiContestResponseMessage.CONTEST_FOUND)
-                        .build();
-            }).orElseGet(() -> responseBuilder
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(ApiContestResponseMessage.CONTEST_NOT_FOUND)
-                    .build());
+                return responseBuilder.ok(contest, ApiContestResponseMessage.CONTEST_FOUND);
+            }).orElseGet(() -> responseBuilder.notFound(ApiContestResponseMessage.CONTEST_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while getting contest: {}", e.getMessage());
-
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            log.error("Error while getting contest: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
     public ApiAuthResponse<Contest> updateContest(ContestUpdateDto contest) {
-        ApiAuthResponse.ApiAuthResponseBuilder<Contest> responseBuilder =
-                ApiAuthResponse.<Contest>builder();
+        ApiAuthResponse<Contest> responseBuilder = new ApiAuthResponse<>();
 
         try {
             Optional<Contest> foundedContest = contestRepository.findById(contest.getId());
@@ -92,43 +70,24 @@ public class ContestService {
             return foundedContest.map(c -> {
                 Contest mappedContest = c.fromUpdateDto(contest);
                 Contest updatedContest = contestRepository.update(mappedContest);
-                return responseBuilder
-                        .status(HttpStatus.OK)
-                        .data(updatedContest)
-                        .message(ApiContestResponseMessage.CONTEST_UPDATED)
-                        .build();
-            }).orElseGet(() -> responseBuilder
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(ApiContestResponseMessage.CONTEST_NOT_FOUND)
-                    .build());
+                return responseBuilder.ok(updatedContest, ApiContestResponseMessage.CONTEST_UPDATED);
+            }).orElseGet(() -> responseBuilder.notFound(ApiContestResponseMessage.CONTEST_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while updating contest: {}", e.getMessage());
-
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            log.error("Error while updating contest: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
-    public ApiAuthResponse<String> deleteContest(UUID id) {
-        ApiAuthResponse.ApiAuthResponseBuilder<String> responseBuilder =
-                ApiAuthResponse.builder();
+    public ApiAuthResponse<Serializable> deleteContest(UUID id) {
+        ApiAuthResponse<Serializable> responseBuilder = new ApiAuthResponse<>();
 
         try {
             contestRepository.deleteById(id);
 
-            return responseBuilder
-                    .status(HttpStatus.OK)
-                    .message(ApiContestResponseMessage.CONTEST_DELETED)
-                    .build();
+            return responseBuilder.ok(ApiContestResponseMessage.CONTEST_DELETED);
         } catch (Exception e) {
-            log.error("Error while deleting contest: {}", e.getMessage());
-
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(e.getMessage())
-                    .build();
+            log.error("Error while deleting contest: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 }

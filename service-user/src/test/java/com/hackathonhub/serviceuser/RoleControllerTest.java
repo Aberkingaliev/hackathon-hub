@@ -2,6 +2,7 @@ package com.hackathonhub.serviceuser;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.hackathonhub.serviceuser.controllers.RoleController;
 import com.hackathonhub.serviceuser.dtos.ApiAuthResponse;
 import com.hackathonhub.serviceuser.models.Role;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-public class RoleControllerTest {
+class RoleControllerTest {
 
     @Mock
     private RoleService roleService;
@@ -38,7 +39,7 @@ public class RoleControllerTest {
     private RoleController roleController;
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
 
 
     @BeforeEach
@@ -51,7 +52,7 @@ public class RoleControllerTest {
     @Test
     void getById_TestValid() throws Exception {
          ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_getById_Success();
-         UUID id = roleResponse.getData().getId();
+         UUID id = roleResponse.getData().get().getId();
 
          String roleResponseJson = objectMapper.writeValueAsString(roleResponse);
 

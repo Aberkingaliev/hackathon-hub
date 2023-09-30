@@ -1,8 +1,10 @@
 package com.hackathonhub.serviceteam.models;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -12,6 +14,8 @@ import java.util.UUID;
 @Embeddable
 @Data
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TeamMemberId implements Serializable {
 
     public TeamMemberId userId(UUID userId) {

@@ -2,14 +2,11 @@ package com.hackathonhub.serviceauth.controllers;
 
 import com.hackathonhub.serviceauth.constants.ApiAuthResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
+import com.hackathonhub.serviceauth.dtos.UserCreateDto;
+import com.hackathonhub.serviceauth.dtos.UserDto;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
 import com.hackathonhub.serviceauth.models.AuthToken;
-import com.hackathonhub.serviceauth.models.User;
 import com.hackathonhub.serviceauth.services.LoginService;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
 import com.hackathonhub.serviceauth.services.RegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,11 +18,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -38,8 +37,7 @@ public class AuthController {
     private LoginService loginService;
 
 
-    @Operation(summary = "User registration", description = "If the response is successful, the created user will be " +
-            "returned in the response body (data: User)")
+    @Operation(summary = "User registration")
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "201", description = "User created"),
@@ -50,16 +48,15 @@ public class AuthController {
             }
     )
     @PostMapping("/registration")
-    public ResponseEntity<ApiAuthResponse<User>> registration(@RequestBody User user) {
-        ApiAuthResponse<User> response = registrationService.registration(user);
+    public ResponseEntity<ApiAuthResponse<UserDto>> registration(@RequestBody UserCreateDto user) {
+        ApiAuthResponse<UserDto> response = registrationService.registration(user);
         return ResponseEntity
                 .status(response.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(response);
     }
 
-    @Operation(summary = "Login", description = "If the response is successful, a pair of tokens will be " +
-            "returned in the response body (data: AuthTokens)")
+    @Operation(summary = "Login")
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "201", description = "User authorized"),
@@ -74,17 +71,20 @@ public class AuthController {
             @RequestBody UserLoginRequest loginRequest,
             HttpServletResponse responseServlet) {
         ApiAuthResponse<AuthToken> response = loginService.login(loginRequest);
+
         if (response.getStatus() == HttpStatus.OK) {
-            Cookie refreshTokenCookie = new Cookie("refreshToken",
-                    response.getData().getRefreshToken());
+            response.getData().ifPresent(authToken -> {
+                Cookie refreshTokenCookie = new Cookie("refreshToken",
+                        authToken.getRefreshToken());
 
-            refreshTokenCookie.setMaxAge((int) TimeUnit.DAYS.toMillis(30));
-            refreshTokenCookie.setPath("/");
+                refreshTokenCookie.setMaxAge((int) TimeUnit.DAYS.toMillis(30));
+                refreshTokenCookie.setPath("/");
 
-            responseServlet.addCookie(refreshTokenCookie);
+                responseServlet.addCookie(refreshTokenCookie);
 
-            responseServlet.setHeader(HttpHeaders.AUTHORIZATION,
-                    "Bearer " + response.getData().getAccessToken());
+                responseServlet.setHeader(HttpHeaders.AUTHORIZATION,
+                        "Bearer " + authToken.getAccessToken());
+            });
         }
 
         return ResponseEntity
@@ -93,8 +93,7 @@ public class AuthController {
                 .body(response);
     }
 
-    @Operation(summary = "Logout", description = "If the response is successful, nothing will be " +
-            "returned in the response body (data: null)")
+    @Operation(summary = "Logout")
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "201", description = "User logged out"),
@@ -112,11 +111,8 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(ApiAuthResponse
-                        .builder()
-                        .status(HttpStatus.OK)
-                        .message(ApiAuthResponseMessage.USER_SUCCESS_LOGGED_OUT)
-                        .build());
+                .body(new ApiAuthResponse<>()
+                        .ok(ApiAuthResponseMessage.USER_SUCCESS_LOGGED_OUT));
     }
 
 }

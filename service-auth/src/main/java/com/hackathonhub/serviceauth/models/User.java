@@ -62,15 +62,5 @@ public class User implements Serializable {
         this.roles = roles;
         return this;
     }
-    public User from(User user) {
-        return new User()
-                .setId(user.getId())
-                .setUsername(user.getUsername())
-                .setFullName(user.getFullName())
-                .setEmail(user.getEmail())
-                .setPassword(user.getPassword())
-                .setIsActivated(user.getIsActivated())
-                .setRoles(new HashSet<>(user.getRoles()));
-    }
 
 }

@@ -2,6 +2,7 @@ package com.hackathonhub.serviceteam;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.hackathonhub.serviceteam.constants.ApiTeamMemberResponseMessage;
 import com.hackathonhub.serviceteam.controllers.TeamMemberController;
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({SpringExtension.class})
-public class TeamMemberControllerTest {
+class TeamMemberControllerTest {
 
     @Mock
     @Autowired
@@ -47,7 +49,7 @@ public class TeamMemberControllerTest {
     private TeamMemberController teamMemberController;
 
     private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new Jdk8Module());
 
     private UUID teamId;
     private UUID userId;
@@ -62,7 +64,7 @@ public class TeamMemberControllerTest {
 
 
     @Test
-    public void addMember_TestValid() throws Exception {
+    void addMember_TestValid() throws Exception {
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.OK)
                 .message(ApiTeamMemberResponseMessage.USER_ADDED_TO_TEAM)
@@ -85,7 +87,7 @@ public class TeamMemberControllerTest {
     }
 
     @Test
-    public void addMember_TestAlreadyInTeam() throws Exception {
+    void addMember_TestAlreadyInTeam() throws Exception {
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(ApiTeamMemberResponseMessage.USER_ALREADY_IN_TEAM)
@@ -108,12 +110,12 @@ public class TeamMemberControllerTest {
     }
 
     @Test
-    public void getMembers_TestValid() throws Exception {
+    void getMembers_TestValid() throws Exception {
         UUID cursor = UUID.randomUUID();
         ApiAuthResponse<HashSet<MemberDto>> response = ApiAuthResponse.<HashSet<MemberDto>>builder()
                 .status(HttpStatus.OK)
                 .message(ApiTeamMemberResponseMessage.MEMBERS_RECEIVED)
-                .data(new HashSet<>(Set.of(new MemberDto())))
+                .data(Optional.of(new HashSet<>(Set.of(new MemberDto()))))
                 .build();
 
         String responseJson = objectMapper.writeValueAsString(response);
@@ -132,7 +134,7 @@ public class TeamMemberControllerTest {
     }
 
     @Test
-    public void deleteMember_TestValid() throws Exception {
+    void deleteMember_TestValid() throws Exception {
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.OK)
                 .message(ApiTeamMemberResponseMessage.USER_DELETED_FROM_TEAM)
@@ -154,7 +156,7 @@ public class TeamMemberControllerTest {
     }
 
     @Test
-    public void deleteMember_TestNotFound() throws Exception {
+    void deleteMember_TestNotFound() throws Exception {
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(ApiTeamMemberResponseMessage.USER_NOT_FOUND_IN_TEAM)

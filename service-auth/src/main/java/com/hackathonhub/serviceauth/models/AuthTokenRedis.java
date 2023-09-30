@@ -14,4 +14,3 @@ public class AuthTokenRedis implements Serializable {
 
     protected String refreshToken;
 }
-

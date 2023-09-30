@@ -2,7 +2,8 @@ package com.hackathonhub.serviceteam.controllers;
 
 
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
-import com.hackathonhub.serviceteam.models.Team;
+import com.hackathonhub.serviceteam.dto.TeamCreateDto;
+import com.hackathonhub.serviceteam.dto.TeamDto;
 import com.hackathonhub.serviceteam.services.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,8 +35,8 @@ public class TeamController {
             }
     )
     @PostMapping("/team/create")
-    public ResponseEntity<ApiAuthResponse<Team>> createTeam(@RequestBody Team team) {
-        ApiAuthResponse<Team> response = teamService.createTeam(team);
+    public ResponseEntity<ApiAuthResponse<TeamDto>> createTeam(@RequestBody TeamCreateDto team) {
+        ApiAuthResponse<TeamDto> response = teamService.createTeam(team);
         return ResponseEntity
                 .status(response.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -56,8 +57,8 @@ public class TeamController {
             }
     )
     @GetMapping("/team/{id}")
-    public ResponseEntity<ApiAuthResponse<Team>> getTeamById(@PathVariable("id") String id) {
-        ApiAuthResponse<Team> response = teamService.getTeamById(id);
+    public ResponseEntity<ApiAuthResponse<TeamDto>> getTeamById(@PathVariable("id") String id) {
+        ApiAuthResponse<TeamDto> response = teamService.getTeamById(id);
         return ResponseEntity
                 .status(response.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -78,8 +79,8 @@ public class TeamController {
             }
     )
     @DeleteMapping("/team/{id}")
-    public ResponseEntity<ApiAuthResponse<Team>> deleteTeamById(@PathVariable("id") String id) {
-        ApiAuthResponse<Team> response = teamService.deleteTeamById(id);
+    public ResponseEntity<ApiAuthResponse> deleteTeamById(@PathVariable("id") String id) {
+        ApiAuthResponse response = teamService.deleteTeamById(id);
         return ResponseEntity
                 .status(response.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)

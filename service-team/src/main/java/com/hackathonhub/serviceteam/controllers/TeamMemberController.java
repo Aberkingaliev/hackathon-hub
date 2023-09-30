@@ -3,7 +3,6 @@ package com.hackathonhub.serviceteam.controllers;
 
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
 import com.hackathonhub.serviceteam.dto.MemberDto;
-import com.hackathonhub.serviceteam.models.User;
 import com.hackathonhub.serviceteam.services.TeamMemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -23,7 +25,7 @@ public class TeamMemberController {
 
     @PostMapping("/team/{id}/member")
     public ResponseEntity<ApiAuthResponse<String>> addMember(
-            @RequestBody  HashMap<String, UUID> userIdObject,
+            @RequestBody  Map<String, UUID> userIdObject,
             @PathVariable("id") UUID teamId
     ) {
         ApiAuthResponse<String> response = teamMemberService
@@ -51,7 +53,7 @@ public class TeamMemberController {
 
     @DeleteMapping("/team/{id}/member")
     public ResponseEntity<ApiAuthResponse<String>> deleteMember(
-            @RequestBody HashMap<String, UUID> userIdObject,
+            @RequestBody Map<String, UUID> userIdObject,
             @PathVariable("id") UUID teamId
     ) {
         ApiAuthResponse<String> response = teamMemberService

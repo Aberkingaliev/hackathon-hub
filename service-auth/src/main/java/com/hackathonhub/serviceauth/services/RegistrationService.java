@@ -1,18 +1,20 @@
 package com.hackathonhub.serviceauth.services;
 
-import com.hackathonhub.common.grpc.Entities;
+import com.hackathonhub.common.grpc.Dto;
 import com.hackathonhub.serviceauth.constants.ApiAuthResponseMessage;
 import com.hackathonhub.serviceauth.dtos.ApiAuthResponse;
+import com.hackathonhub.serviceauth.dtos.UserCreateDto;
+import com.hackathonhub.serviceauth.dtos.UserDto;
 import com.hackathonhub.serviceauth.mappers.grpc.UserCreateMapper;
-import com.hackathonhub.serviceauth.mappers.grpc.common.UserEntityMapper;
-import com.hackathonhub.serviceauth.models.User;
+import com.hackathonhub.serviceauth.mappers.grpc.common.UserDtoMapper;
 import com.hackathonhub.user_protos.grpc.Messages;
 import com.hackathonhub.user_protos.grpc.UserServiceGrpc;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,46 +23,22 @@ public class RegistrationService {
     @GrpcClient("service-user")
     private UserServiceGrpc.UserServiceBlockingStub userStub;
 
-    public ApiAuthResponse<User> registration (User user) {
-        ApiAuthResponse.ApiAuthResponseBuilder<User> responseBuilder =  ApiAuthResponse
-                .builder();
+    public ApiAuthResponse<UserDto> registration (UserCreateDto user) {
+        ApiAuthResponse<UserDto> responseBuilder = new ApiAuthResponse<>();
         try {
-            boolean isUserExist = checkUserExistenceByEmail(user.getEmail());
-
-            if (isUserExist) {
-                return responseBuilder
-                        .status(HttpStatus.BAD_REQUEST)
-                        .message(ApiAuthResponseMessage.USER_ALREADY_REGISTERED)
-                        .build();
+            if (checkUserExistenceByEmail(user.getEmail())) {
+                return responseBuilder.conflict(ApiAuthResponseMessage.USER_ALREADY_REGISTERED);
             }
 
-            Entities.User savedUser = createUser(user);
-            User mappedUser = UserEntityMapper.toEntity(savedUser);
+            Dto.UserDto savedUser = createUser(user);
+            UserDto mappedUser = UserDtoMapper.toOriginalDto(savedUser);
 
-            return responseBuilder
-                    .status(HttpStatus.CREATED)
-                    .message(ApiAuthResponseMessage.USER_SUCCESS_REGISTERED)
-                    .data(mappedUser)
-                    .build();
+            return responseBuilder.created(mappedUser, ApiAuthResponseMessage.USER_SUCCESS_REGISTERED);
         } catch (Exception e) {
-            log.error("Registration failed: {}", e.getMessage());
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message(ApiAuthResponseMessage.registrationFailed(e.getMessage()))
-                    .data(null)
-                    .build();
+            log.error("Registration failed: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
-
     }
-
-    private Entities.User createUser(User user) {
-        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        user.setPassword(hashedPassword);
-        Messages.CreateUserRequest request = UserCreateMapper.toGrpcCreateDto(user);
-
-        return userStub.createUser(request);
-    }
-
     private boolean checkUserExistenceByEmail (String email) {
         Messages.CheckUserExistenceByEmailRequest request =
                 Messages.CheckUserExistenceByEmailRequest.newBuilder()
@@ -68,5 +46,12 @@ public class RegistrationService {
                         .build();
 
         return userStub.checkUserExistenceByEmail(request).getIsExist();
+    }
+    private Dto.UserDto createUser(UserCreateDto user) {
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedPassword);
+        Messages.CreateUserMessage request = UserCreateMapper.toGrpcDto(user);
+
+        return userStub.createUser(request);
     }
 }

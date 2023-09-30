@@ -7,6 +7,7 @@ import com.hackathonhub.serviceuser.models.Role;
 import com.hackathonhub.serviceuser.models.RoleEnum;
 import org.springframework.http.HttpStatus;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /*
@@ -20,7 +21,7 @@ public class RoleData {
         return ApiAuthResponse.<Role>builder()
                 .status(HttpStatus.OK)
                 .message(ApiRoleResponseMessage.ROLE_FOUND)
-                .data(getRole())
+                .data(Optional.ofNullable(getRole()))
                 .build();
     }
 
@@ -28,7 +29,7 @@ public class RoleData {
         return ApiAuthResponse.<Role>builder()
                 .status(HttpStatus.OK)
                 .message(ApiRoleResponseMessage.ROLE_UPDATED)
-                .data(getRole())
+                .data(Optional.ofNullable(getRole()))
                 .build();
     }
 
@@ -49,6 +50,6 @@ public class RoleData {
     public static Role getRole() {
         return new Role()
                 .setId(UUID.randomUUID())
-                .setRole_name(RoleEnum.ROLE_ADMIN);
+                .setRoleName(RoleEnum.ROLE_ADMIN);
     }
 }

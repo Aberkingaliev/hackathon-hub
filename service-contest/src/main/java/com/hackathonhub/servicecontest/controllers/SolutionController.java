@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @RestController
@@ -53,10 +54,10 @@ public class SolutionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiAuthResponse<String>> deleteSolutionById(
+    public ResponseEntity<ApiAuthResponse<Serializable>> deleteSolutionById(
             @PathVariable("id") UUID id
     ) {
-        ApiAuthResponse<String> deletedSolution = solutionService.deleteSolution(id);
+        ApiAuthResponse<Serializable> deletedSolution = solutionService.deleteSolution(id);
 
         return ResponseEntity
                 .status(deletedSolution.getStatus())

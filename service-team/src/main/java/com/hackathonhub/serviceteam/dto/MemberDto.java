@@ -1,8 +1,5 @@
 package com.hackathonhub.serviceteam.dto;
 
-import com.hackathonhub.serviceteam.models.TeamMember;
-import com.hackathonhub.serviceteam.models.User;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;

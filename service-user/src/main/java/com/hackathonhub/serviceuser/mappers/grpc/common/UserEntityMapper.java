@@ -3,8 +3,6 @@ package com.hackathonhub.serviceuser.mappers.grpc.common;
 import com.hackathonhub.common.grpc.Entities;
 import com.hackathonhub.serviceuser.models.User;
 
-import java.util.Optional;
-
 public class UserEntityMapper {
 
     public static Entities.User toGrpcEntity (User user) {

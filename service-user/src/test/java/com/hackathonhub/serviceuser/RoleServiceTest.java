@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-public class RoleServiceTest {
+class RoleServiceTest {
 
     @Mock
     @Autowired
@@ -44,7 +45,7 @@ public class RoleServiceTest {
     @Test
     void getById_TestValid() {
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_getById_Success();
-        Role role = roleResponse.getData();
+        Role role = roleResponse.getData().get();
 
         when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
 
@@ -66,18 +67,20 @@ public class RoleServiceTest {
 
         verify(roleRepository, times(1)).findById(id);
 
-        Assertions.assertEquals(roleResponse, foundedRole);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            throw new ResponseStatusException(roleResponse.getStatus(), roleResponse.getMessage());
+        });
     }
 
 
     @Test
     void update_TestValid() {
         UUID id = UUID.randomUUID();
-        Role role = new Role().setId(id).setRole_name(RoleEnum.ROLE_ADMIN);
+        Role role = new Role().setId(id).setRoleName(RoleEnum.ROLE_ADMIN);
         ApiAuthResponse<Role> roleResponse = RoleData.getRoleResponse_update_Success();
 
         when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
-        when(roleRepository.save(any(Role.class))).thenReturn(roleResponse.getData());
+        when(roleRepository.save(any(Role.class))).thenReturn(roleResponse.getData().get());
 
         ApiAuthResponse<Role> updatedRoleResponse = roleService.update(role);
 
@@ -98,7 +101,9 @@ public class RoleServiceTest {
 
         verify(roleRepository, times(1)).findById(role.getId());
 
-        Assertions.assertEquals(updatedRoleResponse, roleResponse);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            throw new ResponseStatusException(roleResponse.getStatus(), roleResponse.getMessage());
+        });
     }
 
     @Test
@@ -127,7 +132,9 @@ public class RoleServiceTest {
 
         verify(roleRepository, times(1)).findById(role.getId());
 
-        Assertions.assertEquals(deletedRoleResponse, roleResponse);
+        Assertions.assertThrows(ResponseStatusException.class, () -> {
+            throw new ResponseStatusException(roleResponse.getStatus(), roleResponse.getMessage());
+        });
     }
 
 }

@@ -6,7 +6,6 @@ import com.hackathonhub.serviceuser.models.Role;
 import com.hackathonhub.serviceuser.repositories.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,102 +21,55 @@ public class RoleService {
 
 
     public ApiAuthResponse<Role> create(Role role) {
-        ApiAuthResponse.ApiAuthResponseBuilder<Role> responseBuilder =
-                ApiAuthResponse.<Role>builder();
+        ApiAuthResponse<Role> responseBuilder = new ApiAuthResponse<>();
         try {
-            Role savedRole = roleRepository.save(new Role().setRole_name(role.getRole_name()));
-
-            return responseBuilder
-                    .status(HttpStatus.CREATED)
-                    .message(ApiRoleResponseMessage.ROLE_CREATED)
-                    .data(savedRole)
-                    .build();
+            Role savedRole = roleRepository.save(new Role().setRoleName(role.getRoleName()));
+            return responseBuilder.created(savedRole, ApiRoleResponseMessage.ROLE_CREATED);
         } catch (Exception e) {
-            log.error("Error while creating role " + e.getMessage());
-
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("Error while creating role")
-                    .build();
+            log.error("Error while creating role: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
     public ApiAuthResponse<Role> getById(UUID id) {
-        ApiAuthResponse.ApiAuthResponseBuilder<Role> responseBuilder =
-                ApiAuthResponse.<Role>builder();
+        ApiAuthResponse<Role> responseBuilder = new ApiAuthResponse<>();
 
         try {
             Optional<Role> foundedRole = roleRepository.findById(id);
-
-            return foundedRole.map(role -> responseBuilder
-                            .status(HttpStatus.OK)
-                            .message(ApiRoleResponseMessage.ROLE_FOUND)
-                            .data(role)
-                            .build())
-                    .orElseGet(() -> responseBuilder
-                            .status(HttpStatus.NOT_FOUND)
-                            .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
-                            .build());
+            return foundedRole.map(role -> responseBuilder.ok(role, ApiRoleResponseMessage.ROLE_FOUND))
+                    .orElseGet(() -> responseBuilder.notFound(ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("ERROR_WHILE_GETTING_ROLE")
-                    .build();
+            log.error("Error while getting role: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
     public ApiAuthResponse<Role> update(Role role) {
-        ApiAuthResponse.ApiAuthResponseBuilder<Role> responseBuilder =
-                ApiAuthResponse.<Role>builder();
+        ApiAuthResponse<Role> responseBuilder = new ApiAuthResponse<>();
         try {
             Optional<Role> foundedRole = roleRepository.findById(role.getId());
-
             return foundedRole.map(r -> {
-                r.setRole_name(role.getRole_name());
+                r.setRoleName(role.getRoleName());
                 Role updatedRole = roleRepository.save(r);
-                return responseBuilder
-                        .status(HttpStatus.OK)
-                        .message(ApiRoleResponseMessage.ROLE_UPDATED)
-                        .data(updatedRole)
-                        .build();
-            }).orElseGet(() -> responseBuilder
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
-                    .build());
+                return responseBuilder.ok(updatedRole, ApiRoleResponseMessage.ROLE_UPDATED);
+            }).orElseGet(() -> responseBuilder.notFound(ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while updating role " + e.getMessage());
-
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("Error while updating role")
-                    .build();
+            log.error("Error while updating role: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 
     public ApiAuthResponse<Role> delete(Role role) {
-
-        ApiAuthResponse.ApiAuthResponseBuilder<Role> responseBuilder =
-                ApiAuthResponse.<Role>builder();
+        ApiAuthResponse<Role> responseBuilder = new ApiAuthResponse<>();
         try {
             Optional<Role> foundedRole = roleRepository.findById(role.getId());
-
             return foundedRole.map(r -> {
                 roleRepository.delete(r);
-                return responseBuilder
-                        .status(HttpStatus.OK)
-                        .message(ApiRoleResponseMessage.ROLE_DELETED)
-                        .build();
-            }).orElseGet(() -> responseBuilder
-                    .status(HttpStatus.NOT_FOUND)
-                    .message(ApiRoleResponseMessage.ROLE_NOT_FOUND)
-                    .build());
+                return responseBuilder.ok(ApiRoleResponseMessage.ROLE_DELETED);
+            }).orElseGet(() -> responseBuilder.notFound(ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while deleting role " + e.getMessage());
-
-            return responseBuilder
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .message("Error while deleting role")
-                    .build();
+            log.error("Error while deleting role: ", e);
+            return responseBuilder.internalServerError(e.getMessage());
         }
     }
 }

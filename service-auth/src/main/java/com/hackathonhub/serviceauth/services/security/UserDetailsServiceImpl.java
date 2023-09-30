@@ -5,6 +5,8 @@ import com.hackathonhub.serviceauth.mappers.grpc.common.UserEntityMapper;
 import com.hackathonhub.serviceauth.models.User;
 import com.hackathonhub.user_protos.grpc.Messages;
 import com.hackathonhub.user_protos.grpc.UserServiceGrpc;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,16 +30,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .setEmail(email)
                 .build();
 
-        Entities.User response = userStub.getUserByEmail(request);
+        try {
+            Entities.User response = userStub.getUserEntityByEmail(request);
 
-        if (!response.hasId()) {
-            log.error("User {} not found", email);
-            throw new UsernameNotFoundException("User " + email + " not found");
+            User mappedUser = UserEntityMapper.toEntity(response);
+
+            return UserDetailsImpl
+                    .build(mappedUser);
+        } catch (StatusRuntimeException e) {
+            if (e.getStatus().getCode() == Status.NOT_FOUND.getCode()) {
+                throw new UsernameNotFoundException("User not found with email: " + email);
+            }
+            throw new RuntimeException("Error while fetching user with email: " + email);
         }
-
-        User mappedUser = UserEntityMapper.toEntity(response);
-
-        return UserDetailsImpl
-                .build(mappedUser);
     }
 }
+

@@ -1,5 +1,7 @@
 package com.hackathonhub.serviceteam.models;
 
+import com.hackathonhub.serviceteam.dto.TeamCreateDto;
+import com.hackathonhub.serviceteam.dto.TeamDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.ToString;
@@ -61,4 +63,28 @@ public class Team implements Serializable {
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> members;
+
+    public static Team fromCreateDto(TeamCreateDto dto) {
+        return new Team()
+                .setName(dto.getName())
+                .setDescription(dto.getDescription())
+                .setFounderId(dto.getFounderId());
+    }
+
+    public Team fromDto(TeamDto dto) {
+        this.name = dto.getName();
+        this.description = dto.getDescription();
+        this.founderId = dto.getFounderId();
+        return this;
+    }
+
+    public TeamDto toDto() {
+        return TeamDto.builder()
+                .id(this.id)
+                .name(this.name)
+                .description(this.description)
+                .founderId(this.founderId)
+                .createdAt(this.createdAt)
+                .build();
+    }
 }

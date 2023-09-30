@@ -2,7 +2,10 @@ package com.hackathonhub.serviceuser.models;
 
 import javax.persistence.*;
 
-import lombok.Getter;
+import com.hackathonhub.serviceuser.dtos.UserDto;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -11,7 +14,9 @@ import java.util.UUID;
 
 
 @Entity
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email"),
         @UniqueConstraint(columnNames = "username")
@@ -78,19 +83,29 @@ public class User implements Serializable {
         return this;
     }
 
-    public User setRoles(HashSet<Role> roles) {
+    public User setRoles(Set<Role> roles) {
         this.roles = roles;
         return this;
     }
 
-    public User from(User user) {
-        return new User()
-                .setId(user.getId())
-                .setUsername(user.getUsername())
-                .setFullName(user.getFullName())
-                .setEmail(user.getEmail())
-                .setPassword(user.getPassword())
-                .setIsActivated(user.getIsActivated())
-                .setRoles(new HashSet<>(user.getRoles()));
+    public User fromDto(UserDto userDto) {
+        this.id = userDto.getId();
+        this.username = userDto.getUsername();
+        this.fullName = userDto.getFullName();
+        this.email = userDto.getEmail();
+        this.isActivated = userDto.getIsActivated();
+        this.roles = userDto.getRoles();
+        return this;
     }
+
+    public UserDto toDto() {
+        return new UserDto()
+                .setId(this.id)
+                .setUsername(this.username)
+                .setFullName(this.fullName)
+                .setEmail(this.email)
+                .setIsActivated(this.isActivated)
+                .setRoles(this.roles);
+    }
+
 }
