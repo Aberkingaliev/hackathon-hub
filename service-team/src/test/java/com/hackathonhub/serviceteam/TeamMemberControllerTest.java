@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({SpringExtension.class})
-public class TeamMemberControllerTest {
+class TeamMemberControllerTest {
 
     @Mock
     @Autowired
@@ -64,7 +64,7 @@ public class TeamMemberControllerTest {
 
 
     @Test
-    public void addMember_TestValid() throws Exception {
+    void addMember_TestValid() throws Exception {
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.OK)
                 .message(ApiTeamMemberResponseMessage.USER_ADDED_TO_TEAM)
@@ -87,7 +87,7 @@ public class TeamMemberControllerTest {
     }
 
     @Test
-    public void addMember_TestAlreadyInTeam() throws Exception {
+    void addMember_TestAlreadyInTeam() throws Exception {
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(ApiTeamMemberResponseMessage.USER_ALREADY_IN_TEAM)
@@ -110,7 +110,7 @@ public class TeamMemberControllerTest {
     }
 
     @Test
-    public void getMembers_TestValid() throws Exception {
+    void getMembers_TestValid() throws Exception {
         UUID cursor = UUID.randomUUID();
         ApiAuthResponse<HashSet<MemberDto>> response = ApiAuthResponse.<HashSet<MemberDto>>builder()
                 .status(HttpStatus.OK)
@@ -134,7 +134,7 @@ public class TeamMemberControllerTest {
     }
 
     @Test
-    public void deleteMember_TestValid() throws Exception {
+    void deleteMember_TestValid() throws Exception {
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.OK)
                 .message(ApiTeamMemberResponseMessage.USER_DELETED_FROM_TEAM)
@@ -156,7 +156,7 @@ public class TeamMemberControllerTest {
     }
 
     @Test
-    public void deleteMember_TestNotFound() throws Exception {
+    void deleteMember_TestNotFound() throws Exception {
         ApiAuthResponse<String> response = ApiAuthResponse.<String>builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(ApiTeamMemberResponseMessage.USER_NOT_FOUND_IN_TEAM)

@@ -69,7 +69,7 @@ public class LoginService {
             log.info("User not found: {}", userLoginRequest.getEmail());
             return responseBuilder.notFound(ApiAuthResponseMessage.USER_NOT_FOUND);
         } catch (Exception e) {
-            log.error("Login failed: {}", e.getMessage());
+            log.error("Login failed: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
 

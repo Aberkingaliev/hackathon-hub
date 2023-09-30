@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-public class RoleControllerTest {
+class RoleControllerTest {
 
     @Mock
     private RoleService roleService;

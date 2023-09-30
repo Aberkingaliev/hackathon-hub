@@ -44,7 +44,7 @@ public class TeamMemberService {
             teamMemberRepository.save(newTeamMember);
             return responseBuilder.created(ApiTeamMemberResponseMessage.USER_ADDED_TO_TEAM);
         } catch (Exception e) {
-            log.error("Error creating team member: {}", e.getMessage());
+            log.error("Error creating team member: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -64,7 +64,7 @@ public class TeamMemberService {
             return responseBuilder.ok(new HashSet<>(allMembers),
                     ApiTeamMemberResponseMessage.MEMBERS_RECEIVED);
         } catch (Exception e) {
-            log.error("Error retrieving team members: {}", e.getMessage());
+            log.error("Error retrieving team members: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -87,7 +87,7 @@ public class TeamMemberService {
             teamMemberRepository.deleteById(teamMemberId);
             return responseBuilder.ok(ApiTeamMemberResponseMessage.USER_DELETED_FROM_TEAM);
         } catch (Exception e) {
-            log.error("Error deleting team member: {}", e.getMessage());
+            log.error("Error deleting team member: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }

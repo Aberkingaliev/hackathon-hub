@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-public class RoleServiceTest {
+class RoleServiceTest {
 
     @Mock
     @Autowired

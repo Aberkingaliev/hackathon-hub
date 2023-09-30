@@ -3,7 +3,6 @@ package com.hackathonhub.serviceteam.repositories;
 import com.hackathonhub.serviceteam.dto.MemberDto;
 import com.hackathonhub.serviceteam.models.TeamMember;
 import com.hackathonhub.serviceteam.models.TeamMemberId;
-import com.hackathonhub.serviceteam.models.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

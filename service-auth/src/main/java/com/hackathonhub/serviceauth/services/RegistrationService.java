@@ -35,7 +35,7 @@ public class RegistrationService {
 
             return responseBuilder.created(mappedUser, ApiAuthResponseMessage.USER_SUCCESS_REGISTERED);
         } catch (Exception e) {
-            log.error("Registration failed: {}", e.getMessage());
+            log.error("Registration failed: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }

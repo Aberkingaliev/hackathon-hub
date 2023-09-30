@@ -34,7 +34,7 @@ public class TeamService {
             Team savedTeam = teamRepository.save(mappedTeam);
             return responseBuilder.created(savedTeam.toDto(), "Team created successfully");
         } catch (Exception e) {
-            log.error("Error creating team: {}", e.getMessage());
+            log.error("Error creating team: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -48,7 +48,7 @@ public class TeamService {
             return team.map(t -> responseBuilder.ok(t.toDto(), "Team retrieved successfully"))
                     .orElseGet(() -> responseBuilder.notFound("Team not found"));
         } catch (Exception e) {
-            log.error("Error retrieving team: {}", e.getMessage());
+            log.error("Error retrieving team: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -61,7 +61,7 @@ public class TeamService {
             teamRepository.deleteById(parsedId);
             return responseBuilder.ok("Team deleted successfully");
         } catch (Exception e) {
-            log.error("Error deleting team: {}", e.getMessage());
+            log.error("Error deleting team: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }

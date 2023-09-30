@@ -5,7 +5,10 @@ import com.hackathonhub.servicecontest.dtos.solution.SolutionCreateDto;
 import com.hackathonhub.servicecontest.dtos.solution.SolutionUpdateDto;
 import com.hackathonhub.servicecontest.models.Team;
 import com.hackathonhub.servicecontest.models.contest.Contest;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +22,8 @@ import java.util.UUID;
 @Table(name = "solutions")
 @Accessors(chain = true)
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Solution implements Serializable {
 
     @Id

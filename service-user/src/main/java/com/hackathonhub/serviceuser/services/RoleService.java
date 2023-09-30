@@ -26,7 +26,7 @@ public class RoleService {
             Role savedRole = roleRepository.save(new Role().setRoleName(role.getRoleName()));
             return responseBuilder.created(savedRole, ApiRoleResponseMessage.ROLE_CREATED);
         } catch (Exception e) {
-            log.error("Error while creating role " + e.getMessage());
+            log.error("Error while creating role: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -39,6 +39,7 @@ public class RoleService {
             return foundedRole.map(role -> responseBuilder.ok(role, ApiRoleResponseMessage.ROLE_FOUND))
                     .orElseGet(() -> responseBuilder.notFound(ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
+            log.error("Error while getting role: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -53,7 +54,7 @@ public class RoleService {
                 return responseBuilder.ok(updatedRole, ApiRoleResponseMessage.ROLE_UPDATED);
             }).orElseGet(() -> responseBuilder.notFound(ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while updating role " + e.getMessage());
+            log.error("Error while updating role: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -67,7 +68,7 @@ public class RoleService {
                 return responseBuilder.ok(ApiRoleResponseMessage.ROLE_DELETED);
             }).orElseGet(() -> responseBuilder.notFound(ApiRoleResponseMessage.ROLE_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while deleting role " + e.getMessage());
+            log.error("Error while deleting role: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }

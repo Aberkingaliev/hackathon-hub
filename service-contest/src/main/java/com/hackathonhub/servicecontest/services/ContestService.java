@@ -37,7 +37,7 @@ public class ContestService {
 
             return responseBuilder.created(savedContest, ApiContestResponseMessage.CONTEST_CREATED);
         } catch (Exception e) {
-            log.error("Error while creating contest: {}", e.getMessage());
+            log.error("Error while creating contest: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -56,7 +56,7 @@ public class ContestService {
                 return responseBuilder.ok(contest, ApiContestResponseMessage.CONTEST_FOUND);
             }).orElseGet(() -> responseBuilder.notFound(ApiContestResponseMessage.CONTEST_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while getting contest: {}", e.getMessage());
+            log.error("Error while getting contest: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -73,7 +73,7 @@ public class ContestService {
                 return responseBuilder.ok(updatedContest, ApiContestResponseMessage.CONTEST_UPDATED);
             }).orElseGet(() -> responseBuilder.notFound(ApiContestResponseMessage.CONTEST_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while updating contest: {}", e.getMessage());
+            log.error("Error while updating contest: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -86,7 +86,7 @@ public class ContestService {
 
             return responseBuilder.ok(ApiContestResponseMessage.CONTEST_DELETED);
         } catch (Exception e) {
-            log.error("Error while deleting contest: {}", e.getMessage());
+            log.error("Error while deleting contest: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }

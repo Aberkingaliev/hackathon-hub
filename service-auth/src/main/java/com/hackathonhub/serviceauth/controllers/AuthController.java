@@ -6,12 +6,7 @@ import com.hackathonhub.serviceauth.dtos.UserCreateDto;
 import com.hackathonhub.serviceauth.dtos.UserDto;
 import com.hackathonhub.serviceauth.dtos.UserLoginRequest;
 import com.hackathonhub.serviceauth.models.AuthToken;
-import com.hackathonhub.serviceauth.models.User;
 import com.hackathonhub.serviceauth.services.LoginService;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
 import com.hackathonhub.serviceauth.services.RegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,11 +18,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
 
 @RestController

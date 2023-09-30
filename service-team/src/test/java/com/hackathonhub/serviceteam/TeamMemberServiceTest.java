@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith({SpringExtension.class})
-public class TeamMemberServiceTest {
+class TeamMemberServiceTest {
 
     @Mock
     @Autowired
@@ -53,7 +53,7 @@ public class TeamMemberServiceTest {
     }
 
     @Test
-    public void addMember_TestValid() {
+    void addMember_TestValid() {
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
                 .thenReturn(Optional.empty());
         when(teamMemberRepository.save(any(TeamMember.class)))
@@ -71,7 +71,7 @@ public class TeamMemberServiceTest {
     }
 
     @Test
-    public void addMember_TestAlreadyInTeam() {
+    void addMember_TestAlreadyInTeam() {
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
                 .thenReturn(Optional.of(new TeamMember().setEmbeddedId(new TeamMemberId(this.userId, this.teamId))));
 
@@ -88,7 +88,7 @@ public class TeamMemberServiceTest {
 
 
     @Test
-    public void getMembers_TestValid () {
+    void getMembers_TestValid () {
         UUID cursor = UUID.randomUUID();
         int limit = 10;
 
@@ -112,7 +112,7 @@ public class TeamMemberServiceTest {
     }
 
     @Test
-    public void deleteMember_TestValid() {
+    void deleteMember_TestValid() {
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
                 .thenReturn(Optional.of(new TeamMember().setEmbeddedId(new TeamMemberId(this.userId, this.teamId))));
 
@@ -125,7 +125,7 @@ public class TeamMemberServiceTest {
     }
 
     @Test
-    public void deleteMember_TestNotFound() {
+    void deleteMember_TestNotFound() {
         when(teamMemberRepository.findById(any(TeamMemberId.class)))
                 .thenReturn(Optional.empty());
 

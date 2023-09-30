@@ -1,9 +1,6 @@
 package com.hackathonhub.serviceauth.repositories;
 
 import com.hackathonhub.serviceauth.models.AuthToken;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

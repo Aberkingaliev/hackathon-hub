@@ -4,7 +4,6 @@ package com.hackathonhub.serviceteam.controllers;
 import com.hackathonhub.serviceteam.dto.ApiAuthResponse;
 import com.hackathonhub.serviceteam.dto.TeamCreateDto;
 import com.hackathonhub.serviceteam.dto.TeamDto;
-import com.hackathonhub.serviceteam.models.Team;
 import com.hackathonhub.serviceteam.services.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.Serializable;
 
 
 @RestController

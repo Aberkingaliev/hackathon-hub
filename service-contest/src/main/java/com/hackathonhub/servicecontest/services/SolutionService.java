@@ -32,7 +32,7 @@ public class SolutionService {
 
             return responseBuilder.created(savedSolution, ApiSolutionResponseMessage.SOLUTION_CREATED);
         } catch (Exception e) {
-            log.error("Error while creating solution: {}", e.getMessage());
+            log.error("Error while creating solution: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -47,7 +47,7 @@ public class SolutionService {
                             responseBuilder.ok(solution, ApiSolutionResponseMessage.SOLUTION_FOUND))
                     .orElseGet(() -> responseBuilder.notFound(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while getting solution: {}", e.getMessage());
+            log.error("Error while getting solution: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -62,7 +62,7 @@ public class SolutionService {
 
             return responseBuilder.ok(foundedSolutionMeta, ApiSolutionResponseMessage.SOLUTION_FOUND);
         } catch (Exception e) {
-            log.error("Error while getting solution meta list: {}", e.getMessage());
+            log.error("Error while getting solution meta list: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -79,7 +79,7 @@ public class SolutionService {
                 return responseBuilder.ok(updatedSolution, ApiSolutionResponseMessage.SOLUTION_UPDATED);
             }).orElseGet(() -> responseBuilder.notFound(ApiSolutionResponseMessage.SOLUTION_NOT_FOUND));
         } catch (Exception e) {
-            log.error("Error while updating solution: {}", e.getMessage());
+            log.error("Error while updating solution: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }
@@ -91,7 +91,7 @@ public class SolutionService {
             solutionRepository.deleteById(id);
             return responseBuilder.ok(ApiSolutionResponseMessage.SOLUTION_DELETED);
         } catch (Exception e) {
-            log.error("Error while deleting solution: {}", e.getMessage());
+            log.error("Error while deleting solution: ", e);
             return responseBuilder.internalServerError(e.getMessage());
         }
     }

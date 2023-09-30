@@ -5,7 +5,6 @@ import javax.persistence.*;
 import com.hackathonhub.serviceuser.dtos.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;

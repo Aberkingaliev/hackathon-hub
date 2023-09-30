@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
+
 
 @Configuration
 public class AuthorityCheckFilter extends BaseFilter {
@@ -18,31 +20,46 @@ public class AuthorityCheckFilter extends BaseFilter {
 
     @Override
     public Mono<Void> customFilter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String token = exchange.getRequest()
-                .getHeaders()
-                .getFirst("Authorization")
-                .substring(7);
+        return extractToken(exchange)
+                .flatMap(token -> checkAuthority(token, exchange))
+                .flatMap(hasAccess -> proceedOrTerminate(hasAccess, exchange, chain))
+                .switchIfEmpty(Mono.defer(() -> unauthorized(exchange)));
+    }
 
-        if(token.isEmpty()) {
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
-        }
+    private Mono<String> extractToken(ServerWebExchange exchange) {
+        return Optional.ofNullable(exchange.getRequest().getHeaders().getFirst("Authorization"))
+                .map(token -> token.substring(7))
+                .map(Mono::just)
+                .orElse(Mono.empty());
+    }
 
-        Messages.CheckAuthorityRequest request = Messages.CheckAuthorityRequest
-                .newBuilder()
+    private Mono<Boolean> checkAuthority(String token, ServerWebExchange exchange) {
+        Messages.CheckAuthorityRequest request = Messages.CheckAuthorityRequest.newBuilder()
                 .setAccessToken(token)
                 .setRoute(exchange.getRequest().getPath().toString())
                 .build();
-
         Messages.CheckAuthorityResponse response = authorityStub.checkAuthority(request);
-
-        if(!response.getHasAccess()) {
-            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-            return exchange.getResponse().setComplete();
-        }
-
-        return chain.filter(exchange);
+        return Mono.just(response.getHasAccess());
     }
+
+    private Mono<Void> proceedOrTerminate(boolean hasAccess, ServerWebExchange exchange, GatewayFilterChain chain) {
+        if (hasAccess) {
+            return chain.filter(exchange);
+        } else {
+            return forbidden(exchange);
+        }
+    }
+
+    private Mono<Void> unauthorized(ServerWebExchange exchange) {
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        return exchange.getResponse().setComplete();
+    }
+
+    private Mono<Void> forbidden(ServerWebExchange exchange) {
+        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+        return exchange.getResponse().setComplete();
+    }
+
 
     @Override
     public int getOrder() {

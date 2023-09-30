@@ -81,7 +81,7 @@ public class User implements Serializable {
         return this;
     }
 
-    public User setRole(HashSet<Role> roles) {
+    public User setRole(Set<Role> roles) {
         this.roles = roles;
         return this;
     }

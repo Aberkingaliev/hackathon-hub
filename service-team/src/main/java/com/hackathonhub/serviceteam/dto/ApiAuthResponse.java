@@ -19,7 +19,7 @@ public class ApiAuthResponse<T extends Serializable> {
    @Builder.Default
    private Optional<T> data = Optional.empty();
 
-   public ApiAuthResponse () {}
+   public ApiAuthResponse () {  }
 
    public ApiAuthResponse<T> created(String message) {
        return ApiAuthResponse.<T>builder()
