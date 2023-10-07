@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: service-identity
+  config:
+    import: optional:configserver:http://service-cloud-config:8888

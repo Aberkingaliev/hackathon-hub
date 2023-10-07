@@ -34,8 +34,8 @@ jobs:
       - name: Build service user
         run: ./gradlew :service-user:build
 
-      - name: Build service auth
-        run: ./gradlew :service-auth:build
+      - name: Build service identity
+        run: ./gradlew :service-identity:build
 
       - name: Build service team
         run: ./gradlew :service-team:build

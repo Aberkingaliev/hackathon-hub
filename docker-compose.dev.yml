@@ -4,10 +4,10 @@ services:
     build: ./service-cloud-config
     ports:
       - "8888:8888"
-    volumes:
-        - configs:/tmp/config-repo
     environment:
-        - GITHUB_TOKEN=${CONFIG_TOKEN}
+      - GITHUB_TOKEN=${CONFIG_TOKEN}
+    volumes:
+      - configs:/tmp/config-repo
     healthcheck:
         test: timeout 10s bash -c ':> /dev/tcp/service-cloud-config/8888' || exit 1
         interval: 10s
@@ -34,8 +34,8 @@ services:
         condition: service_started
     volumes:
       - ./service-user/build/libs/service-user-0.0.1-SNAPSHOT.jar:/app.jar
-  service-auth:
-    build: ./service-auth
+  service-identity:
+    build: ./service-identity
     ports:
       - "8002:8002"
       - "55002:55002"
@@ -49,7 +49,7 @@ services:
       tokens-redis:
         condition: service_started
     volumes:
-      - ./service-auth/build/libs/service-auth-0.0.1-SNAPSHOT.jar:/app.jar
+      - ./service-identity/build/libs/service-identity-0.0.1-SNAPSHOT.jar:/app.jar
   service-team:
     build: ./service-team
     ports:
@@ -89,7 +89,7 @@ services:
         condition: service_healthy
       service-user:
         condition: service_started
-      service-auth:
+      service-identity:
         condition: service_started
       service-team:
         condition: service_started

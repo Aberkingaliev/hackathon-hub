@@ -1,6 +1,6 @@
 rootProject.name = 'hackathon-hub'
 includeBuild("service-registry")
-includeBuild("service-auth")
+includeBuild("service-identity")
 includeBuild("service-user")
 includeBuild("service-team")
 includeBuild("service-gateway")

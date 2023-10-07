@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package services.auth_service;
-
-option java_package = "com.hackathonhub.auth_protos.grpc";
-
-
-

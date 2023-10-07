@@ -7,3 +7,7 @@ option java_package = "com.hackathonhub.common.grpc";
 message UUID {
   string value = 1;
 }
+
+message HttpStatus {
+  int32 code = 1;
+}

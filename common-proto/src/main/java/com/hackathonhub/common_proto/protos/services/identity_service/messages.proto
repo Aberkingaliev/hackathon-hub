@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package services.identity_service;
+import "common/types.proto";
+
+option java_package = "com.hackathonhub.identity_protos.grpc";
+
+message ValidateTokensRequest {
+  string accessToken = 1;
+  string refreshToken = 2;
+  string route = 3;
+}
+
+message ValidateTokensResponse {
+  common.HttpStatus status = 4;
+  bool isValid = 1;
+  string accessToken = 2;
+  string refreshToken = 3;
+}

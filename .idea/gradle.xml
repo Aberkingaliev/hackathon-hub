@@ -12,11 +12,6 @@
                   <project path="$PROJECT_DIR$/common-proto" />
                 </projects>
               </build>
-              <build path="$PROJECT_DIR$/service-auth" name="service-auth">
-                <projects>
-                  <project path="$PROJECT_DIR$/service-auth" />
-                </projects>
-              </build>
               <build path="$PROJECT_DIR$/service-cloud-config" name="service-cloud-config">
                 <projects>
                   <project path="$PROJECT_DIR$/service-cloud-config" />
@@ -30,6 +25,11 @@
               <build path="$PROJECT_DIR$/service-gateway" name="service-gateway">
                 <projects>
                   <project path="$PROJECT_DIR$/service-gateway" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/service-identity" name="service-identity">
+                <projects>
+                  <project path="$PROJECT_DIR$/service-identity" />
                 </projects>
               </build>
               <build path="$PROJECT_DIR$/service-registry" name="service-registry">
@@ -55,10 +55,10 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/common-proto" />
-            <option value="$PROJECT_DIR$/service-auth" />
             <option value="$PROJECT_DIR$/service-cloud-config" />
             <option value="$PROJECT_DIR$/service-contest" />
             <option value="$PROJECT_DIR$/service-gateway" />
+            <option value="$PROJECT_DIR$/service-identity" />
             <option value="$PROJECT_DIR$/service-registry" />
             <option value="$PROJECT_DIR$/service-team" />
             <option value="$PROJECT_DIR$/service-user" />

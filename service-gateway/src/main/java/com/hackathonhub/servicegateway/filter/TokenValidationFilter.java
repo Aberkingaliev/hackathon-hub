@@ -1,121 +1,102 @@
 package com.hackathonhub.servicegateway.filter;
 
-import com.hackathonhub.auth_protos.grpc.Messages;
-import com.hackathonhub.auth_protos.grpc.TokensServiceGrpc;
-import com.hackathonhub.common.grpc.Entities;
+import com.hackathonhub.identity_protos.grpc.IdentityServiceGrpc;
+import com.hackathonhub.identity_protos.grpc.Messages;
+import io.grpc.StatusRuntimeException;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 
 @Configuration
+@Slf4j
 public class TokenValidationFilter extends BaseFilter {
 
     @GrpcClient("service-auth")
-    private TokensServiceGrpc.TokensServiceBlockingStub tokensStub;
+    private IdentityServiceGrpc.IdentityServiceBlockingStub identityStub;
 
     @Override
     public Mono<Void> customFilter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        return validateTokens(exchange)
-                .flatMap(isValid -> isValid ? proceed(chain, exchange) : unauthorized(exchange))
-                .switchIfEmpty(refreshTokens(exchange)
-                        .flatMap(newTokens -> updateExchangeAndProceed(newTokens, exchange, chain))
-                        .switchIfEmpty(Mono.defer(() -> unauthorized(exchange))));
+        return Mono.just(exchange)
+                .flatMap(this::buildRequestMessage)
+                .flatMap(this::validateTokens)
+                .flatMap(response -> returnResults(exchange, chain, response))
+                .switchIfEmpty(Mono.defer(() -> {
+                    exchange.getResponse()
+                            .setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse()
+                            .setComplete();
+                }))
+                .onErrorResume(StatusRuntimeException.class, e -> {
+                    log.error("Token validation failed: ", e);
+                    exchange.getResponse()
+                            .setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse()
+                            .setComplete();
+                });
     }
 
-    private Mono<Boolean> validateTokens(ServerWebExchange exchange) {
-        Optional<String> accessToken = extractAccessToken(exchange);
-        Optional<String> refreshToken = extractRefreshToken(exchange);
-
-        if (accessToken.isEmpty() || refreshToken.isEmpty()) {
-            return Mono.empty();
+    private Mono<Void> returnResults(ServerWebExchange exchange,
+                                     GatewayFilterChain chain,
+                                     Messages.ValidateTokensResponse response) {
+        if (!response.getIsValid()) {
+            exchange.getResponse()
+                    .setStatusCode(
+                            HttpStatus
+                                    .valueOf(response.getStatus().getCode())
+                    );
+            return exchange.getResponse()
+                    .setComplete();
         }
 
-        Messages.ValidateTokensRequest request = Messages.ValidateTokensRequest.newBuilder()
-                .setAccessToken(accessToken.get())
-                .setRefreshToken(refreshToken.get())
-                .build();
-
-        Messages.ValidateTokensResponse response = tokensStub.validateTokens(request);
-        return Mono.just(response.getIsAccessTokenValid());
-    }
-
-    private Optional<String> extractAccessToken(ServerWebExchange exchange) {
-        return Optional.ofNullable(exchange.getRequest()
-                        .getHeaders()
-                        .getFirst("Authorization"))
-                .map(a -> a.substring(7));
-    }
-
-    private Optional<String> extractRefreshToken(ServerWebExchange exchange) {
-        return Optional.ofNullable(exchange.getRequest()
-                        .getCookies()
-                        .getFirst("refreshToken"))
-                .map(HttpCookie::getValue);
-    }
-
-    private Mono<Void> unauthorized(ServerWebExchange exchange) {
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        return exchange.getResponse().setComplete();
-    }
-
-    private Mono<Void> proceed(GatewayFilterChain chain, ServerWebExchange exchange) {
         return chain.filter(exchange);
     }
 
-    private Mono<Map<String, String>> refreshTokens(ServerWebExchange exchange) {
-        Optional<String> refreshToken = extractRefreshToken(exchange);
+    private Mono<Messages.ValidateTokensResponse> validateTokens(Messages.ValidateTokensRequest request) {
+        return Mono.just(request)
+                .map(identityStub::validateTokens);
+    }
 
-        if (refreshToken.isEmpty()) {
-            return Mono.empty();
-        }
-
-        Messages.UpdateTokensRequest refreshRequest = Messages.UpdateTokensRequest
+    private Mono<Messages.ValidateTokensRequest> buildRequestMessage(ServerWebExchange exchange) {
+        Messages.ValidateTokensRequest.Builder request = Messages.ValidateTokensRequest
                 .newBuilder()
-                .setRefreshToken(refreshToken.get())
-                .build();
+                .setRoute(exchange.getRequest().getPath().toString());
 
-        Entities.AuthTokens refreshResponse = tokensStub.updateTokens(refreshRequest);
+        Optional<String> accessToken = getAccessToken(exchange);
+        Optional<String> refreshToken = getRefreshToken(exchange);
 
-        Map<String, String> newTokens = new HashMap<>();
-        newTokens.put("accessToken", refreshResponse.getAccessToken());
-        newTokens.put("refreshToken", refreshResponse.getRefreshToken());
 
-        return Mono.just(newTokens);
+        return accessToken.isEmpty() || refreshToken.isEmpty()
+                ? Mono.empty()
+                : Mono.just(
+                        request
+                                .setAccessToken(accessToken.get())
+                                .setRefreshToken(refreshToken.get())
+                                .build()
+        );
     }
 
-    private Mono<Void> updateExchangeAndProceed(Map<String, String> newTokens,
-                                                ServerWebExchange exchange,
-                                                GatewayFilterChain chain) {
-        ServerWebExchange mutatedExchange = mutateExchange(newTokens, exchange);
-        return chain.filter(mutatedExchange);
+    private Optional<String> getAccessToken(ServerWebExchange exchange) {
+        return Optional.ofNullable(exchange
+                        .getRequest()
+                        .getHeaders()
+                        .getFirst("Authorization"))
+                .map(header -> header.replace("Bearer ", ""));
     }
 
-    private ServerWebExchange mutateExchange(Map<String, String> newTokens,
-                                             ServerWebExchange exchange) {
-        ServerWebExchange mutatedExchange = exchange.mutate()
-                .request(exchange.getRequest().mutate()
-                        .headers(h -> h.setBearerAuth(newTokens.get("accessToken")))
-                        .build())
-                .build();
-
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", newTokens.get("refreshToken"))
-                .path("/")
-                .build();
-
-        mutatedExchange.getResponse().getCookies().add("refreshToken", cookie);
-        mutatedExchange.getResponse().getHeaders().setBearerAuth(newTokens.get("accessToken"));
-
-        return mutatedExchange;
+    private Optional<String> getRefreshToken(ServerWebExchange exchange) {
+        return Optional.ofNullable(exchange
+                        .getRequest()
+                        .getCookies()
+                        .getFirst("refreshToken"))
+                .map(HttpCookie::getValue);
     }
 
 
